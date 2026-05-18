@@ -39,6 +39,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 - `cs-req` — 起草或刷新 `.codestable/requirements/` 下的需求文档——系统的能力愿景层，覆盖过去/现在/未来
 - `cs-arch` — 架构相关一站式:起草新架构文档 / 刷新已有文档 / 做架构体检(含 design 自洽 / design↔代码一致 / architecture 目录多份文档间一致)。architecture 只记现状
 - `cs-roadmap` — 把一块装不进单个 feature 的大需求拆成带依赖和状态的子 feature 清单,作为后续多次 feature 流程的种子和排期依据;独立于需求 / 架构档案
+- `cs-doc-sweep` — 手动文档熵维护：围绕一个完成项清理旧 spec，或全项目分析 spec 有效性
 - `cs-guide` — 写给外部读者的开发者指南 / 用户指南
 - `cs-libdoc` — 为库的公开 API 逐条目生成参考文档
 
@@ -57,6 +58,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 | 补 / 更新需求文档 | `cs-req` |
 | 补 / 更新 / 检查架构文档 | `cs-arch` |
 | 大需求拆解 / 排期规划 | `cs-roadmap` |
+| 手动清理旧设计文档 / 全项目文档熵检查 / 新方案推翻旧方案 | `cs-doc-sweep` |
 | 技术选型 / 约束 / 规约 | `cs-decide` |
 | 踩坑回顾、经验总结 | `cs-learn` |
 | 可复用的编程模式、库用法 | `cs-trick` |
@@ -85,7 +87,7 @@ learning / trick / decision / explore 都是存档文档类型,区别在记录�
 - **愿景档案**(requirements)——描述"用户需要什么、系统提供什么能力来满足"。`status` 区分三个时间深度：`draft`（未来愿景）、`current`（现在的能力）、`outdated`（过去的痕迹）。draft req 可独立于实现存在——先把愿景定下来，后续 roadmap 排期和 design 实现才有稳定对齐基准
 - **结构档案**(architecture)——描述"系统现在用什么结构实现"。只记现状,默认在 feature-acceptance 时跟着代码同步;必要时由 cs-arch 主动刷新。**不写"未来会加什么层"**
 - **规划档案**(roadmap)——描述"接下来打算怎么分步实现"。独立于愿景和结构档案,改动不牵连 requirements / architecture。所有条目 done / dropped 后 roadmap 进入 `completed` 状态,作为历史档案留存
-- **单次动作**(feature / issue / refactor)——本次要做的一件具体事情的 spec。动作走完后,相关沉淀提炼进愿景档案、结构档案和沉淀类文档
+- **单次动作**(feature / issue / refactor)——本次要做的一件具体事情的 spec。动作走完后,相关沉淀提炼进愿景档案、结构档案和沉淀类文档；用户手动维护文档熵时由 `cs-doc-sweep` 标 `lifecycle`
 
 用户说"我想要一个 X 系统"这种大需求,先走 roadmap 拆成若干子 feature,再一条一条走 feature 流程。直接起 feature 会变成巨型 design 塞不下、拆了又没有追踪抓手。
 
@@ -105,7 +107,7 @@ AI 最常见的问题是一口气铺几百行代码才让人看——等发现�
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记
 
-目录结构(requirements/、architecture/、roadmap/、features/、issues/、compound/、tools/、reference/)的权威定义在 `shared-conventions.md`。要改目录先改那里——方法是改 `cs-onboard/reference/shared-conventions.md` 这个模板,新项目 onboard 时会带上新版本。
+目录结构(requirements/、architecture/、roadmap/、features/、issues/、refactors/、doc-sweeps/、compound/、tools/、reference/)的权威定义在 `shared-conventions.md`。要改目录先改那里——方法是改 `cs-onboard/reference/shared-conventions.md` 这个模板,新项目 onboard 时会带上新版本。
 
 
 ## 相关

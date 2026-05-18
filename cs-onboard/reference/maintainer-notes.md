@@ -14,6 +14,7 @@ AI 对话随时可能中断（token 超限、网络断开、用户换设备）�
 - **acceptance**：如 `{slug}-acceptance.md` 已有部分节，检查哪些节已填写（有实质 checklist 勾选），从下一个未完成节继续
 - **issue-analyze**：如 `{slug}-analysis.md` 已存在，检查 5 节是否都有内容，缺失的补做，已有的不重写
 - **issue-fix**：如代码已改但 `{slug}-fix-note.md` 不存在，直接进入验证 + 写 fix-note 环节
+- **doc-sweep**：anchor 模式如 `{slug}-doc-sweep.md` 已存在，project 模式如 `doc-sweeps/YYYY-MM-DD-{slug}/index.md` 已存在，读取候选表和已修改文件，只处理未决项，不重复改已标记的旧文档
 
 恢复时先向用户简短汇报："检测到上次工作到 X 阶段，我从 Y 继续"。
 

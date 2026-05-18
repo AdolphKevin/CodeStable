@@ -30,18 +30,24 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 │       ├── {slug}-design.md      （标准流程）
 │       ├── {slug}-checklist.yaml （标准流程）
 │       ├── {slug}-acceptance.md  （标准流程）
-│       └── {slug}-ff-note.md     （fastforward 通道唯一产物，与上面四份互斥）
+│       ├── {slug}-ff-note.md     （fastforward 通道唯一产物，与上面四份互斥）
+│       └── {slug}-doc-sweep.md   （可选，手动 anchor sweep 产物）
 ├── issues/                issue spec 聚合根
 │   └── YYYY-MM-DD-{slug}/
 │       ├── {slug}-report.md
 │       ├── {slug}-analysis.md   （根因不显然才有）
-│       └── {slug}-fix-note.md
+│       ├── {slug}-fix-note.md
+│       └── {slug}-doc-sweep.md  （可选，手动 anchor sweep 产物）
 ├── refactors/             refactor spec 聚合根
 │   └── YYYY-MM-DD-{slug}/
 │       ├── {slug}-scan.md
 │       ├── {slug}-refactor-design.md
 │       ├── {slug}-checklist.yaml
-│       └── {slug}-apply-notes.md
+│       ├── {slug}-apply-notes.md
+│       └── {slug}-doc-sweep.md  （可选，手动 anchor sweep 产物）
+├── doc-sweeps/            全项目文档熵维护报告（cs-doc-sweep 手动 project 模式）
+│   └── YYYY-MM-DD-{slug}/
+│       └── index.md
 ├── compound/              沉淀类文档统一目录
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │                          doc_type ∈ {learning, trick, decision, explore}
@@ -57,6 +63,7 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 - 需求文档：`requirements/{slug}.md`（能力愿景，不带日期前缀，扁平不分组）；中心索引 `requirements/VISION.md`
 - roadmap：`roadmap/{slug}/`（不带日期前缀，平铺不嵌套）
 - feature / issue / refactor 目录：带日期前缀 `YYYY-MM-DD-{slug}`
+- doc-sweep 项目级报告：`doc-sweeps/YYYY-MM-DD-{slug}/index.md`
 - 沉淀类：`compound/YYYY-MM-DD-{doc_type}-{slug}.md`，日期用**归档当天**
 - 架构 doc：`architecture/{type}-{slug}.md`（长效，不带日期前缀）；总入口固定 `ARCHITECTURE.md`
 - 项目注意事项入口固定为 `.codestable/attention.md`，所有 CodeStable 子技能启动前必须读取；不再兼容 `AGENTS.md` / `CLAUDE.md` 等外部入口
@@ -97,6 +104,18 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 **外部读者文档**（guidedoc / libdoc）：frontmatter 由各自子技能定义。无特殊说明：`draft` = 待 review，`current` = 当前有效，`outdated` = 代码已变更待同步。
 
 **写作约束**：子技能提字段时优先写"额外字段"或"阶段状态变化"，不重复展开整套通用字段。
+
+### action spec 生命周期标记
+
+feature / issue / refactor 的 `status` 表示原工作流阶段，**不表示当前设计有效性**。用户手动触发 `cs-doc-sweep` 后，旧 spec 被当前有效文档覆盖或推翻时，补生命周期字段：
+
+- `lifecycle: absorbed`：旧文档说的是同一需求 / 问题，已被新锚点完整覆盖
+- `lifecycle: superseded`：旧文档的设计 / 修法 / 重构方案已被新锚点推翻
+- `absorbed_by` / `superseded_by`：指向新锚点路径
+- `lifecycle_note`：一句话说明为什么被吸收或取代
+- 新锚点可带 `absorbs` / `supersedes` 列表反向指回旧文档
+
+默认不物理删除旧 spec；删除只处理空目录、未确认草稿、临时 spike 这类用户明确同意丢弃的内容。
 
 ---
 

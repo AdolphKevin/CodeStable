@@ -35,7 +35,7 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 
 ## 体系一图速读（用户没具体诉求 / 让你介绍时讲这个）
 
-CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物聚在 `.codestable/`：
+CodeStable 把开发活动建模成 **8 个实体 + 1 个维护报告目录 + 3 个流程**，所有产物聚在 `.codestable/`：
 
 ```
 .codestable/
@@ -46,7 +46,8 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 ├── issues/          修 bug spec 聚合根（report / analyze / fix）
 ├── refactors/       重构 spec 聚合根（beta）
 ├── audits/          审计实体（主动扫描发现清单，不定修）
-└── compound/        知识沉淀（learning / trick / decision / explore）
+├── compound/        知识沉淀（learning / trick / decision / explore）
+└── doc-sweeps/      手动文档熵维护报告（不算单次动作 spec）
 ```
 
 **三条流程**：
@@ -79,6 +80,7 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 | 补 / 更新需求文档 | `cs-req` |
 | 补 / 更新 / 检查架构文档 / "刷新架构 doc" / "做架构体检" | `cs-arch` |
 | 大需求拆解 / "我想要一个 X 系统" / 排期规划 / 模块拆分 + 接口契约 | `cs-roadmap` |
+| 用户明确要求清理旧设计文档 / 全项目文档熵检查 / 分析旧 spec 是否有效 | `cs-doc-sweep` |
 | 技术选型 / 长期约束 / 编码规约 | `cs-decide` |
 | 踩坑回顾 / 经验总结 / "值得记下来" | `cs-learn` |
 | 可复用编程模式 / 库用法 / "以后做 X 就该这样" | `cs-trick` |
@@ -112,6 +114,10 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 
 扫描看到 `features/` 或 `issues/` 下已有相关目录 → 提一句"看到 `features/2026-04-22-xxx/` 已经存在，是接着做这个吗？" 让用户确认续作还是开新的。
 
+### 手动文档熵维护
+
+只有用户明确要求清理旧 spec、做文档熵检查、或分析全项目 features/issues/refactors 有效性时，才路由到 `cs-doc-sweep`。不要在普通 feature / issue / refactor 收尾时主动推荐它。
+
 ### 沉淀类技能的细分
 
 判别口诀：
@@ -131,7 +137,7 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 按这个顺序讲，**不一次倒出全部**：
 
 1. 一句话：CodeStable 是面向严肃工程的 AI 编码工作流，编排软件生命周期而不是 Agent
-2. 6 实体 + 3 流程的速读图
+2. 8 个实体 + 1 个维护报告目录 + 3 条流程的速读图
 3. 问用户"你现在最想从哪儿开始？"，给三个引子：
    - "我有个新功能想做" → cs-feat
    - "代码里有个 bug" → cs-issue

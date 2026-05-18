@@ -33,6 +33,8 @@ description: 把新仓库或有零散文档的仓库接入 CodeStable 体系，�
 ├── roadmap/                    规划层聚合根
 ├── features/                   feature 聚合根
 ├── issues/                     issue 聚合根
+├── refactors/                  refactor 聚合根
+├── doc-sweeps/                 手动文档熵维护报告
 ├── compound/                   沉淀类统一目录（learning / trick / decision / explore）
 ├── tools/                      跨工作流共享脚本（onboard 释放）
 │   ├── search-yaml.py
@@ -74,7 +76,7 @@ description: 把新仓库或有零散文档的仓库接入 CodeStable 体系，�
 
 按下面顺序执行，**不等用户逐步确认**——骨架是整体一次性的：
 
-- `.codestable/{requirements,roadmap,features,issues,compound}/.gitkeep`
+- `.codestable/{requirements,roadmap,features,issues,refactors,doc-sweeps,compound}/.gitkeep`
 - `.codestable/attention.md`（最小骨架模板见同目录 `reference.md`）
 - `.codestable/architecture/ARCHITECTURE.md`（占位模板见同目录 `reference.md`）
 - `.codestable/tools/`（用 `cp -rf` / `Copy-Item -Recurse -Force` 整目录拷贝技能包 `cs-onboard/tools/`，**不要 Read 再 Write**）
@@ -164,7 +166,7 @@ Copy-Item -Recurse -Force <技能包路径>\cs-onboard\reference\*  .codestable\
 
 ## 退出条件
 
-- [ ] `.codestable/` 八个子目录都存在
+- [ ] `.codestable/` 标准子目录都存在
 - [ ] `.codestable/attention.md` 已建
 - [ ] `.codestable/tools/` 和 `.codestable/reference/` 已从技能包复制
 - [ ] `.codestable/architecture/ARCHITECTURE.md` 已建

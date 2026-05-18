@@ -59,6 +59,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 # 搜索 feature 方案 doc
 python .codestable/tools/search-yaml.py --dir .codestable/features --filter doc_type=feature-design --filter status=approved
+python .codestable/tools/search-yaml.py --dir .codestable/features --filter lifecycle=superseded
 
 # 输出控制
 python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_type=decision --filter status=active --full
@@ -77,6 +78,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/guides --filter status
 | feature-design 开始前查已有归档 | 搜 `.codestable/compound` 目录，按 `--query "{关键词}"` 全文搜；要分类看就加 `--filter "doc_type=learning\|trick\|decision\|explore"` |
 | issue-analyze 根因分析前查历史 | 搜 `.codestable/compound` `--filter doc_type=learning --filter track=pitfall`、再搜 `--filter doc_type=trick --filter type=library`，按相关组件/框架过滤 |
 | 归档落盘后查重叠 | 搜 `.codestable/compound --query "{关键词}" --json`，看有无语义重叠 |
+| doc-sweep 查旧 spec | anchor 模式用 `--query "{关键词}" --json` 找候选；project 模式分别导出 features / issues / refactors 全量 JSON 后聚类 |
 | 新人了解项目规约 | `--dir .codestable/compound --filter doc_type=decision --filter status=active` |
 | 按技术栈浏览技巧 | `--dir .codestable/compound --filter doc_type=trick --filter language={语言} --filter status=active` |
 | 找最久没 review 的库文档 / 指南 | `--dir {目录} --filter status=current --sort-by last_reviewed --order asc` |
