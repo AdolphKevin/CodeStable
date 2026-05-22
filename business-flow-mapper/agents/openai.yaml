@@ -1,0 +1,4 @@
+interface:
+  display_name: "Business Flow Mapper"
+  short_description: "梳理业务处理流程并生成精确中文 Mermaid 流程图"
+  default_prompt: "Use $business-flow-mapper to map this business handling process and generate a precise Chinese Mermaid flowchart."

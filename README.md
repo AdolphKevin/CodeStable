@@ -12,7 +12,7 @@
 
 <p>
   <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-22-6366F1?style=flat-square" alt="Skills"/>
+  <img src="https://img.shields.io/badge/skills-28-6366F1?style=flat-square" alt="Skills"/>
   <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
 </p>
 
@@ -135,11 +135,16 @@ CodeStable 顺着软件编码的真实流程来设计，把开发活动建模成
 <tr><td><code>cs-issue-fix</code></td><td>定点修复 + 验证 + 写 fix-note</td></tr>
 <tr><td rowspan="2"><b>重构流程</b></td><td><code>cs-refactor</code></td><td>(beta) 重构主流程</td></tr>
 <tr><td><code>cs-refactor-ff</code></td><td>(beta) 轻量重构通道</td></tr>
+<tr><td rowspan="3"><b>维护 & 审计</b></td><td><code>cs-audit</code></td><td>主动审计代码，产出 bug、安全、性能和架构偏离清单</td></tr>
+<tr><td><code>cs-doc-sweep</code></td><td>手动清理旧设计文档和过期 spec</td></tr>
+<tr><td><code>cs-note</code></td><td>记录短小但每次启动都必须知道的项目注意事项</td></tr>
 <tr><td rowspan="3"><b>知识沉淀</b></td><td><code>cs-learn</code></td><td>把踩过的坑 / 好做法沉淀成 learning 文档</td></tr>
 <tr><td><code>cs-trick</code></td><td>把可复用的编程模式 / 库用法整理成处方性参考</td></tr>
 <tr><td><code>cs-decide</code></td><td>把已拍板的技术选型、架构决定、长期约束记成永久文档</td></tr>
-<tr><td rowspan="2"><b>探索 & 文档</b></td><td><code>cs-explore</code></td><td>定向代码探索，把"提问 → 读代码 → 得结论"沉淀成证据</td></tr>
+<tr><td rowspan="3"><b>探索 & 文档</b></td><td><code>cs-explore</code></td><td>定向代码探索，把"提问 → 读代码 → 得结论"沉淀成证据</td></tr>
+<tr><td><code>business-flow-mapper</code></td><td>梳理业务处理流程，生成精确中文 Mermaid 流程图</td></tr>
 <tr><td><code>cs-guide</code> / <code>cs-libdoc</code></td><td>对外的开发者指南 / 库参考文档</td></tr>
+<tr><td><b>浏览器自动化</b></td><td><code>browser-bridge</code></td><td>通过 Chrome 扩展控制真实浏览器，抽取 DOM、点击、填写和验证页面</td></tr>
 </table>
 
 ---
@@ -244,72 +249,9 @@ CodeStable 的技能不是一条线性流水，而是**分层 + 事件驱动**�
 
 ## 运行时结构
 
-`/cs-onboard` 跑完后，会在你的项目根下生成一个 `codestable/` 目录——这是 CodeStable 所有产物的聚合根，也是各个子技能在运行时**唯一**会读写的工作区。
+`/cs-onboard` 跑完后，会在你的项目根下生成一个 `codestable/` 目录——这是 CodeStable 所有产物的聚合根，也是各个子技能在运行时唯一会读写的工作区。
 
-```
-你的项目/
-├── codestable/
-│   ├── requirements/                     # 需求实体（"为什么要有这个能力"）
-│   │   └── {slug}.md                     # 一个能力一份，扁平不分组
-│   │
-│   ├── architecture/                     # 架构实体（"用什么结构实现"）
-│   │   ├── ARCHITECTURE.md               # 架构总入口 / 索引
-│   │   └── {type}-{slug}.md              # 子系统架构 doc（同类 ≥6 份自动收进子目录）
-│   │
-│   ├── roadmap/                          # 路线图（"接下来打算怎么走"）
-│   │   └── {slug}/
-│   │       ├── {slug}-roadmap.md         # 主文档：背景 / 拆解 / 排期
-│   │       ├── {slug}-items.yaml         # 机器可读子 feature 清单，acceptance 回写状态
-│   │       └── drafts/                   # 可选：草稿 / 调研
-│   │
-│   ├── features/                         # 特性流程聚合根
-│   │   └── YYYY-MM-DD-{slug}/            # 一个 feature 一个目录
-│   │       ├── {slug}-brainstorm.md      # 可选（cs-brainstorm 产出）
-│   │       ├── {slug}-design.md          # 方案（cs-feat-design）
-│   │       ├── {slug}-checklist.yaml     # 推进清单（impl 跑、accept 回写）
-│   │       └── {slug}-acceptance.md      # 验收报告（cs-feat-accept）
-│   │
-│   ├── issues/                           # 问题流程聚合根
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-report.md          # 问题报告
-│   │       ├── {slug}-analysis.md        # 根因分析（不显然时才有）
-│   │       └── {slug}-fix-note.md        # 修复记录
-│   │
-│   ├── refactors/                        # 重构流程聚合根（beta）
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-scan.md
-│   │       ├── {slug}-refactor-design.md
-│   │       ├── {slug}-checklist.yaml
-│   │       └── {slug}-apply-notes.md
-│   │
-│   ├── compound/                         # 知识沉淀（复利工程）统一目录
-│   │   └── YYYY-MM-DD-{doc_type}-{slug}.md
-│   │       # doc_type ∈ {learning, trick, decision, explore}
-│   │
-│   ├── tools/                            # 跨工作流共享脚本（onboard 释放）
-│   └── reference/                        # 共享参考文档（onboard 释放）
-│       ├── shared-conventions.md         # 跨技能口径 / 路径命名 / 元数据规范
-│       ├── system-overview.md            # CodeStable 体系总览 + 场景路由
-│       └── ...
-│
-└── AGENTS.md                             # 在项目根，不在 codestable/ 里
-```
-
-**几条要点：**
-
-- 所有产物都聚在 `codestable/` 下，让"上次那个 feature / bug 当时怎么搞的"三秒能找到
-- `requirements/` 和 `architecture/` 是**长效档案**（只记现状），`roadmap/` 是**规划层**（接下来怎么走），两者刻意分开
-- `features/` `issues/` `refactors/` 用 `YYYY-MM-DD-{slug}/` 一个目录装齐所有相关 spec，不交叉
-- `compound/` 是**唯一**的知识沉淀目录，learning / trick / decision / explore 通过 `doc_type` 字段区分而不是分目录——好搜
-- `reference/` 是 `cs-onboard` 从技能包复制过来的；要改共享口径，改 `cs-onboard/reference/` 模板，新项目 onboard 自动带上新版
-
-### 硬约束
-
-> Skill 是独立安装单元，运行时**每个 skill 只能看到自己包内的文件**。A 技能的 SKILL.md 里写 `B-skill/reference/xxx.md` 这种引用在运行时**根本读不到**。
->
-> 跨 skill 共享的参考文档必须走"工作项目"这一层：由 `cs-onboard` 从技能包复制到项目的 `codestable/reference/`，其他 skill 用项目相对路径读取。
-
-要改共享口径，改 `cs-onboard/reference/` 下的模板，新项目 onboard 时带上新版本。
+运行时目录、共享 reference 机制和跨 skill 可见性约束见 [CodeStable 运行时结构](./docs/runtime-structure.md)。
 
 ---
 

@@ -76,6 +76,7 @@ CodeStable 把开发活动建模成 **8 个实体 + 1 个维护报告目录 + 3 
 | BUG / 异常 / 报错 / "这里不对" / "文档错了" | `cs-issue`（路由 report / analyze / fix） |
 | 代码优化 / 重构 / 重写（行为不变） | `cs-refactor` / `cs-refactor-ff` |
 | 摸代码 / "X 是怎么实现的" / 提问调研 | `cs-explore` |
+| 业务流程梳理 / "画出 X 流程图" / "说明 X 怎么处理" / "生成 Mermaid 流程图" | `business-flow-mapper` |
 | 审查系统 / 扫描 bug / 审计代码 / "有哪些问题" / "哪里可以优化" | `cs-audit`（主动扫描发现，只列清单不定修） |
 | 补 / 更新需求文档 | `cs-req` |
 | 补 / 更新 / 检查架构文档 / "刷新架构 doc" / "做架构体检" | `cs-arch` |

@@ -12,7 +12,7 @@ Tired of OpenSpec's flimsiness, Oh-My-OpenAgent's over-engineering, and Superpow
 
 <p>
   <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-22-6366F1?style=flat-square" alt="Skills"/>
+  <img src="https://img.shields.io/badge/skills-28-6366F1?style=flat-square" alt="Skills"/>
   <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
 </p>
 
@@ -133,11 +133,16 @@ CodeStable models real coding work as **6 entities** and **3 flows**.
 <tr><td><code>cs-issue-fix</code></td><td>Targeted fix + verification + write fix-note</td></tr>
 <tr><td rowspan="2"><b>Refactor flow</b></td><td><code>cs-refactor</code></td><td>(beta) Main refactor flow</td></tr>
 <tr><td><code>cs-refactor-ff</code></td><td>(beta) Light refactor lane</td></tr>
+<tr><td rowspan="3"><b>Maintenance & audit</b></td><td><code>cs-audit</code></td><td>Audit code for bugs, security, performance, maintainability, and architecture drift</td></tr>
+<tr><td><code>cs-doc-sweep</code></td><td>Manually clean stale design docs and outdated specs</td></tr>
+<tr><td><code>cs-note</code></td><td>Record short project notes every CodeStable skill must know at startup</td></tr>
 <tr><td rowspan="3"><b>Knowledge sink</b></td><td><code>cs-learn</code></td><td>Sink pitfalls / good practices into learning docs</td></tr>
 <tr><td><code>cs-trick</code></td><td>Curate reusable patterns / library usage as prescriptive references</td></tr>
 <tr><td><code>cs-decide</code></td><td>Record settled tech choices, architectural decisions, long-term constraints as permanent docs</td></tr>
-<tr><td rowspan="2"><b>Explore & docs</b></td><td><code>cs-explore</code></td><td>Targeted code exploration; sink "ask → read → conclude" into evidence</td></tr>
+<tr><td rowspan="3"><b>Explore & docs</b></td><td><code>cs-explore</code></td><td>Targeted code exploration; sink "ask → read → conclude" into evidence</td></tr>
+<tr><td><code>business-flow-mapper</code></td><td>Map business handling processes into precise Chinese Mermaid flowcharts</td></tr>
 <tr><td><code>cs-guide</code> / <code>cs-libdoc</code></td><td>Outward-facing developer guides / library reference docs</td></tr>
+<tr><td><b>Browser automation</b></td><td><code>browser-bridge</code></td><td>Control a real Chrome browser through an extension for DOM extraction, clicks, forms, and page checks</td></tr>
 </table>
 
 ---
@@ -242,72 +247,9 @@ CodeStable's skills aren't a single linear pipeline — they're **layered + even
 
 ## Runtime structure
 
-After `/cs-onboard`, a `codestable/` directory appears at your project root — the aggregate root for all CodeStable artifacts and the **only** workspace each skill reads/writes at runtime.
+After `/cs-onboard`, a `codestable/` directory appears at your project root. It is the aggregate root for all CodeStable artifacts and the only workspace each skill reads or writes at runtime.
 
-```
-your-project/
-├── codestable/
-│   ├── requirements/                     # Requirement entities ("why this capability exists")
-│   │   └── {slug}.md                     # One file per capability, flat (no grouping)
-│   │
-│   ├── architecture/                     # Architecture entities ("what structure delivers it")
-│   │   ├── ARCHITECTURE.md               # Architecture entry point / index
-│   │   └── {type}-{slug}.md              # Subsystem architecture doc (auto-grouped at ≥6 of same type)
-│   │
-│   ├── roadmap/                          # Roadmaps ("how we plan to walk next")
-│   │   └── {slug}/
-│   │       ├── {slug}-roadmap.md         # Main doc: background / breakdown / sequencing
-│   │       ├── {slug}-items.yaml         # Machine-readable sub-feature list, acceptance writes status back
-│   │       └── drafts/                   # Optional: drafts / research
-│   │
-│   ├── features/                         # Feature flow aggregate root
-│   │   └── YYYY-MM-DD-{slug}/            # One directory per feature
-│   │       ├── {slug}-brainstorm.md      # Optional (cs-brainstorm output)
-│   │       ├── {slug}-design.md          # Design (cs-feat-design)
-│   │       ├── {slug}-checklist.yaml     # Progress checklist (impl runs it, accept writes back)
-│   │       └── {slug}-acceptance.md      # Acceptance report (cs-feat-accept)
-│   │
-│   ├── issues/                           # Issue flow aggregate root
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-report.md          # Issue report
-│   │       ├── {slug}-analysis.md        # Root-cause analysis (only when non-obvious)
-│   │       └── {slug}-fix-note.md        # Fix record
-│   │
-│   ├── refactors/                        # Refactor flow aggregate root (beta)
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-scan.md
-│   │       ├── {slug}-refactor-design.md
-│   │       ├── {slug}-checklist.yaml
-│   │       └── {slug}-apply-notes.md
-│   │
-│   ├── compound/                         # Knowledge sink (compounding engineering), unified directory
-│   │   └── YYYY-MM-DD-{doc_type}-{slug}.md
-│   │       # doc_type ∈ {learning, trick, decision, explore}
-│   │
-│   ├── tools/                            # Cross-workflow shared scripts (released by onboard)
-│   └── reference/                        # Shared reference docs (released by onboard)
-│       ├── shared-conventions.md         # Cross-skill conventions / paths / metadata
-│       ├── system-overview.md            # CodeStable system overview + scenario routing
-│       └── ...
-│
-└── AGENTS.md                             # At project root, not under codestable/
-```
-
-**Key points:**
-
-- All artifacts aggregate under `codestable/`, so "how did we handle that feature / bug last time" is three seconds away
-- `requirements/` and `architecture/` are **long-lived archives** (current state only); `roadmap/` is the **planning layer** (what's next) — deliberately separated
-- `features/` `issues/` `refactors/` use `YYYY-MM-DD-{slug}/` to bundle all related specs in one directory, no crossing
-- `compound/` is the **single** knowledge sink directory — learning / trick / decision / explore are distinguished by the `doc_type` field, not by sub-directories. Easier to search
-- `reference/` is copied in by `cs-onboard` from the skill package; to change shared conventions, edit the templates under `cs-onboard/reference/` — new projects pick up the new version on onboard
-
-### Hard constraint
-
-> A skill is an independent install unit. At runtime, **each skill can only see files inside its own package**. References like `B-skill/reference/xxx.md` written in skill A's SKILL.md are **simply unreachable** at runtime.
->
-> Cross-skill shared references must go through the "working project" layer: `cs-onboard` copies them from the skill package to the project's `codestable/reference/`, and other skills read them via the project-relative path.
-
-To change shared conventions, edit the templates under `cs-onboard/reference/`; new projects pick them up at onboard time.
+For the runtime directory, shared reference mechanism, and cross-skill visibility constraints, see [CodeStable Runtime Structure](./docs/runtime-structure.en.md).
 
 ---
 
