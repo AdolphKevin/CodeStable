@@ -12,7 +12,7 @@ Tired of OpenSpec's flimsiness, Oh-My-OpenAgent's over-engineering, and Superpow
 
 <p>
   <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-28-6366F1?style=flat-square" alt="Skills"/>
+  <img src="https://img.shields.io/badge/skills-29-6366F1?style=flat-square" alt="Skills"/>
   <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
 </p>
 
@@ -116,7 +116,7 @@ CodeStable models real coding work as **6 entities** and **3 flows**.
 
 <table>
 <tr><th>Group</th><th>Skill</th><th>Purpose</th></tr>
-<tr><td><b>Root entry</b></td><td><code>cs</code></td><td>Unified entry — introduces the system and routes open-ended intents to the right cs-* skill. Call it when you don't know which one fits</td></tr>
+<tr><td><b>Root entry</b></td><td><code>cs</code></td><td>Unified entry — introduces the system and routes open-ended intents to the right skill. Call it when you don't know which one fits</td></tr>
 <tr><td><b>Onboard</b></td><td><code>cs-onboard</code></td><td>Bring CodeStable into a new repo or one with scattered docs</td></tr>
 <tr><td rowspan="2"><b>Requirement & architecture</b></td><td><code>cs-req</code></td><td>Curate / accumulate raw requirement docs</td></tr>
 <tr><td><code>cs-arch</code></td><td>Draft or update architecture docs under <code>codestable/architecture/</code></td></tr>
@@ -143,6 +143,7 @@ CodeStable models real coding work as **6 entities** and **3 flows**.
 <tr><td><code>business-flow-mapper</code></td><td>Map business handling processes into precise Chinese Mermaid flowcharts</td></tr>
 <tr><td><code>cs-guide</code> / <code>cs-libdoc</code></td><td>Outward-facing developer guides / library reference docs</td></tr>
 <tr><td><b>Browser automation</b></td><td><code>browser-bridge</code></td><td>Control a real Chrome browser through an extension for DOM extraction, clicks, forms, and page checks</td></tr>
+<tr><td><b>Version control</b></td><td><code>git-commit</code></td><td>Generate a structured commit message from the staged diff and create the commit</td></tr>
 </table>
 
 ---
