@@ -100,7 +100,7 @@ CodeStable models real coding work as **6 entities** and **3 flows**.
 | **Roadmap** | roadmap | "I want a permission system" — too big to throw at AI as a feature; cut it into a roadmap and advance step by step |
 | **Feature** | feature | The actual engineering execution. Human and AI collaborate, jointly responsible for design / implementation / acceptance |
 | **Issue** | issue | The bug list after release. AI and human solve it together |
-| **Compound** | compound | The compounding-engineering knowledge base — pitfalls, good practices, technical decisions |
+| **Knowledge** | compound / attention | The compounding-engineering knowledge base — wrap-up first classifies candidates by future use, then AI routes them to the right sink |
 
 ### 3 flows
 
@@ -135,10 +135,10 @@ CodeStable models real coding work as **6 entities** and **3 flows**.
 <tr><td><code>cs-refactor-ff</code></td><td>(beta) Light refactor lane</td></tr>
 <tr><td rowspan="3"><b>Maintenance & audit</b></td><td><code>cs-audit</code></td><td>Audit code for bugs, security, performance, maintainability, and architecture drift</td></tr>
 <tr><td><code>cs-doc-sweep</code></td><td>Manually clean stale design docs and outdated specs</td></tr>
-<tr><td><code>cs-note</code></td><td>Record short project notes every CodeStable skill must know at startup</td></tr>
-<tr><td rowspan="3"><b>Knowledge sink</b></td><td><code>cs-learn</code></td><td>Sink pitfalls / good practices into learning docs</td></tr>
-<tr><td><code>cs-trick</code></td><td>Curate reusable patterns / library usage as prescriptive references</td></tr>
-<tr><td><code>cs-decide</code></td><td>Record settled tech choices, architectural decisions, long-term constraints as permanent docs</td></tr>
+<tr><td><code>cs-note</code></td><td>Auto-reminder executor: record short project notes every CodeStable skill must know at startup</td></tr>
+<tr><td rowspan="3"><b>Knowledge sink</b></td><td><code>cs-learn</code></td><td>Searchable-experience executor: sink pitfalls, failed attempts, debugging paths, and lessons</td></tr>
+<tr><td><code>cs-trick</code></td><td>Reusable-prescription executor: curate patterns / library usage / technical recipes</td></tr>
+<tr><td><code>cs-decide</code></td><td>Long-term-rule executor: record settled tech choices, architectural decisions, and constraints</td></tr>
 <tr><td rowspan="3"><b>Explore & docs</b></td><td><code>cs-explore</code></td><td>Targeted code exploration; sink "ask → read → conclude" into evidence</td></tr>
 <tr><td><code>business-flow-mapper</code></td><td>Map business handling processes into precise Chinese Mermaid flowcharts</td></tr>
 <tr><td><code>cs-guide</code> / <code>cs-libdoc</code></td><td>Outward-facing developer guides / library reference docs</td></tr>
@@ -226,15 +226,15 @@ CodeStable's skills aren't a single linear pipeline — they're **layered + even
                               │
                 ▼ trigger any time something is worth recording ▼
 ═══════════════════════════════════════════════════════════════════════
- Cross-cut · Knowledge sink (compounding engineering)
+ Cross-cut · Knowledge capture review (compounding engineering)
 ───────────────────────────────────────────────────────────────────────
-   cs-learn   ──▶ ┐
-   cs-trick   ──▶ ├─▶ codestable/compound/YYYY-MM-DD-{doc_type}-{slug}.md
-   cs-decide  ──▶ │     doc_type ∈ { learning, trick, decision, explore }
-   cs-explore ──▶ ┘
+   Auto reminder        ──▶ cs-note   ──▶ codestable/attention.md
+   Long-term rule       ──▶ cs-decide ──▶ codestable/compound/YYYY-MM-DD-decision-{slug}.md
+   Searchable experience──▶ cs-learn  ──▶ codestable/compound/YYYY-MM-DD-learning-{slug}.md
+   Reusable prescription──▶ cs-trick  ──▶ codestable/compound/YYYY-MM-DD-trick-{slug}.md
                    ↑
           Next cs-arch / cs-feat-design / cs-issue-analyze
-          reads back compound/ so experience is reused
+          reads back attention + compound/ so experience is reused
 ═══════════════════════════════════════════════════════════════════════
 ```
 
@@ -242,7 +242,7 @@ CodeStable's skills aren't a single linear pipeline — they're **layered + even
 
 - **Vertical = layers**, not strict time order — Layer 1 is refreshed repeatedly, Layer 2 is only entered for big needs
 - **Layer 3 is event-driven**: new need → feature flow, bug → issue flow, rot → refactor flow
-- **Cross-cut is the flywheel**: any flow can trigger a sink when something is worth keeping; the next round of work reads it back. This is the physical implementation of CodeStable's "compounding"
+- **Cross-cut is the flywheel**: every flow wrap-up first reviews knowledge-capture candidates. Users only confirm whether to keep them; AI routes them to the right executor, and the next round of work reads them back. This is the physical implementation of CodeStable's "compounding"
 
 ---
 

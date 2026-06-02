@@ -21,13 +21,13 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 两类都不直接让 AI 写代码,而是先产出 spec(功能方案 / 问题分析),用户 review 后再动手,代码和 doc 一起交付。针对的是术语冲突、范围失控、改完不留存档这三种 AI 默认会出的问题。
 
-**沉淀**——把做事过程产生的知识存下来,下次遇到同类问题直接复用:
+**沉淀**——把做事过程产生的知识存下来,下次遇到同类问题直接复用。普通 feature / issue / fastforward 收尾时先做"知识沉淀盘点"，用户只确认候选是否保留，AI 再按用途路由到具体执行器:
 
-- `cs-learn` — 回顾"做 X 时踩了 Y 这个坑"
-- `cs-trick` — 处方"以后做 X 就这样做"
-- `cs-decide` — 规定"全项目今后都按 X 来"
+- `cs-note` — 自动提醒项：一两行、每次启动 CodeStable 技能都必须知道
+- `cs-learn` — 可检索经验项：踩坑、失败尝试、调试路径、经验回顾
+- `cs-trick` — 可复用处方项："以后做 X 就这样做"的技巧 / 库用法
+- `cs-decide` — 长期规则项：已拍板的技术选型、架构决定、长期约束、编码规约
 - `cs-explore` — 存档"调查了 X 问题,看到代码里是这样的"
-- `cs-note` — 把一两行启动必读的项目注意事项追加到 `.codestable/attention.md`
 
 **讨论层**——想法还模糊时的统一入口,不直接产出设计或代码:
 
@@ -70,16 +70,16 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 完整的操作手册、退出条件、和其他工作流的关系,各子技能里讲。
 
 
-## 沉淀类四个子技能如何区分
+## 知识沉淀盘点
 
-learning / trick / decision / explore 都是存档文档类型,区别在记录内容的性质:
+收尾阶段不再让用户先区分 learning / decision / attention。AI 先按"未来怎么被用到"列候选:
 
-- 回顾某次做 X 时发现了 Y —— `cs-learn`(产出 `doc_type: learning`)
-- 以后做 X 就这样做的处方 —— `cs-trick`(产出 `doc_type: trick`)
-- 全项目今后都得遵守的规定 —— `cs-decide`(产出 `doc_type: decision`)
-- 调查了一个问题,留份证据 —— `cs-explore`(产出 `doc_type: explore`)
+- **自动提醒项**：每次 CodeStable 会话开始都必须知道,且一两句话能讲清 → `cs-note` 写入 `.codestable/attention.md`
+- **长期规则项**：以后做类似工作必须遵守的规约、约束、选型或架构决定 → `cs-decide` 归档
+- **可检索经验项**：一次踩坑、失败尝试、调试路径或经验回顾,未来搜到就够 → `cs-learn` 归档
+- **可复用处方项**："以后做 X 就这样做"的可复用技巧、库用法或技术处方 → `cs-trick` 归档
 
-四者共用 `.codestable/compound/` 目录,靠 frontmatter 的 `doc_type` 字段和文件名中间的类型段(`YYYY-MM-DD-{doc_type}-{slug}.md`)区分。每个子技能只认自己的 `doc_type`,不读写别家产物——**"A 和 B 有什么不同"这种判断由本节负责,子技能里不再重复**。
+用户只确认候选是否保留；`doc_type` 是 AI 内部归档路由。`learning` / `trick` / `decision` / `explore` 仍共用 `.codestable/compound/` 目录,靠 frontmatter 的 `doc_type` 字段和文件名中间的类型段(`YYYY-MM-DD-{doc_type}-{slug}.md`)区分。`attention.md` 不属于 compound,它是所有 CodeStable 技能启动时强制读取的短摘要入口。
 
 
 ## 愿景档案 vs 结构档案 vs 规划档案 vs 单次动作

@@ -180,29 +180,48 @@ planned  → dropped      （cs-roadmap update 模式，用户决定不做时改
 
 ---
 
-## 3. 阶段收尾推荐
+## 3. 知识沉淀盘点
 
-**feature-acceptance** 收尾按顺序判断：
+feature-acceptance / issue-fix / feature-ff 收尾时必须先做"知识沉淀盘点"，再进入指南、API 参考、commit 等后续收尾动作。盘点问的是**这条信息以后怎么被用到**，不是让用户选择 `learning` / `decision` / `attention` 这些内部归档类型。
 
-1. `cs-learn`：沉淀经验
-2. `cs-decide`：长期约束 / 选型
-3. `cs-guide`：开发者 / 用户指南
-4. `cs-libdoc`：公开 API 参考
-5. `scoped-commit`
+### 四类候选
 
-**issue-fix** 收尾按顺序判断：
+| 候选 | 判据 | 内部路由 |
+|---|---|---|
+| 自动提醒项 | 每次 CodeStable 会话开始都必须知道，且一两句话能讲清 | `cs-note` 写入 `.codestable/attention.md` |
+| 长期规则项 | 以后做类似工作必须遵守的规约、约束、选型或架构决定 | `cs-decide` 归档，必要时后续由 `cs-arch` 引用 |
+| 可检索经验项 | 一次踩坑、失败尝试、调试路径或经验回顾，未来搜到就够 | `cs-learn` 归档 |
+| 可复用处方项 | "以后做 X 就这样做"的可复用技巧、库用法或技术处方 | `cs-trick` 归档 |
 
-1. `cs-learn`：坑点
-2. `cs-decide`：暴露的长期约束
+**用户可见话术**：先列候选内容和建议用途，再问"这些要保留吗？"。不要问"要不要沉淀 learning / 归档 decision / 记到 attention"。
+
+**统一规则**：
+
+- 没有候选也要写明"无沉淀项"，避免收尾阶段静默跳过。
+- 收尾技能只列候选；实际写文件交给对应归档执行器，避免多处重复落盘逻辑。
+- 用户说"不用"立即跳过当前候选，不重复追问。
+- 长期规则项必须来自用户已确认的结论、已实现验证结果、或可追溯代码证据，不替用户拍板。
+- `attention.md` 只放短、稳、每次启动必须知道的摘要；需要背景、理由、替代方案时写入 compound，必要时让 attention 链接详细归档。
+
+### 各流程收尾顺序
+
+**feature-acceptance**：
+
+1. 知识沉淀盘点（四类候选）
+2. 文档同步盘点：README / docs / guide / libdoc 已存在且被本次能力改到或变得过期 → acceptance 内直接更新
 3. `scoped-commit`
 
-**feature-ff** 收尾按顺序判断（比标准 acceptance 短，没有 architecture / req 回写动作）：
+需要从零写一份完整外部指南或大批量 API 参考时，才作为独立文档工作处理；不要把本次改动造成的现有文档过期丢成"后续建议"。
 
-1. `cs-learn`：动手过程暴露的坑
-2. `cs-decide`：动手过程拍板的长期约束
-3. `scoped-commit`
+**issue-fix**：
 
-**统一规则**：一律一句话提示；用户说"不用"立即跳过；不强制；上游主动提示，下游承接执行。
+1. 知识沉淀盘点（四类候选）
+2. `scoped-commit`
+
+**feature-ff**（比标准 acceptance 短，没有 architecture / req 回写动作）：
+
+1. 轻量知识沉淀盘点（四类候选，可一句话说明）
+2. `scoped-commit`
 
 ---
 

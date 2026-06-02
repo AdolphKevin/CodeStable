@@ -56,7 +56,7 @@ CodeStable 把开发活动建模成 **8 个实体 + 1 个维护报告目录 + 3 
 - **修 bug**：`cs-issue-report` → `cs-issue-analyze` → `cs-issue-fix`
 - **重构**（beta）：`cs-refactor` / `cs-refactor-ff`
 
-**横切**：流程跑完发现"值得记下来" → `cs-learn` / `cs-trick` / `cs-decide` / `cs-explore` 沉淀到 `compound/`。
+**横切**：流程收尾会先做"知识沉淀盘点"，按未来用途列候选；用户只确认是否保留，AI 再路由到 `cs-note` / `cs-learn` / `cs-trick` / `cs-decide` 等执行器。
 
 **核心理念**：编排的是软件本身的生命周期（需求、架构、特性、bug、决策），不是 Agent。人在环——程序员对整体把控负责，AI 是高效执行体。
 
@@ -83,8 +83,8 @@ CodeStable 把开发活动建模成 **8 个实体 + 1 个维护报告目录 + 3 
 | 补 / 更新 / 检查架构文档 / "刷新架构 doc" / "做架构体检" | `cs-arch` |
 | 大需求拆解 / "我想要一个 X 系统" / 排期规划 / 模块拆分 + 接口契约 | `cs-roadmap` |
 | 用户明确要求清理旧设计文档 / 全项目文档熵检查 / 分析旧 spec 是否有效 | `cs-doc-sweep` |
-| 技术选型 / 长期约束 / 编码规约 | `cs-decide` |
-| 踩坑回顾 / 经验总结 / "值得记下来" | `cs-learn` |
+| 明确要归档已拍板的技术选型 / 长期约束 / 编码规约 | `cs-decide` |
+| 明确要归档踩坑回顾 / 经验总结 / "值得记下来" | `cs-learn` |
 | 可复用编程模式 / 库用法 / "以后做 X 就该这样" | `cs-trick` |
 | 一两行的项目注意事项 / 编译特殊设置 / 命令陷阱 / "记到 attention.md" | `cs-note` |
 | 开发者指南 / 用户指南 | `cs-guide` |
@@ -120,17 +120,17 @@ CodeStable 把开发活动建模成 **8 个实体 + 1 个维护报告目录 + 3 
 
 只有用户明确要求清理旧 spec、做文档熵检查、或分析全项目 features/issues/refactors 有效性时，才路由到 `cs-doc-sweep`。不要在普通 feature / issue / refactor 收尾时主动推荐它。
 
-### 沉淀类技能的细分
+### 沉淀类技能的使用方式
 
-判别口诀：
+普通 feature / issue / fastforward 收尾时，不让用户先区分 learning / decision / attention。先按未来用途做"知识沉淀盘点"：
 
-- 回顾"做 X 时踩了 Y" → `cs-learn`
-- 处方"以后做 X 就这样做" → `cs-trick`
-- 规定"全项目今后都按 X 来" → `cs-decide`
-- 调查"X 现在是什么样" → `cs-explore`
-- 一两行常驻提示"CodeStable 技能每次启动都得知道 X" → `cs-note`（写到 `.codestable/attention.md`）
+- 每次 CodeStable 会话都必须知道，且一两句话能讲清 → 自动提醒项，AI 路由到 `cs-note`
+- 以后做类似工作必须遵守的规约、约束、选型或架构决定 → 长期规则项，AI 路由到 `cs-decide`
+- 一次踩坑、失败尝试、调试路径或经验回顾，未来搜到就够 → 可检索经验项，AI 路由到 `cs-learn`
+- "以后做 X 就这样做"的可复用技巧、库用法或技术处方 → 可复用处方项，AI 路由到 `cs-trick`
+- 调查"X 现在是什么样"并留证据 → 用户明确要求探索存档时走 `cs-explore`
 
-判不出问用户："这个你想记成 {踩坑回顾 / 复用处方 / 长期规约 / 调研存档 / 常驻提示} 哪一种？"
+用户主动点名某个执行器（如"记录决定"、"记到 attention.md"）时，仍按对应技能处理；判不准就问："这条是以后每次自动提醒、长期遵守、可检索回顾，还是复用处方？"
 
 ---
 

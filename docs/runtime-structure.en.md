@@ -32,7 +32,7 @@ your-project/
 │   │       ├── {slug}-refactor-design.md
 │   │       ├── {slug}-checklist.yaml
 │   │       └── {slug}-apply-notes.md
-│   ├── compound/                         # Knowledge sink
+│   ├── compound/                         # Searchable lessons / long-term rules / reusable prescriptions
 │   │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │   ├── tools/                            # Shared scripts
 │   └── reference/                        # Shared references
@@ -48,7 +48,9 @@ your-project/
 - `requirements/` and `architecture/` are long-lived archives that only record current state.
 - `roadmap/` is the planning layer for big-need breakdowns and interface contracts.
 - `features/`, `issues/`, and `refactors/` use `YYYY-MM-DD-{slug}/` to bundle one unit of work.
-- `compound/` is the single knowledge sink. learning, trick, decision, and explore are distinguished by the `doc_type` field.
+- Wrap-up first reviews knowledge-capture candidates by future use; users only confirm whether to keep them, and AI routes them to the right executor.
+- `compound/` stores searchable archive docs. learning, trick, decision, and explore are distinguished by the `doc_type` field.
+- `attention.md` is not part of compound; it stores short reminders every CodeStable skill must know at startup.
 - `reference/` is copied by `cs-onboard` from the skill package. To change shared conventions, edit `cs-onboard/reference/` templates.
 
 ## Hard Constraint

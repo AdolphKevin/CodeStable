@@ -32,7 +32,7 @@
 │   │       ├── {slug}-refactor-design.md
 │   │       ├── {slug}-checklist.yaml
 │   │       └── {slug}-apply-notes.md
-│   ├── compound/                         # 知识沉淀
+│   ├── compound/                         # 可检索经验 / 长期规则 / 可复用处方
 │   │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │   ├── tools/                            # 共享脚本
 │   └── reference/                        # 共享参考文档
@@ -48,7 +48,9 @@
 - `requirements/` 和 `architecture/` 是长效档案，只记现状。
 - `roadmap/` 是规划层，用于大需求拆解和接口契约。
 - `features/`、`issues/`、`refactors/` 用 `YYYY-MM-DD-{slug}/` 聚合单次工作。
-- `compound/` 是唯一的知识沉淀目录，learning、trick、decision、explore 通过 `doc_type` 字段区分。
+- 收尾阶段先按未来用途做知识沉淀盘点；用户只确认候选是否保留，AI 再路由到对应执行器。
+- `compound/` 保存可检索的归档文档，learning、trick、decision、explore 通过 `doc_type` 字段区分。
+- `attention.md` 不属于 compound，它保存每次 CodeStable 技能启动都必须知道的短提醒。
 - `reference/` 由 `cs-onboard` 从技能包复制；要改共享口径，改 `cs-onboard/reference/` 模板。
 
 ## 硬约束

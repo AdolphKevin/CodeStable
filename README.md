@@ -101,7 +101,7 @@ CodeStable 顺着软件编码的真实流程来设计，把开发活动建模成
 | **路线图** | roadmap | "我想要一个权限校验系统"——直接塞 feature AI 接不住，先拆成路线图分步推进 |
 | **特性** | feature | 实际落地的工程执行过程，人与 AI 共同协作，对 design / 实现 / 验收负责 |
 | **问题** | issue | 开发完成后的 BUG 单子，AI 和人一同解决 |
-| **知识** | compound | 复利工程的知识库，沉淀踩过的坑、好做法、技术决策 |
+| **知识** | compound / attention | 复利工程的知识库：收尾先按未来用途盘点候选，再由 AI 路由到归档执行器 |
 
 ### 3 个流程
 
@@ -137,10 +137,10 @@ CodeStable 顺着软件编码的真实流程来设计，把开发活动建模成
 <tr><td><code>cs-refactor-ff</code></td><td>(beta) 轻量重构通道</td></tr>
 <tr><td rowspan="3"><b>维护 & 审计</b></td><td><code>cs-audit</code></td><td>主动审计代码，产出 bug、安全、性能和架构偏离清单</td></tr>
 <tr><td><code>cs-doc-sweep</code></td><td>手动清理旧设计文档和过期 spec</td></tr>
-<tr><td><code>cs-note</code></td><td>记录短小但每次启动都必须知道的项目注意事项</td></tr>
-<tr><td rowspan="3"><b>知识沉淀</b></td><td><code>cs-learn</code></td><td>把踩过的坑 / 好做法沉淀成 learning 文档</td></tr>
-<tr><td><code>cs-trick</code></td><td>把可复用的编程模式 / 库用法整理成处方性参考</td></tr>
-<tr><td><code>cs-decide</code></td><td>把已拍板的技术选型、架构决定、长期约束记成永久文档</td></tr>
+<tr><td><code>cs-note</code></td><td>自动提醒项执行器：记录短小但每次启动都必须知道的项目注意事项</td></tr>
+<tr><td rowspan="3"><b>知识沉淀</b></td><td><code>cs-learn</code></td><td>可检索经验项执行器：沉淀踩坑、失败尝试、调试路径和经验回顾</td></tr>
+<tr><td><code>cs-trick</code></td><td>可复用处方项执行器：整理编程模式 / 库用法 / 技术处方</td></tr>
+<tr><td><code>cs-decide</code></td><td>长期规则项执行器：归档已拍板的技术选型、架构决定、长期约束</td></tr>
 <tr><td rowspan="3"><b>探索 & 文档</b></td><td><code>cs-explore</code></td><td>定向代码探索，把"提问 → 读代码 → 得结论"沉淀成证据</td></tr>
 <tr><td><code>business-flow-mapper</code></td><td>梳理业务处理流程，生成精确中文 Mermaid 流程图</td></tr>
 <tr><td><code>cs-guide</code> / <code>cs-libdoc</code></td><td>对外的开发者指南 / 库参考文档</td></tr>
@@ -228,15 +228,15 @@ CodeStable 的技能不是一条线性流水，而是**分层 + 事件驱动**�
                               │
                 ▼ 任意阶段觉得"这个值得记下来"都能触发 ▼
 ═══════════════════════════════════════════════════════════════════════
- 横切层 · 知识沉淀（复利工程）
+ 横切层 · 知识沉淀盘点（复利工程）
 ───────────────────────────────────────────────────────────────────────
-   cs-learn   ──▶ ┐
-   cs-trick   ──▶ ├─▶ codestable/compound/YYYY-MM-DD-{doc_type}-{slug}.md
-   cs-decide  ──▶ │     doc_type ∈ { learning, trick, decision, explore }
-   cs-explore ──▶ ┘
+   自动提醒项 ──▶ cs-note   ──▶ codestable/attention.md
+   长期规则项 ──▶ cs-decide ──▶ codestable/compound/YYYY-MM-DD-decision-{slug}.md
+   可检索经验 ──▶ cs-learn  ──▶ codestable/compound/YYYY-MM-DD-learning-{slug}.md
+   可复用处方 ──▶ cs-trick  ──▶ codestable/compound/YYYY-MM-DD-trick-{slug}.md
                    ↑
           下一次 cs-arch / cs-feat-design / cs-issue-analyze
-          会回头读 compound/，让经验在新工作里被复用
+          会回头读 attention + compound/，让经验在新工作里被复用
 ═══════════════════════════════════════════════════════════════════════
 ```
 
@@ -244,7 +244,7 @@ CodeStable 的技能不是一条线性流水，而是**分层 + 事件驱动**�
 
 - **纵向是层次**，不是严格的时间顺序——长效档案层会反复被刷新，规划层只在大需求时进入
 - **第 3 层是事件入口**：来了新需求走 feature 流，发现 bug 走 issue 流，发现腐化走 refactor 流
-- **横切层是飞轮**：任何流程跑完发现"这事值得记下来"都可以触发沉淀，沉淀的产物又会被下一次同类工作读到——这是 CodeStable "复利"的物理实现
+- **横切层是飞轮**：任何流程收尾都会先做知识沉淀盘点。用户只确认候选是否保留，AI 再路由到对应执行器；沉淀产物会被下一次同类工作读到——这是 CodeStable "复利"的物理实现
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: cs-decide
-description: 把已拍板的技术选型、架构决定、长期约束、编码规约记成永久性决策文档（tech-stack / architecture / constraint / convention 四种）。触发：用户说"记录决定"、"归档技术选型"、"ADR"、"记录这条约束"、"把规约写下来"，或 design / analyze 后做出重要选择。只归档已拍板的，讨论中的不归档。
+description: 把以后做类似工作必须遵守的已拍板技术选型、架构决定、长期约束、编码规约记成永久性决策文档（tech-stack / architecture / constraint / convention 四种）。触发：用户明确要求记录决定，或知识沉淀盘点识别出长期规则项。只归档已拍板的，讨论中的不归档。
 ---
 
 # cs-decide
@@ -16,6 +16,8 @@ description: 把已拍板的技术选型、架构决定、长期约束、编码�
 - 约束需要修改时找不到当初的理由，无法评估修改影响
 
 本工作流让每一条重要的"已经决定了"都有完整存档：**是什么、为什么、考虑过什么替代方案、后果是什么**。
+
+本技能是归档执行器：当收尾阶段的"知识沉淀盘点"识别出**长期规则项**时，由 AI 路由到这里落盘。用户不需要先判断它叫 decision；用户只确认这条规则是否已拍板、是否值得长期保留。
 
 > 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。产物写入 `.codestable/compound/`，命名 `YYYY-MM-DD-decision-{slug}.md`，frontmatter 带 `doc_type: decision`。
 
