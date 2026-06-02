@@ -191,7 +191,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound \
 - 是否稳定模式：{一次性整理 → 省略整段；稳定模式 → 继续填以下}
 - 规则一句话：{如"自定义业务组件统一放 src/components/custom/，通用组件放 src/components/common/"}
 - 适用范围：{本仓库全部 / 仅 frontend / 仅某模块}
-  → 建议 implement 跑通后走 `cs-decide` 归档为 `category: convention`，未来 design 在开篇 compound 检索就能命中
+  → implement 跑通、acceptance 验证通过后自动走 `cs-decide` 归档为 `category: convention`，未来 design 在开篇 compound 检索就能命中
 
 ##### 超出范围的观察（可选，仅提示不阻塞）
 - {文件路径 / 目录路径}：{发现的结构性问题——职责重划 / 模块拆合 / 接口语义需要变 / 跨文件依赖混乱}
@@ -202,7 +202,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound \
 
 - 选"微重构"必须满足"只搬不改行为"——文件级靠 IDE rename / move + 编译器校验，目录级靠纯文件移动 + import 路径更新 + 编译器校验。一旦涉及改函数签名 / 改返回值结构 / 改调用关系语义 / 模块拆合，**不要在 design 里做也不要作为前置依赖**——写进"超出范围的观察"提示用户走 `cs-refactor`，本 feature 照常推进
 - 选"不做"也要列评估观察点（文件级 + 目录级），不能只写一句"健康"——避免后续 acceptance 时无法回看判断依据
-- "建议沉淀的 convention"判定**稳定模式 vs 一次性整理**：稳定模式 = 这条规则**未来其他 feature 也应该遵守**（如归属规则、命名规则）；一次性整理 = 只是这个目录恰好挤了，没有普适规则。拿不准时倾向"一次性整理"——design 阶段方案还没真跑过，不在这里直接归档，只留钩子让 implement 跑通后由用户决定是否走 `cs-decide`
+- "建议沉淀的 convention"判定**稳定模式 vs 一次性整理**：稳定模式 = 这条规则**未来其他 feature 也应该遵守**（如归属规则、命名规则）；一次性整理 = 只是这个目录恰好挤了，没有普适规则。拿不准时倾向"一次性整理"——design 阶段方案还没真跑过，不在这里直接归档，只留钩子让 implement 跑通、acceptance 验证后自动走 `cs-decide`
 - "超出范围的观察"和"建议沉淀的 convention"都是发现到就提，不是必填——发现不到就省略整段
 
 写完此节不单独走确认，随整稿一起进整体 review（看下文第 5 节）。
