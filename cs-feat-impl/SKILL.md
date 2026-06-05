@@ -68,6 +68,21 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 - `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.codestable/attention.md`
 - 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
 
+### 3.5 实现前谓词对照
+
+写代码前先做一次 **design predicate → code predicate** 对照，尤其是路由、fallback、recovery、handoff、slot 消费、状态推进、回复组合这类容易漂移的 feature。
+
+1. 从 design / checklist 里抽出所有"可触发 / 允许 / fallback / recovery / waiting / unsatisfied / read-only"条件词。
+2. 写成正反例矩阵：
+   - design predicate：设计真正要求什么条件成立
+   - code predicate：准备落到代码里的判断条件
+   - 正向：什么输入 / typed signal 必须触发
+   - 反向：什么相似输入 / typed signal 必须不触发
+   - 禁止依据：不能靠哪些关键词、raw text 或未声明猜测
+3. 检查 `code predicate` 是否比 `design predicate` 更宽或更窄；更宽 / 更窄都不能直接开写，先回 design 或 checklist 修正。
+
+**测试通过 ≠ predicate 对齐**。如果测试只覆盖正向 happy path，没有覆盖矩阵里的反向行，不能认为实现符合 feature 预期。
+
 ### 4. 跟用户确认从哪一步开始
 
 通常第 1 步；接续上次中断从已 `done` 的下一步继续。
@@ -93,6 +108,8 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 按 `steps` 列表顺序执行，不合并、不跳。每完成一步立即把 status `pending` → `done`。
 
 最常见违规是"顺手把下一步也做了"——每步都对应独立可验证的退出信号，两步合做意味着出问题时不知道是哪一步引入的、回滚也回不到干净中间态。
+
+每个 done 必须绑定证据：改 `status: done` 前，先能指出对应的单测 / 集成测试 / trace / 类型约束 / grep 反向核对。只有"我写了代码"或"测试全绿"不够；证据必须能对应到该 step 的 exit_signal 和 checks 里的正反例矩阵。
 
 ### 不做方案外的改动
 
@@ -157,6 +174,9 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 ### 推进顺序退出信号核对
 {对照 steps 逐条列 action + exit_signal + status（应全为 done）}
 
+### 设计谓词对照
+{列出本 feature 的 design predicate / code predicate / 正反例矩阵；说明是否发现更宽或更窄的实现，以及怎么修正}
+
 ### 验收场景自检
 **标准 design**：对照第 3 节关键场景清单，每条靠什么证据满足（类型 / 单测 / 集成 / 手工 / assert）+ 反向核对项是否守住
 **Fastforward design**：对照第 2 节验收标准逐条核对
@@ -174,6 +194,8 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 **测试通过 ≠ 验收场景满足**——前者只说明你写的用例过了，不说明每条场景都有用例覆盖。
 
+**测试通过 ≠ predicate 对齐**——涉及触发条件时，至少要覆盖正反例矩阵：一个应该触发的相邻场景、一个看起来相似但不应该触发的场景。没有反向用例时，不要把相关 check 标成 done。
+
 类型系统保证的（如 TypeScript 签名直接排除某种调用），汇报里说"类型签名已落地，编译期保证"。
 
 ---
@@ -184,6 +206,7 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 - [ ] 完成汇报已输出，用户 review 通过
 - [ ] 没有未处理的"需要叫停"信号
 - [ ] 第 3 节关键场景每条都有证据 / 测试覆盖（fastforward 对照第 2 节）
+- [ ] 触发条件类 feature 已完成 design predicate / code predicate 对照，正反例矩阵都有证据
 - [ ] 没有"顺手发现"被偷偷修掉（都进 issue 列表）
 - [ ] 没有方案外文件改动（或已同步更新方案 doc）
 

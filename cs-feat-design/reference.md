@@ -71,6 +71,14 @@ checks:
 
 不允许编造 design 里不存在的条目。
 
+**触发条件防漂移**：
+
+- 遇到"可触发 / 允许 / fallback / recovery / waiting / unsatisfied / read-only"这类条件词时，必须在 checklist 保留触发前提；**候选条件 ≠ 充分条件**，不得把“可触发 / 允许”抽成无前提规则。
+- 对每个会改变路由、回复、capability 编排、状态推进的条件，补一条"触发 / 不触发矩阵"检查项：什么输入必须触发、什么相似输入必须不触发、依赖哪个已有 typed signal、禁止靠什么判断。
+- 如果 design 依赖 typed contract / semantic artifact / ledger outcome / provider outcome 等 typed signal，checklist item 必须点名该 typed signal，不能只写自然语言意图。
+- 每个正向触发场景至少配一个反向场景；**正向场景至少配一个反向场景** 这一要求优先于 4-8 步的简洁性。
+- 如果无法从 design 抽出反向场景，说明 design 第 3 节验收契约不够稳，先补 design 再生成 checklist。
+
 ## 4. 各节写作要求
 
 ### `## 0. 术语约定`
@@ -212,6 +220,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound \
 implement 完成的判据，acceptance 核对的依据。**不写测试代码 / framework / mock 怎么搭**——归 implement 自决。
 
 - **关键场景清单**：每条"输入 / 触发 → 期望可观察结果"——能被一个测试或一次手工操作验证。覆盖正常路径（对应成功标准）+ 关键边界（边界值、空输入、上下限）+ 关键错误路径（流程级约束的可观察行为）
+- **触发 / 不触发矩阵**：涉及路由、fallback、recovery、handoff、slot 消费、状态推进、回复组合时，每个触发场景旁边写相似但不应触发的反例；标明依赖的 typed signal 和不能使用的关键词 / raw text 猜测。
 - **明确不做的反向核对项**：第 1 节"明确不做"每条 → 写成可被 grep 或测试反向核对的形式（"代码中不应出现对 X API 的调用"、"输出 JSON 不应包含字段 Y"）
 
 ### `## 4. 与项目级架构文档的关系`
