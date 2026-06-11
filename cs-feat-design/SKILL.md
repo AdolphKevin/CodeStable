@@ -210,6 +210,14 @@ AI 默认翻车的姿势是**不思考就往眼前最顺手的文件里加**。
 
 方案确认后从 `{slug}-design.md` 抽出 `steps` + `checks` 落到 `{slug}-checklist.yaml`。完整格式、提取规则、典型节奏看 reference.md 第 3 节。
 
+生成时把 checklist 当作**后续实现的证明清单**，不是普通 todo：
+
+- 每个 step 必须有 `proof_required`，说明完成它至少要提供什么证据。
+- 每个 check 必须带 `design_ref`、`proof_required`、`positive_case`、`negative_case`、`typed_signal`、`forbidden_basis`。无适用项时显式填 `null` 或 `[]`，不能省略。
+- 涉及路由、fallback、recovery、handoff、slot 消费、状态推进、effect guard、response boundary、eval gate 的 feature，必须把触发 / 不触发矩阵抽进 check 字段；不能只写自然语言场景。
+- 高风险链路要拆 step：不要把 `gate + commitment + response`、`runtime + eval`、`publisher + lifecycle + persistence` 这类复合链路合并成一个 step；拆分后超过常规 4-8 步也可以。
+- 初始 status 一律 `pending`，`evidence: []`，`blocker: null`。design 阶段不预填 evidence，不预判 passed。
+
 落盘后 `python .codestable/tools/validate-yaml.py --file {path} --yaml-only` 校验。
 
 ### 7. 退出
@@ -226,10 +234,10 @@ AI 默认翻车的姿势是**不思考就往眼前最顺手的文件里加**。
 - [ ] 第 1 节含"不做什么"和复杂度档位偏离（或明确走默认）
 - [ ] 第 2.1 / 2.2 用"现状 → 变化"两段式；接口有示例 + 来源位置；编排层开头有主流程图
 - [ ] 第 2.3 挂载点按"删了它 feature 是否消失"判据收紧（一般 3-5 条）
-- [ ] 第 2.4 推进策略按 paradigm 维度切片，每步有退出信号
+- [ ] 第 2.4 推进策略按 paradigm 维度切片，每步有退出信号；checklist steps 每条有 `proof_required`，高风险链路没有把 gate / commitment / response / eval 等复合责任揉成单步；如超过 8 步，原因是职责拆分而不是琐碎 file-level 拆分
 - [ ] 第 2.5 结构健康度评估覆盖文件级 + 目录级；评估前已查 compound convention；结论显式写出（不做 / 拆文件 / 重组目录）；选"微重构"时 checklist 第 1 步是它且有独立退出信号；选"重组目录"且属稳定模式时含"建议沉淀的 convention"段；超出"只搬不改行为"的结构性问题列在"超出范围的观察"，仅提示不阻塞
 - [ ] 第 3 节关键场景覆盖正常 + 边界 + 错误；含"明确不做"反向核对项
-- [ ] `{slug}-checklist.yaml` 已落盘并通过 `validate-yaml.py` 校验
+- [ ] `{slug}-checklist.yaml` 已落盘并通过 `validate-yaml.py` 校验；checks 每条有 design_ref / proof_required / positive_case / negative_case / typed_signal / forbidden_basis
 - [ ] roadmap 起头时 items.yaml 已回写（`status: in-progress` + `feature` 填上）
 
 ---

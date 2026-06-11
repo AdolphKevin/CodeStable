@@ -59,8 +59,12 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 ### 2. {slug}-checklist.yaml 在不在
 
 - 文件存在，`feature` 字段一致
-- `steps` 非空（design 已产出，paradigm 维度切片，4-8 步）；`checks` 非空
+- `steps` 非空（design 已产出，paradigm 维度切片，通常 4-8 步；高风险链路因职责拆分可更多）；`checks` 非空
 - 不存在 → 退回 `cs-feat-design` 生成
+- 新版 checklist 应带证明字段：`steps[].proof_required`、`steps[].evidence`、`steps[].blocker`、`checks[].design_ref`、`checks[].proof_required`、`checks[].positive_case`、`checks[].negative_case`、`checks[].typed_signal`、`checks[].forbidden_basis`、`checks[].evidence`、`checks[].blocker`。
+  - 旧 checklist 缺字段时，不要直接实现；先从 design 补齐这些字段并用 `validate-yaml.py --yaml-only` 和本 skill 的 `scripts/validate_checklist_evidence.py {checklist}` 校验。
+  - step status 只允许 `pending` / `partial` / `blocked` / `done`；check status 只允许 `pending` / `partial` / `blocked` / `passed`。
+  - `done` / `passed` 必须有非空 `evidence`；`partial` / `blocked` 必须有 `blocker`。
 
 ### 3. 把上下文读全
 
@@ -83,9 +87,55 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 **测试通过 ≠ predicate 对齐**。如果测试只覆盖正向 happy path，没有覆盖矩阵里的反向行，不能认为实现符合 feature 预期。
 
+把矩阵落盘到 `{slug}-implementation-evidence.md`，不要只放在脑子里或最终汇报里。模板：
+
+```markdown
+## Predicate Matrix
+
+| design_ref | design predicate | code predicate | positive proof | negative proof | status |
+|---|---|---|---|---|---|
+| §3 owner probe | current open-text owner surface + non-owner stateful/response | {函数/条件} | {test/trace} | {test/trace} | pending |
+```
+
+没有正反例证据的行，status 保持 `pending` 或 `partial`，对应 checklist check 不能标 `passed`。
+
+### 3.6 建立 implementation evidence
+
+动代码前创建或更新 `.codestable/features/{feature}/{slug}-implementation-evidence.md`。这是实现阶段的硬产物，用来承接 design/checklist 的证明责任。
+
+最小结构：
+
+```markdown
+---
+doc_type: feature-implementation-evidence
+feature: {feature}
+status: in-progress
+created: YYYY-MM-DD
+---
+
+# {slug} implementation evidence
+
+## Predicate Matrix
+{见上方表格}
+
+## Step Evidence
+| step | status | proof_required | evidence | blocker |
+|---|---|---|---|---|
+
+## Check Evidence
+| check | status | proof_required | positive | negative | evidence | blocker |
+|---|---|---|---|---|---|---|
+
+## Red-Team Review
+| claim | attempted disproof | result | follow-up |
+|---|---|---|---|
+```
+
+之后每完成一个 step/check，先更新 evidence 文件，再更新 checklist status。顺序不能反过来。
+
 ### 4. 跟用户确认从哪一步开始
 
-通常第 1 步；接续上次中断从已 `done` 的下一步继续。
+通常第 1 步；接续上次中断时先看 checklist status：从第一个 `pending` / `partial` / `blocked` step 继续。`blocked` 需要先回方案或用户决策，不能跳过。
 
 design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 → 持久化 → 测试），**具体每步改哪个文件由你执行时决定**。如果某一步实际是 3 个独立子动作、或发现微重构是它的前置（参考反射检查），跟用户对齐后追加 / 拆分 steps，**不偷偷做**。
 
@@ -105,11 +155,20 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ### 严格按 steps 顺序走
 
-按 `steps` 列表顺序执行，不合并、不跳。每完成一步立即把 status `pending` → `done`。
+按 `steps` 列表顺序执行，不合并、不跳。每推进一步先补 `{slug}-implementation-evidence.md`，再改 status：证据完整才改为 `done`；证据不足改为 `partial`；无法继续改为 `blocked`。
 
 最常见违规是"顺手把下一步也做了"——每步都对应独立可验证的退出信号，两步合做意味着出问题时不知道是哪一步引入的、回滚也回不到干净中间态。
 
 每个 done 必须绑定证据：改 `status: done` 前，先能指出对应的单测 / 集成测试 / trace / 类型约束 / grep 反向核对。只有"我写了代码"或"测试全绿"不够；证据必须能对应到该 step 的 exit_signal 和 checks 里的正反例矩阵。
+
+状态规则：
+
+- `done`：`proof_required` 全部满足，`evidence` 非空且能定位到 test / trace / grep / schema / file:line。
+- `partial`：已有部分实现或部分证据，但还有 design/checklist 要求未满足；必须写 `blocker` 或剩余缺口。
+- `blocked`：当前 step 因 design 缺口、依赖缺失或用户决策无法继续；必须写 `blocker`，并停下来回方案谈。
+- 禁止批量替换 status；每次改 status 都要伴随同一项的 evidence/blocker 更新。
+
+check 规则同理：没有正反例证据的验收场景不能标 `passed`；只能 `partial` 或 `pending`。
 
 ### 不做方案外的改动
 
@@ -144,43 +203,34 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 - **能用"只搬不改行为"解决**（拆函数 / 拆文件 / 移动定义，编译器全程绿灯，对外签名零 diff）→ 和用户对齐后**追加为独立 step**插在当前 step 之前，跑完独立验证退出再继续
 - **超出"只搬不改行为"边界**（要改函数签名 / 改返回值结构 / 改调用关系语义 / 模块拆合）→ **本 feature 不做**，记成"顺手发现"格式提示用户后续走 `cs-refactor`，当前 step 用最少的改动绕过去；不要因为"反正都看到了"就在 feature 里顺手做掉——这会把功能 PR 稀释成综合改动，也违反 design 2.5 早就划好的边界
 
+### 完成前 red-team 复核
+
+所有 step 自认为可以收尾后，不要马上输出完成汇报。先做一次反向审查：
+
+1. 逐条读 design 第 1 节"明确不做"、第 2.2 流程级约束、第 2.3 挂载点、第 3 验收契约。
+2. 对照当前代码和 evidence，尝试证明每个 `passed` / `done` 是错的。
+3. 凡是只能用"测试全绿"、"应该可以"、"schema 有字段"解释的项，降级为 `partial` 或 `pending`。
+4. 把审查记录写进 `{slug}-implementation-evidence.md` 的 `Red-Team Review`。
+
+red-team 复核发现 P1/P0 缺口时，停下来报告，不进入 acceptance。
+
+复核后必须运行：
+
+```bash
+python /Users/naonao/.agents/skills/cs-feat-impl/scripts/validate_checklist_evidence.py {path/to/{slug}-checklist.yaml}
+```
+
+脚本失败时，按报错补 evidence / blocker 或降级 status，不进入完成汇报。
+
 ---
 
-## 写完后输出统一汇报
+## 收尾时输出统一汇报
 
-所有步骤完成后用下面模板汇报，**停下来等用户 review**。
+只有当 checklist evidence 脚本通过，且没有 `partial` / `blocked` 项时，才用下面模板汇报实现完成并**停下来等用户 review**。如果仍有 `partial` / `blocked`，输出"实现阻塞 / 部分完成汇报"，列出 blocker 和需要用户或 design 决策的点，不要说完成。
 
 固定模板的意义：含糊汇报等于把验证责任推回用户。固定模板逼你把改了哪些文件、是否触碰方案外、是否引入新概念一一说清楚。
 
-```markdown
-## 实现完成汇报
-
-### 动了哪些文件
-{git status 真实输出}
-
-### 改了哪些函数 / 类型（按步骤分组）
-**步骤 N：{步骤名}**
-- file:line  函数名  改动类型（新增 / 修改 / 删除）
-
-### 是否触碰到方案外的文件？
-{是 / 否。是的话说明原因 + 是否已同步更新方案 doc}
-
-### 是否引入了方案 doc 里没有的新概念 / 抽象？
-{是 / 否。是的话说明已回填方案 doc（标准 design 补第 0 节 + 第 2.1 节；fastforward 补第 1 节）并做过 grep 防冲突}
-
-### 代码质量反射检查自检
-{对照 shared-conventions 第 7 节，触发哪些信号 + 怎么处理；都没触发写"无触发"}
-
-### 推进顺序退出信号核对
-{对照 steps 逐条列 action + exit_signal + status（应全为 done）}
-
-### 设计谓词对照
-{列出本 feature 的 design predicate / code predicate / 正反例矩阵；说明是否发现更宽或更窄的实现，以及怎么修正}
-
-### 验收场景自检
-**标准 design**：对照第 3 节关键场景清单，每条靠什么证据满足（类型 / 单测 / 集成 / 手工 / assert）+ 反向核对项是否守住
-**Fastforward design**：对照第 2 节验收标准逐条核对
-```
+具体模板看 `reference.md` 的"实现完成汇报模板"。
 
 汇报后停等 review。
 
@@ -202,11 +252,15 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ## 退出条件
 
-- [ ] 所有 steps 的 status 都 `done`
+- [ ] 所有 steps 的 status 都 `done`；所有 checks 的 status 都 `passed`
+- [ ] `{slug}-implementation-evidence.md` 已落盘，包含 Predicate Matrix / Step Evidence / Check Evidence / Red-Team Review
+- [ ] `scripts/validate_checklist_evidence.py {slug}-checklist.yaml` 通过
 - [ ] 完成汇报已输出，用户 review 通过
 - [ ] 没有未处理的"需要叫停"信号
 - [ ] 第 3 节关键场景每条都有证据 / 测试覆盖（fastforward 对照第 2 节）
 - [ ] 触发条件类 feature 已完成 design predicate / code predicate 对照，正反例矩阵都有证据
+- [ ] checklist 中每个 `done` / `passed` 都有 evidence；每个 `partial` / `blocked` 都有 blocker；不存在批量标绿
+- [ ] 完成前 red-team 复核没有留下 P1/P0 缺口；若有则已停下来报告
 - [ ] 没有"顺手发现"被偷偷修掉（都进 issue 列表）
 - [ ] 没有方案外文件改动（或已同步更新方案 doc）
 
@@ -214,7 +268,7 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ## 退出后
 
-告诉用户："所有步骤完成，方案 doc 已同步。下一步阶段 3 验收闭环，触发 cs-feat-accept。"
+只有退出条件全部满足且用户 review 通过后，告诉用户："所有步骤完成，方案 doc 已同步。下一步阶段 3 验收闭环，触发 cs-feat-accept。"
 
 别自己顺手开始写验收报告——验收需要独立的 checklist 节奏，提前进入会让把关失效。
 
@@ -224,11 +278,4 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ## 容易踩的坑
 
-- 代码只写了一部分就发完成汇报——汇报只在全部完成后发一次
-- 汇报里写"修改了相关文件"而不列 file:line
-- 看到方案外的代码顺手改了
-- 引入新类型 / 概念但没回去更新方案 doc
-- 加 `if (用户是 X) { 特殊处理 }` 补丁分支而不停下来
-- 用户 review 还没通过就自己进入验收阶段
-- 关键场景清单一条都没落证据
-- 把 paradigm 维度 steps 当 file:line 读——steps 是切片策略不是改动清单；step 内部偷偷拆子步骤而不跟用户对齐 = 绕过 review
+详细清单看 `reference.md` 的"容易踩的坑"；执行时发现踩中任一项，先停下来修正 evidence / checklist / design，再继续。

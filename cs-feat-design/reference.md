@@ -44,12 +44,25 @@ created: YYYY-MM-DD
 steps:
   - action: "{paradigm 维度的切片}：{动作描述}"
     exit_signal: "{退出信号，可独立验证}"
+    proof_required:
+      - "{完成本 step 必须出现的证据，例如 test / trace / grep / schema diff}"
     status: pending
+    evidence: []
+    blocker: null
 
 checks:
   - item: "{检查项描述}"
     source: 名词契约 | 编排骨架 | 流程级约束 | 挂载点 | 范围守护 | 验收场景
+    design_ref: "{design 中对应章节或 bullet，例如 §2.2 owner probe}"
+    proof_required: "{能证明它成立的最低证据}"
+    positive_case: "{必须触发 / 必须成立的输入或 typed signal；无触发条件时填 null}"
+    negative_case: "{相似但必须不触发 / 不成立的输入或 typed signal；无触发条件时填 null}"
+    typed_signal: "{依赖的 typed contract / semantic artifact / guard result；无则填 null}"
+    forbidden_basis:
+      - "{禁止用作判断依据的 raw text / keyword / 未声明猜测；无则 []}"
     status: pending
+    evidence: []
+    blocker: null
 ```
 
 `steps`（design 阶段产出）：
@@ -58,16 +71,17 @@ checks:
 - 切片顺序"最简 Workflow 先行 → 逐个节点填充"：
   - 后端：编排骨架（空实现跑通）→ 计算节点逐个填 → 接通加载/持久化 → 测试覆盖
   - 前端：静态结构 → 交互逻辑 → 状态接入 → 联调 / 样式收尾
-- 4-8 步；每步必须有可独立验证的退出信号
+- 通常 4-8 步；高风险链路按职责拆分后允许超过 8 步，但每步必须有可独立验证的退出信号和 `proof_required`
 - 第 2.5 节结论是"微重构"时，**第 1 步固定是"按第 2.5 节方案做微重构（只搬不改行为）"**，独立退出信号（如"全部测试通过 + 编译绿灯 + 行为相关 diff 为零"），跑通后再进 feature 主体步骤
+- 高风险链路不能揉成一个 step：路由 / fallback / owner probe / state commit / effect guard / response boundary / eval gate 中任意两个以上同时出现时，拆成独立 step。尤其禁止把 `gate + commitment + response` 或 `runtime + eval gate` 合并成一句退出信号。
 
 `checks`（design 阶段产出，提取来源）：
 
-- 名词契约 ← 第 2.1 节关键接口签名
-- 编排骨架 / 流程级约束 ← 第 2.2 节主流程关键步骤、流程级约束
-- 挂载点 ← 第 2.3 节每个挂入点（acceptance 反向核对可卸载性）
-- 范围守护 ← 第 1 节"明确不做"每条
-- 验收场景 ← 第 3 节"关键场景清单"每条
+- 名词契约 ← 第 2.1 节关键接口签名；`design_ref` 指向接口名 / 示例位置
+- 编排骨架 / 流程级约束 ← 第 2.2 节主流程关键步骤、流程级约束；必须写 `typed_signal`
+- 挂载点 ← 第 2.3 节每个挂入点（acceptance 反向核对可卸载性）；`proof_required` 通常是 registry/config/schema 反向 grep 或拔除推演
+- 范围守护 ← 第 1 节"明确不做"每条；`proof_required` 通常是 grep / schema absence / runtime absence
+- 验收场景 ← 第 3 节"关键场景清单"每条；必须写 positive/negative case，除非该条本身是纯反向 grep
 
 不允许编造 design 里不存在的条目。
 
@@ -78,6 +92,13 @@ checks:
 - 如果 design 依赖 typed contract / semantic artifact / ledger outcome / provider outcome 等 typed signal，checklist item 必须点名该 typed signal，不能只写自然语言意图。
 - 每个正向触发场景至少配一个反向场景；**正向场景至少配一个反向场景** 这一要求优先于 4-8 步的简洁性。
 - 如果无法从 design 抽出反向场景，说明 design 第 3 节验收契约不够稳，先补 design 再生成 checklist。
+
+**证据防漂移**：
+
+- 每个 `checks[]` 必须能回答"什么证据足以让我把 status 改成 passed"；答不出就先补 design，不要生成空泛 check。
+- `proof_required` 不能写"测试通过"这种总称；要写到证据类型和对象，例如"`tests/test_x.py::test_y` 覆盖 positive/negative；`rg ...` 无命中；trace 含 guard rejection event"。
+- design 阶段只把 `evidence` 留空；implement 阶段填入真实 test / trace / grep / file:line。没有证据时只能保持 `pending`，不能靠文字解释标 passed。
+- `status` 初始只允许 `pending`；implement 阶段 step 可改为 `done` / `partial` / `blocked`，check 可改为 `passed` / `partial` / `blocked`。`done` / `passed` 必须有 evidence；`partial` 必须写 blocker 或缺口说明；`blocked` 必须写 blocker。
 
 ## 4. 各节写作要求
 
