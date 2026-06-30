@@ -83,6 +83,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 - [ ] **前端改动浏览器验证**（如涉及）——按 `.codestable/attention.md` 的硬要求执行，不能只 typecheck
 - [ ] **相关测试通过**——有测试覆盖到修复区域就跑一遍
 - [ ] **通用质量检查**——按 `.codestable/reference/workflow-conventions.md` 第 3.5 节检查本次变更、相关产物、lint / typecheck / test 和跨层影响
+- [ ] **Project Sync**——验证通过并写完 fix-note 后，按 `.codestable/reference/workflow-conventions.md` 第 4.5 节同步 architecture / requirement / roadmap / 知识沉淀；无同步项也要写明
 
 ---
 
@@ -102,6 +103,14 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 如果本次 bug 命中"同类反复出现 / 多次修复才成功 / 跨层契约不清 / 测试缺口 / 隐含假设"任一信号，按 `.codestable/reference/shared-conventions.md` 第 3 节的 Bug 防复发判断补一段到 fix-note；没命中就不写长分析。
 
+写完 fix-note 后执行 `.codestable/reference/workflow-conventions.md` 第 4.5 节 Project Sync：
+
+- 修复改了模块边界 / API / 数据结构 / 配置格式 / 主流程 → 更新相关 architecture
+- 修复实际改变了用户可感能力边界 → 更新或 backfill requirement；只是恢复原本期望行为则写"无 requirement 变化"
+- issue 关联 roadmap item → 更新 roadmap 状态；普通 bug 修复写"不适用"
+- 本次形成长期规则 / 踩坑经验 / 启动必读提醒 / 复用做法 → 按用途归档
+- 都没命中 → 在 fix-note 收尾写"Project Sync：无同步项"
+
 ---
 
 ## 退出条件
@@ -109,6 +118,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 - [ ] 所有改动文件已提交或列清单
 - [ ] 验证清单全部勾选
 - [ ] `{slug}-fix-note.md` 已建并填写完整
+- [ ] Project Sync 已执行并在 fix-note / 收尾汇报里写明结果
 - [ ] 没有未处理的"顺手发现"（都进后续 issue 列表）
 - [ ] 没有范围外改动（或已和用户确认）
 - [ ] 用户明确确认修复完成
@@ -119,7 +129,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 按 `workflow-conventions.md` 第 4 节"scoped-commit"规则执行。本阶段：
 
-- **提交范围**：修复代码 + `{slug}-fix-note.md` + 本次一并更新的 report / analysis（如果存在）
+- **提交范围**：修复代码 + `{slug}-fix-note.md` + 本次一并更新的 report / analysis（如果存在）+ Project Sync 实际更新的 architecture / requirement / roadmap / compound / attention 文档
 - 修复闭环后告诉用户"修复验证已完成，`{slug}-fix-note.md` 已落盘"，紧接着问是否需要 commit
 
 ---
@@ -128,7 +138,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 告诉用户："issue 修复完成，工作流闭环。fix-note 已存档。" 标准路径有 report / analysis 时再补一句"report + analysis 已一并保留。"
 
-按 `shared-conventions.md` 第 3 节先做轻量"知识沉淀判断"，再问是否提交（用户"不用"立即跳过）：
+按 `workflow-conventions.md` 第 4.5 节先做 Project Sync（包含轻量"知识沉淀判断"），再问是否提交（用户"不用"立即跳过）：
 
 1. 回看本次修复，按用途列候选，不让用户选择 `learning` / `decision` / `attention`：
    - 自动提醒项：每次 CodeStable 会话开始都必须知道，且一两句话能讲清 → `cs-note`

@@ -190,6 +190,7 @@ refactor: {YYYY-MM-DD}-{slug}
 
 - 跑全量测试 + 类型检查 + lint
 - 最后一次请用户整体目视确认（前端：打开主要页面点一圈）
+- 执行 `.codestable/reference/workflow-conventions.md` 第 4.5 节 Project Sync：模块边界 / API / 数据结构 / 配置格式 / 主流程变化才更新 architecture；纯内部整理默认写"无同步项"；发现长期规则 / 踩坑 / 复用做法再归档
 - 确认通过后收尾 commit，message 引用 refactor 目录
 
 ---
@@ -204,6 +205,7 @@ refactor: {YYYY-MM-DD}-{slug}
 - [ ] apply 每步都有验证记录（AI 自证贴日志，HUMAN 贴用户确认语录）
 - [ ] 全量测试 / 类型检查 / lint 通过
 - [ ] 用户最后一次目视确认通过
+- [ ] Project Sync 已执行；无 architecture / requirement / roadmap / 知识沉淀变化时已明确写"无同步项"
 
 ---
 

@@ -20,6 +20,8 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 
 漏掉任何一件的代价：架构 doc 过期下个 feature 读到错信息；req 和实际能力脱节；roadmap 规划层和实际进度脱节，下次推进会重复跑流程。
 
+项目级回写和知识沉淀的统一判定口径看 `.codestable/reference/workflow-conventions.md` 第 4.5 节 Project Sync；本技能的第 5/6/7/8 节是 feature 场景下的展开版。
+
 **没产出报告 = 工作流未完成**。后人查"上次这个功能验收时确认了哪些行为"，没报告就只能翻 git diff 重新推断。
 
 > 共享路径与命名约定看 `.codestable/reference/shared-conventions.md` 第 0 节。

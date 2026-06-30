@@ -1,6 +1,6 @@
 ---
 name: cs
-description: CodeStable 工作流根入口，介绍体系全貌并把诉求路由到对应技能。触发：用户只输入 `cs`、说"介绍一下 codestable"、"该用哪个技能"、"不知道用哪个"，或诉求还很开放未收敛。本技能只做路由不做事。
+description: CodeStable 工作流根入口，介绍体系全貌并把诉求路由到对应技能。触发：用户只输入 `cs` / `cs plan` / `cs do` / `cs review`，说"介绍一下 codestable"、"该用哪个技能"、"不知道用哪个"，或诉求还很开放未收敛。本技能只做路由不做事。
 ---
 
 # cs
@@ -18,6 +18,18 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 
 **本技能不做事**：不写 spec / 不读写 `.codestable/` 下内容产物 / 不替子技能跑流程。产出只有"下一步做什么"；内部技能名只作为路由依据，不作为用户界面。
 
+## 三命令入口
+
+用户可以只记三条命令；它们是阶段，不是工作类型。feature / issue / refactor / roadmap 仍是内部路由结果。
+
+| 用户入口 | 含义 | 本技能做什么 |
+|---|---|---|
+| `cs plan ...` | 把要做的事变成计划 / 规格 / 根因方案 | 只做分诊：模糊新能力进讨论，清楚 feature 进方案，大需求进 roadmap，bug 进报告 / 分析，重构进 scan / design |
+| `cs do ...` | 推进当前可执行项 | 找到当前 ready 的 feature / issue / refactor；有 approved design / analysis / checklist 才进入执行，没计划就退回 `plan` |
+| `cs review ...` | 验收、验证、项目级同步和收口 | feature 进验收，issue 做复现验证 + fix-note，refactor 做行为等价验证；然后统一执行 Project Sync |
+
+`cs plan/do/review` 只是统一入口，不新增一套平行流程。用户显式点名 `cs-feat` / `cs-issue` / `cs-refactor` 时仍按原技能走。
+
 ---
 
 ## 收到调用先做的扫描
@@ -29,7 +41,7 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 3. **恢复现场**——跑 `git status --short`，只用来判断是否有未收口的本次工作 / 旁路脏文件；不要因为有脏文件就自动 commit
 4. **识别当前动作阶段**——若发现相关 feature / issue / refactor 目录，按已有产物判断下一步：只有 brainstorm/report → 继续方案或分析；有 approved design + checklist 未完成 → 实现；实现完成但无 acceptance / fix-note → 验收或修复收尾；有验收 / fix-note 但仍有本次代码脏文件 → 先走 scoped-commit
 5. **不存在**——后面提示用户先走 `cs-onboard`
-6. **看用户原话**——开放式还是带具体诉求？带诉求匹配路由表，没诉求给体系介绍
+6. **看用户原话**——先识别是否显式 `cs plan` / `cs do` / `cs review`；命中则按三命令路由表，不命中再按普通场景路由表；没诉求给体系介绍
 
 扫完才回应。让用户感觉你心里有数。
 
@@ -69,6 +81,26 @@ CodeStable 把开发活动建模成 **8 个实体 + 1 个维护报告目录 + 3 
 ## 场景路由表
 
 匹配用户的话到表里某行，**对用户说人话，不暴露内部技能名**。内部可以路由到具体 `cs-*` 执行器，但用户只需要知道下一步会发生什么。
+
+### 三命令路由表
+
+| 用户说什么 / 当前状态 | 路由到 |
+|---|---|
+| `cs plan` + 想法模糊 / 方向摇摆的新能力 | 先一起梳理真实问题和边界；清楚后再进入功能方案或 roadmap |
+| `cs plan` + 清楚的小功能 / 新能力 | 先写功能方案；小到不值得起方案时提示可直接执行快路径 |
+| `cs plan` + 多 feature 的大需求 / 子系统 | 先拆规划、依赖和接口契约 |
+| `cs plan` + bug / 报错 / 现有行为不对 | 先记录现象、复现路径、根因和修复方案；根因很清楚时走快速修复确认 |
+| `cs plan` + 重构 / 拆 service / 优化结构 | 先确认行为不变、扫描影响面，范围小时走小重构 |
+| `cs do` + 有 approved feature design / checklist | 推进功能实现 |
+| `cs do` + 有 confirmed issue analysis / 已确认根因 | 执行修复 |
+| `cs do` + 有 approved refactor design / checklist | 逐步执行重构 |
+| `cs do` + 没有可执行计划 | 退回 `cs plan`，先补计划 / 根因 / 方案，不硬写代码 |
+| `cs review` + feature 已实现 | 对照方案验收，并执行项目级回写与知识沉淀 |
+| `cs review` + issue 已修复 | 验证复现路径、写 fix-note，并执行 Project Sync |
+| `cs review` + refactor 已完成 | 验证行为等价、写 apply-notes，并执行 Project Sync |
+| `cs review` + 没有代码变更或事项已关闭 | 只做状态确认；无未收口内容就结束 |
+
+### 普通场景路由表
 
 | 用户说什么 / 想做什么 | 路由到 |
 |---|---|

@@ -11,7 +11,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 **根入口**——开放式诉求 / 不知道走哪个时的统一入口:
 
-- `cs` — 介绍体系全貌 + 把诉求路由到正确技能。本技能不做事,只做分诊和提示
+- `cs` — 介绍体系全貌 + 把诉求路由到正确技能。本技能不做事,只做分诊和提示。用户也可以用 `cs plan` / `cs do` / `cs review` 三命令推进：plan 建计划 / 规格，do 执行当前 ready 项，review 验收并做项目级同步
 
 **做事**——从一段模糊想法走到上线的功能、或者从一份错误报告走到修好的 bug。默认先走轻量路径，复杂时再升级:
 
@@ -69,6 +69,18 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 完整的操作手册、退出条件、和其他工作流的关系,各子技能里讲。
 
+## 三命令入口
+
+`cs plan` / `cs do` / `cs review` 是用户界面，不替代内部技能：
+
+| 命令 | 做什么 | 常见内部路由 |
+|---|---|---|
+| `cs plan ...` | 把事情定清楚，不写业务代码 | brainstorm / feature design / issue report+analysis / refactor scan+design / roadmap |
+| `cs do ...` | 推进当前可执行项 | feature implement / issue fix / refactor apply / fastforward |
+| `cs review ...` | 验证结果、同步项目事实、收口 | feature acceptance / issue fix-note / refactor apply-notes + Project Sync |
+
+Project Sync 是统一收口检查：architecture 记当前结构事实，requirement 记当前能力事实，roadmap 记规划进度，compound / attention 记长期知识。没有命中就写"无同步项"，不为了完整感硬写文档。
+
 
 ## 知识沉淀判断
 
@@ -110,7 +122,7 @@ Orient → Change → Check → Close
 ## 进一步参考
 
 - `.codestable/reference/shared-conventions.md` — 目录结构、YAML frontmatter 口径、`{slug}-checklist.yaml` 生命周期
-- `.codestable/reference/workflow-conventions.md` — 最小实现纪律、质量检查、收尾 commit 约定、归档类共享规则、写代码反射检查
+- `.codestable/reference/workflow-conventions.md` — 最小实现纪律、质量检查、Project Sync、收尾 commit 约定、归档类共享规则、写代码反射检查
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记
 

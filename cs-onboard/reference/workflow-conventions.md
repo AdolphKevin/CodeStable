@@ -89,6 +89,56 @@ acceptance / issue-fix 走完后把本次产物提交为一个 commit：
 
 ---
 
+## 4.5 Project Sync（统一项目级同步）
+
+`cs review`、feature-acceptance、issue-fix、refactor-apply 收尾时都跑这一段。它不是新流程，只是把"改完以后项目事实要不要同步"从各技能里抽成同一张检查表。
+
+### 1. 先完成类型内验收
+
+- feature：对照 design 验收行为；有偏差先修代码，确实接受的偏差写入 acceptance
+- issue：按 report / 用户原始描述验证复现路径不再出现，写 fix-note
+- refactor：证明外部可观察行为不变，写 apply-notes / refactor note
+
+类型内验收没过，不进入 Project Sync。不能用"顺手更新文档"掩盖代码没收口。
+
+### 2. 判定要同步什么
+
+只同步当前事实，不补未来规划。
+
+| 变更信号 | 同步动作 |
+|---|---|
+| 模块边界 / API / 数据结构 / 配置格式 / 主流程变了 | 更新相关 architecture；必要时同步 `ARCHITECTURE.md` 入口 |
+| 用户可感能力 / 能力边界 / 成功标准变了 | 更新或 backfill requirement |
+| 本事项来自 roadmap item | 更新 items.yaml 状态，并同步 roadmap 主文档 |
+| 实现与已批准 design / analysis / refactor-design 不一致 | 优先修代码；若偏差被接受，只在 acceptance / fix-note / apply-notes 记录，不静默改历史方案 |
+| 出现长期约束 / 编码规约 / 技术选型 | 归档 decision；未拍板就列为待确认，不代替用户拍板 |
+| 出现下次必踩坑 / 调试路径 / 失败尝试 | 归档 learning |
+| 出现每次启动都必须知道的一两行硬约束 | 写入 attention.md |
+| 出现可复用做法 / 库用法 / 技术处方 | 归档 trick |
+
+没有命中就写"Project Sync：无同步项"，不要为了显得完整硬写文档。
+
+### 3. 同步边界
+
+- architecture / requirement 只记当前系统事实；未来要做的放 roadmap，不塞进 architecture
+- design / analysis 是当时批准的计划和诊断，不当作当前事实库反复自动改
+- 回写必须是实际文件改动或明确"无变化 / 不适用"，不能只写"应该不用更新"
+- 不确定是否长期适用的 decision / attention 先问用户；客观命令、路径、环境约束可直接归档
+- 收尾提交范围要包含本次实际同步的 architecture / requirement / roadmap / compound / attention 文档
+
+### 4. 输出口径
+
+收尾汇报统一用这个顺序，短到能扫完：
+
+```text
+验证：{通过的检查 / 手工路径}
+Project Sync：architecture {无变化 / 已更新路径}；requirement {无变化 / 已更新路径}；roadmap {不适用 / 已更新}
+沉淀：{无 / decision+learning+attention+trick 摘要}
+提交：{已提交 / 待用户确认 / 跳过}
+```
+
+---
+
 ## 5. 动手前上下文读取
 
 写代码前先读和本次改动真正相关的上下文，不搞全库仪式化扫描：
