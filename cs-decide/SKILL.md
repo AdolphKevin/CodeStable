@@ -1,6 +1,6 @@
 ---
 name: cs-decide
-description: 把以后做类似工作必须遵守的已拍板技术选型、架构决定、长期约束、编码规约记成永久性决策文档（tech-stack / architecture / constraint / convention 四种）。触发：用户明确要求记录决定，或知识沉淀盘点识别出长期规则项。只归档已拍板的，讨论中的不归档。
+description: 把以后做类似工作必须遵守的已拍板技术选型、架构决定、长期约束、编码规约记成永久性决策文档（tech-stack / architecture / constraint / convention 四种）。触发：用户明确要求记录决定，或知识沉淀判断识别出长期规则项。只归档已拍板的，讨论中的不归档。
 ---
 
 # cs-decide
@@ -17,7 +17,7 @@ description: 把以后做类似工作必须遵守的已拍板技术选型、架�
 
 本工作流让每一条重要的"已经决定了"都有完整存档：**是什么、为什么、考虑过什么替代方案、后果是什么**。
 
-本技能是归档执行器：当收尾阶段的"知识沉淀盘点"识别出**长期规则项**时，由 AI 路由到这里落盘。用户不需要先判断它叫 decision；用户只确认这条规则是否已拍板、是否值得长期保留。
+本技能是归档执行器：当收尾阶段的"知识沉淀判断"识别出**长期规则项**时，由 AI 路由到这里落盘。用户不需要先判断它叫 decision；用户只确认这条规则是否已拍板、是否值得长期保留。
 
 > 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。产物写入 `.codestable/compound/`，命名 `YYYY-MM-DD-decision-{slug}.md`，frontmatter 带 `doc_type: decision`。
 
@@ -60,7 +60,7 @@ frontmatter / 正文模板 / 示例见同目录 `reference.md`。本技能流程
 
 ### Phase 1.5：查重叠与意图分流（必做）
 
-按 `shared-conventions.md` §6 第 5/6 条执行：
+按 `workflow-conventions.md` §6 第 5/6 条执行：
 
 - 用户话里含"改 / 更新 / 推翻 / 某条决策 / 某个选型"或明确指向某份旧决策 → 直接走**更新或 supersede**。决策文档特性：**结论本身变更几乎总要 supersede**（旧结论留痕不能原地覆盖）；只补背景 / 替代方案 / 影响描述时走"更新已有条目"
 - 否则用下面"搜索工具"按 category + 关键词查一遍，命中相近旧决策时把候选列给用户
@@ -85,7 +85,7 @@ AI 根据对话起草完整文档（YAML frontmatter + 所有正文节）。一�
 
 - 新建：写入 `.codestable/compound/YYYY-MM-DD-decision-{slug}.md`，frontmatter 顶部带 `doc_type: decision`
 - 更新：写回 Phase 1.5 定位到的原文件，frontmatter 补 `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条处理；旧文档 `status: superseded` + `superseded-by`
+- supersede：按 `workflow-conventions.md` §6 第 5 条处理；旧文档 `status: superseded` + `superseded-by`
 
 ### Phase 5：相关工作流更新提示
 
@@ -118,7 +118,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ## 守护规则
 
-> 归档类工作流共享守护规则（只增不删 / 宁缺毋滥 / 不替用户写 / 可发现性 / 归档后查重叠）见 `shared-conventions.md` 第 6 节。本技能特有：
+> 归档类工作流共享守护规则（只增不删 / 宁缺毋滥 / 不替用户写 / 可发现性 / 归档后查重叠）见 `workflow-conventions.md` 第 6 节。本技能特有：
 
 1. **只归档已拍板的决定**——讨论中的方案不归档
 2. **status=superseded 不等于删除**——被取代的保留原文 + `superseded-by` + 正文顶部 `**[已取代]** 见 {新文档 slug}`

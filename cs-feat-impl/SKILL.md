@@ -48,10 +48,6 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 - 第 2.3 挂载点按"删了它 feature 是否消失"判据，没把内部代码改动误列进来
 - 第 3 节有关键场景清单 + 反向核对项（不含测试代码 / framework 选型）
 
-**Fastforward design**（节 0/1/2/3）：
-- 第 0 含"明确不做"；第 1 有改动点（文件 + 函数/类型名）
-- 第 2 验收标准每条可验证；第 3 推进步骤有退出信号
-
 任一项不达标 → 退回 `cs-feat-design` 补齐。原因：方案漏的项实现时一定要现场补，等于绕过 checkpoint。
 
 **注意**：标准 design 第 3 节"验收契约"只说"做完后什么应该成立"，不说"具体怎么做"。改动文件清单 / 函数级落点 / 测试代码归 implement 自决，不要因为 design 里没写就退回去要求补。
@@ -68,13 +64,13 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 ### 3. 把上下文读全
 
-- 方案 doc 全文（标准 design 重点：第 1 节、2.1/2.2/2.3/2.4、3）
+- 方案 doc 全文（重点：第 1 节、2.1/2.2/2.3/2.4、3）
 - `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.codestable/attention.md`
-- 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
+- 第 2.1 节接口示例的来源位置——读相关函数即可
 
-### 3.5 实现前谓词对照
+### 3.5 实现前谓词对照（按需）
 
-写代码前先做一次 **design predicate → code predicate** 对照，尤其是路由、fallback、recovery、handoff、slot 消费、状态推进、回复组合这类容易漂移的 feature。
+只有涉及路由、fallback、recovery、handoff、slot 消费、状态推进、回复组合这类容易漂移的 feature，才做 **design predicate → code predicate** 对照。普通 CRUD、小 UI、小命令改动不建矩阵。
 
 1. 从 design / checklist 里抽出所有"可触发 / 允许 / fallback / recovery / waiting / unsatisfied / read-only"条件词。
 2. 写成正反例矩阵：
@@ -87,7 +83,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 **测试通过 ≠ predicate 对齐**。如果测试只覆盖正向 happy path，没有覆盖矩阵里的反向行，不能认为实现符合 feature 预期。
 
-把矩阵落盘到 `{slug}-implementation-evidence.md`，不要只放在脑子里或最终汇报里。模板：
+把矩阵写进 checklist 对应 check 的 `evidence` / `blocker`。只有矩阵太长、或用户明确要独立证明材料时，才落盘到 `{slug}-implementation-evidence.md`。
 
 ```markdown
 ## Predicate Matrix
@@ -98,40 +94,6 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 ```
 
 没有正反例证据的行，status 保持 `pending` 或 `partial`，对应 checklist check 不能标 `passed`。
-
-### 3.6 建立 implementation evidence
-
-动代码前创建或更新 `.codestable/features/{feature}/{slug}-implementation-evidence.md`。这是实现阶段的硬产物，用来承接 design/checklist 的证明责任。
-
-最小结构：
-
-```markdown
----
-doc_type: feature-implementation-evidence
-feature: {feature}
-status: in-progress
-created: YYYY-MM-DD
----
-
-# {slug} implementation evidence
-
-## Predicate Matrix
-{见上方表格}
-
-## Step Evidence
-| step | status | proof_required | evidence | blocker |
-|---|---|---|---|---|
-
-## Check Evidence
-| check | status | proof_required | positive | negative | evidence | blocker |
-|---|---|---|---|---|---|---|
-
-## Red-Team Review
-| claim | attempted disproof | result | follow-up |
-|---|---|---|---|
-```
-
-之后每完成一个 step/check，先更新 evidence 文件，再更新 checklist status。顺序不能反过来。
 
 ### 4. 跟用户确认从哪一步开始
 
@@ -155,7 +117,7 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ### 严格按 steps 顺序走
 
-按 `steps` 列表顺序执行，不合并、不跳。每推进一步先补 `{slug}-implementation-evidence.md`，再改 status：证据完整才改为 `done`；证据不足改为 `partial`；无法继续改为 `blocked`。
+按 `steps` 列表顺序执行，不合并、不跳。每推进一步先补 checklist 对应项的 `evidence` / `blocker`，再改 status：证据完整才改为 `done`；证据不足改为 `partial`；无法继续改为 `blocked`。
 
 最常见违规是"顺手把下一步也做了"——每步都对应独立可验证的退出信号，两步合做意味着出问题时不知道是哪一步引入的、回滚也回不到干净中间态。
 
@@ -172,7 +134,7 @@ check 规则同理：没有正反例证据的验收场景不能标 `passed`；�
 
 ### 不做方案外的改动
 
-发现值得重构的点（参考 `.codestable/reference/shared-conventions.md` 第 7 节"写代码时的反射检查"），只要**不在本次功能影响面内**就记成后续 issue：
+发现值得重构的点（参考 `.codestable/reference/workflow-conventions.md` 第 7 节"写代码时的反射检查"），只要**不在本次功能影响面内**就记成后续 issue：
 
 ```markdown
 > 顺手发现：{文件:行号} {问题简述}。不在本次范围，记录待后续 issue。
@@ -184,7 +146,7 @@ check 规则同理：没有正反例证据的验收场景不能标 `passed`；�
 
 **标准 design**：新写的类型 / 函数 / 变量名都要去方案 doc 第 0 节对照，不允许出现 doc 里没有的新概念。要引入新概念 → 先停下来改第 0 节、grep 防冲突、用户确认。
 
-**Fastforward design**：没有正式术语表，但要新起概念名时也要 grep 一下当前代码防冲突。
+**Fastforward 通道**：不进入本技能；若在轻量实现里要新起概念名，也要 grep 一下当前代码防冲突。
 
 代价：术语冲突意味着同概念两个名字 / 同名字两个概念——后者会让搜索完全失效。
 
@@ -194,7 +156,7 @@ check 规则同理：没有正反例证据的验收场景不能标 `passed`；�
 
 ### 代码质量反射检查
 
-除上面流程约束外，还有一组针对代码质量的反射检查——看 `.codestable/reference/shared-conventions.md` 第 7 节。
+除上面流程约束外，还有一组针对代码质量的反射检查——看 `.codestable/reference/workflow-conventions.md` 第 7 节。
 
 核心：**不是"超过 N 行必须拆"，而是"遇到 X 情况就停下来问自己"**。每条对应 AI 默认会走进去的坑（往大文件继续追加、往大类加方法、补丁分支、复制粘贴、第 4+ 个参数、往万能 util 堆东西）。
 
@@ -210,7 +172,7 @@ check 规则同理：没有正反例证据的验收场景不能标 `passed`；�
 1. 逐条读 design 第 1 节"明确不做"、第 2.2 流程级约束、第 2.3 挂载点、第 3 验收契约。
 2. 对照当前代码和 evidence，尝试证明每个 `passed` / `done` 是错的。
 3. 凡是只能用"测试全绿"、"应该可以"、"schema 有字段"解释的项，降级为 `partial` 或 `pending`。
-4. 把审查记录写进 `{slug}-implementation-evidence.md` 的 `Red-Team Review`。
+4. 把审查结论写进相关 checklist 项的 `evidence` / `blocker`；只有已有独立 evidence 文件时才同步写入 `Red-Team Review`。
 
 red-team 复核发现 P1/P0 缺口时，停下来报告，不进入 acceptance。
 
@@ -253,13 +215,13 @@ python /Users/naonao/.agents/skills/cs-feat-impl/scripts/validate_checklist_evid
 ## 退出条件
 
 - [ ] 所有 steps 的 status 都 `done`；所有 checks 的 status 都 `passed`
-- [ ] `{slug}-implementation-evidence.md` 已落盘，包含 Predicate Matrix / Step Evidence / Check Evidence / Red-Team Review
+- [ ] checklist 中每个 `done` / `passed` 都有 evidence；每个 `partial` / `blocked` 都有 blocker；不存在批量标绿
+- [ ] predicate-heavy feature 已完成 design predicate / code predicate 对照；普通改动明确跳过
 - [ ] `scripts/validate_checklist_evidence.py {slug}-checklist.yaml` 通过
 - [ ] 完成汇报已输出，用户 review 通过
 - [ ] 没有未处理的"需要叫停"信号
-- [ ] 第 3 节关键场景每条都有证据 / 测试覆盖（fastforward 对照第 2 节）
-- [ ] 触发条件类 feature 已完成 design predicate / code predicate 对照，正反例矩阵都有证据
-- [ ] checklist 中每个 `done` / `passed` 都有 evidence；每个 `partial` / `blocked` 都有 blocker；不存在批量标绿
+- [ ] 第 3 节关键场景每条都有证据 / 测试覆盖
+- [ ] 若创建了 `{slug}-implementation-evidence.md`，内容已和 checklist 证据一致
 - [ ] 完成前 red-team 复核没有留下 P1/P0 缺口；若有则已停下来报告
 - [ ] 没有"顺手发现"被偷偷修掉（都进 issue 列表）
 - [ ] 没有方案外文件改动（或已同步更新方案 doc）
@@ -272,7 +234,7 @@ python /Users/naonao/.agents/skills/cs-feat-impl/scripts/validate_checklist_evid
 
 别自己顺手开始写验收报告——验收需要独立的 checklist 节奏，提前进入会让把关失效。
 
-**实现过程中如果踩到了项目通用的硬约束 / 命令陷阱 / 环境设置**（"啊原来这个项目要先 X 才能 Y"，一两行能讲清、下个 feature 的 AI 还会再撞一次）→ 在告诉用户去 accept 前**顺便提一句**："这次发现 {具体那条}，我会在 acceptance 的知识沉淀盘点里作为自动提醒项候选列出。"——单条即可，不连写多条；用户说"不用列"就跳过，accept 第 8 节会兜底盘点。
+**实现过程中如果踩到了项目通用的硬约束 / 命令陷阱 / 环境设置**（"啊原来这个项目要先 X 才能 Y"，一两行能讲清、下个 feature 的 AI 还会再撞一次）→ 在告诉用户去 accept 前**顺便提一句**："这次发现 {具体那条}，我会在 acceptance 的知识沉淀判断里作为自动提醒项候选列出。"——单条即可，不连写多条；用户说"不用列"就跳过，accept 第 8 节会兜底判断。
 
 ---
 

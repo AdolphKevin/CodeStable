@@ -1,6 +1,6 @@
 ---
 name: cs-learn
-description: 把"未来搜到就够"的踩坑、失败尝试、调试路径或经验回顾沉淀成可检索 learning 文档，两条轨道 pitfall（坑）/ knowledge（默认做法）。触发：用户主动要求记录经验，或知识沉淀盘点识别出可检索经验项。
+description: 把"未来搜到就够"的踩坑、失败尝试、调试路径或经验回顾沉淀成可检索 learning 文档，两条轨道 pitfall（坑）/ knowledge（默认做法）。触发：用户主动要求记录经验，或知识沉淀判断识别出可检索经验项。
 ---
 
 # cs-learn
@@ -11,7 +11,7 @@ description: 把"未来搜到就够"的踩坑、失败尝试、调试路径或�
 
 每次做 feature 或修 issue 都会留下 spec 文件。但 spec 记录的是"做了什么"和"怎么做的"，**不会记录"踩了什么坑"和"发现了什么更好的做法"**。没有沉淀的团队总在重复解决同一个问题。
 
-本技能是归档执行器：当收尾阶段的"知识沉淀盘点"识别出**可检索经验项**时，由 AI 路由到这里落盘。用户不需要先判断它叫 learning；用户只确认这条经验要不要保留。
+本技能是归档执行器：当收尾阶段的"知识沉淀判断"识别出**可检索经验项**时，由 AI 路由到这里落盘。用户不需要先判断它叫 learning；用户只确认这条经验要不要保留。
 
 两条轨道：
 
@@ -26,8 +26,8 @@ description: 把"未来搜到就够"的踩坑、失败尝试、调试路径或�
 
 | 情境 | 说明 |
 |---|---|
-| 完成 feature 工作流 | `cs-feat-accept` 的知识沉淀盘点识别出可检索经验项 |
-| 完成 issue 工作流 | `cs-issue-fix` 的知识沉淀盘点识别出可检索经验项 |
+| 完成 feature 工作流 | `cs-feat-accept` 的知识沉淀判断识别出可检索经验项 |
+| 完成 issue 工作流 | `cs-issue-fix` 的知识沉淀判断识别出可检索经验项 |
 | 用户主动 | "记录一下"、"沉淀知识"、"learning"等 |
 | 解决了一次性难题 | 不在 feature / issue 内但花了大量时间才解决的工程问题 |
 
@@ -59,7 +59,7 @@ frontmatter / 正文模板 / 完整示例见同目录 `reference.md`。
 
 ### Phase 1.5：查重叠与意图分流（必做）
 
-按 `shared-conventions.md` §6 第 5/6 条：
+按 `workflow-conventions.md` §6 第 5/6 条：
 
 - 含"改 / 更新 / 补充 / 某条 learning"或指向某份旧文档 → 直接走**更新已有**
 - 否则用搜索工具按 `--filter tags~=` 或 `--query` 查一遍，命中相近旧文档时把候选列给用户
@@ -91,7 +91,7 @@ AI 一次性起草完整文档（YAML frontmatter + 所有正文节）。一次�
 
 - 新建：写入 `compound/YYYY-MM-DD-learning-{slug}.md`（日期取**归档当天**），frontmatter 带 `doc_type: learning`
 - 更新：写回 Phase 1.5 定位的原文件 + `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条处理
+- supersede：按 `workflow-conventions.md` §6 第 5 条处理
 
 ### Phase 5：可发现性检查
 
@@ -121,7 +121,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ## 守护规则
 
-> 归档类共享规则见 `shared-conventions.md` 第 6 节。本技能特有：
+> 归档类共享规则见 `workflow-conventions.md` 第 6 节。本技能特有：
 
 1. **不混入 spec**——learning 不放进 `features/` 或 `issues/`；spec 也不放进 `compound/`
 2. **只认自己的 doc_type**——只读写 `doc_type: learning`

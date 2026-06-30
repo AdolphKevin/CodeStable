@@ -9,7 +9,9 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 
 开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
 
-代码已经写完，但流程没结束。本阶段做四件事，缺一不可：
+代码已经写完，但流程没结束。默认先写短验收：做了什么、怎么验证、有没有项目级回写、有没有知识沉淀。只有标准 feature、跨模块能力、或确实触发 architecture / requirement / roadmap 回写时，才展开完整 9 节。
+
+完整验收要做四件事，缺一不可：
 
 1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md`，发现偏差当场修，**不是在报告里"记一下"**就过去
 2. **把 feature 归并到整体架构**——对照方案第 4 节，实际去更新架构中心目录下的相关 doc
@@ -36,8 +38,6 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 - 第 3 节：验收契约（关键场景清单 + 反向核对项）
 - 第 4 节：与项目级架构文档的关系
 
-**Fastforward design**：第 0 需求摘要 / 第 1 设计方案 / 第 2 验收标准 / 第 3 推进步骤
-
 ---
 
 ## 启动检查
@@ -47,22 +47,42 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 3. **`{slug}-checklist.yaml`**——存在且 `feature` 一致；`steps` 全 `done`（有 `pending` 退回 implement）；`checks` 非空全 `pending`
 4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）
 5. **断点恢复**——`{slug}-acceptance.md` 已存在且部分填好 → 从下一个未完成节继续，跳过 checks 中已 `passed` 的项；汇报"上次做到第 X 节，从第 Y 节继续"
-
-**Fastforward design 验收报告映射表**：
-
-| 验收报告节 | 标准 design 对照 | Fastforward design 对照 |
-|---|---|---|
-| 1 接口契约核对 | 第 2.1 接口示例 | 第 1 节改动点 |
-| 2 行为与决策核对（含挂载点） | 第 1 节 + 第 2.2 + 第 2.3 | 第 0 节；挂载点现场盘点 |
-| 3 验收场景核对 | 第 3 节场景清单 + 反向核对 | 第 2 节验收标准 |
-| 4 术语一致性 | 第 0 节 + 第 2.1 命名 | 检查代码命名一致性 |
-| 5 架构归并 | 第 4 节 | 通常无；写"无架构维度变更" |
-
----
+6. **通用质量检查**——按 `.codestable/reference/workflow-conventions.md` 第 3.5 节识别本次改动、读取相关产物 / 规则、运行项目检查；失败先修，不能修就作为 blocker 停下
 
 ## 验收报告模板
 
-逐节填写**别跳节**。报告路径在 feature 目录下（位置看 `shared-conventions.md` 第 0 节）。
+默认用短模板。报告路径在 feature 目录下（位置看 `shared-conventions.md` 第 0 节）。
+
+```markdown
+# {功能名称} 验收报告
+
+> 验收日期：YYYY-MM-DD
+> 关联方案 doc：{方案 doc 路径}
+
+## 1. 做了什么
+
+- {1-3 条：本次能力 / 行为变化}
+- 范围外事项：{无 / 明确没做什么}
+
+## 2. 怎么验证
+
+- 质量检查：{lint / typecheck / test / 手工路径}
+- 关键场景：{场景 → 结果}
+- 前端肉眼验证（如涉及）：{页面 / 操作 / 结果}
+
+## 3. 项目级回写
+
+- architecture：{无变化 / 已更新路径}
+- requirement：{无变化 / 已 backfill / 已 update}
+- roadmap：{非 roadmap 起头 / 已更新 items.yaml + 主文档}
+- 可执行契约：{无 / 已按 shared-conventions 第 3 节补签名、契约、验证矩阵}
+
+## 4. 知识沉淀
+
+- {无沉淀项 / 已同步项 / 需要用户拍板项}
+```
+
+下面是完整模板。仅在标准 feature、跨模块改动、或第 3 节出现实际回写时展开；不要把小改写成 9 节报告。
 
 ```markdown
 # {功能名称} 验收报告
@@ -110,8 +130,6 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 - [ ] **反向核查**（grep）：本 feature 在代码里的所有引用是否都落在清单内？清单外的引用 → 漏记，补进第 2.3 节
 - [ ] **拔除沙盘推演**：按清单逆向操作后是否还有残留？残留 → 写进"遗留"或补挂载点
 
-Fastforward 方案没有挂载点清单 → 现场 grep 盘点本次改动命中的挂入位置作为卸载依据。
-
 ## 3. 验收场景核对
 
 对照方案第 3 节关键场景清单，逐条可观察证据验证：
@@ -135,6 +153,8 @@ Fastforward 方案没有挂载点清单 → 现场 grep 盘点本次改动命中
 ## 5. 架构归并
 
 **目标**：把本次 feature 里稳定、系统级可见的内容**实际写入** architecture，让读者只看 architecture 就能看懂新能力的存在和形态。**不是加 design 链接就算数**。
+
+跨层 / infra / API / CLI / DB / 配置格式变化时，按 `.codestable/reference/shared-conventions.md` 第 3 节"可执行契约回写"补签名、契约、验证矩阵和测试点；不要只写原则。
 
 对照方案第 4 节，三类东西实际写入对应架构 doc：
 
@@ -178,9 +198,9 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 
 衔接协议看 `shared-conventions.md` 第 2.5 节。和归并 / req 同规则：实际写文件的动作。
 
-## 8. 知识沉淀盘点
+## 8. 知识沉淀判断
 
-回看本次实现，按 `.codestable/reference/shared-conventions.md` 第 3 节盘点四类候选。这里问的是"这条信息以后怎么被用到"，不是让用户选择 `learning` / `decision` / `attention`。
+回看本次实现，按 `.codestable/reference/shared-conventions.md` 第 3 节判断是否有值得沉淀的候选。这里问的是"这条信息以后怎么被用到"，不是让用户选择 `learning` / `decision` / `attention`。默认不写沉淀；只有下次一定会再踩、每次启动都必须知道、已拍板长期规则、或明确可复用做法才归档。
 
 四类候选：
 
@@ -189,7 +209,7 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 - **可检索经验项**：一次踩坑、失败尝试、调试路径或经验回顾，未来搜到就够 → 验收通过后由 `cs-learn` 归档
 - **可复用处方项**："以后做 X 就这样做"的可复用技巧、库用法或技术处方 → 验收通过后由 `cs-trick` 归档
 
-- [ ] 无候选：写"本 feature 无知识沉淀候选"
+- [ ] 无候选：写"本 feature 无沉淀项"
 - [ ] 有候选：按用途列出来，标明是否已拍板 / 已由实现验证；本节只登记，实际落档在"退出后"环节处理
   - 自动提醒项：{内容 + 为什么每次启动都该知道}
   - 长期规则项：{内容 + 已拍板证据 / 实现验证结果}
@@ -207,22 +227,20 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 
 ## 核对节奏
 
-逐节做。每节完成后**逐条更新 `{slug}-checklist.yaml` 的 `checks`**：通过 → `passed`，失败 → `failed`（先修代码 / 方案再改回 `passed`）。所有 checks 全 `passed` 后报告才算完成。
+短验收按 4 节做，能证明行为就收。标准 feature 才逐节做完整模板，并逐条更新 `{slug}-checklist.yaml` 的 `checks`：通过 → `passed`，失败 → `failed`（先修代码 / 方案再改回 `passed`）。所有 checks 全 `passed` 后报告才算完成。
 
-第 1/2 节最容易暴露偏离，先做。第 2 节挂载点反向核对**必须实际 grep + 沙盘推演**，不能凭印象勾选。第 5/6/7 节是写文件的动作，不是自评。
+完整模板里第 1/2 节最容易暴露偏离，先做。第 2 节挂载点反向核对**必须实际 grep + 沙盘推演**，不能凭印象勾选。第 5/6/7 节是写文件的动作，不是自评。
 
 ---
 
 ## 退出条件
 
-- [ ] 验收报告 9 节都填完
-- [ ] 第 1/2 节核对全部勾选，无未处理偏差（含挂载点 grep + 拔除沙盘推演）
-- [ ] 第 3 节场景核对全部勾选，前端已浏览器验证
-- [ ] 第 4 节术语一致性无遗漏
-- [ ] 第 5 节归并：每条有明确结论，需要更新的 doc 已实际写入
-- [ ] 第 6 节 req 回写有结论：跳过 / 未变 / 已 backfill / draft→current / 已 update
-- [ ] 第 7 节 roadmap 回写有结论：跳过（非 roadmap 起头）/ 已更新（items.yaml + 主文档同步，yaml 通过校验）
-- [ ] checklist 所有 checks 都 `passed`
+- [ ] 验收报告已按短模板 4 节填完；若触发标准 feature / 跨模块 / 项目级回写，完整 9 节已填完
+- [ ] 行为核对无未处理偏差；标准 feature 已完成接口 / 决策 / 场景 / 术语 / 挂载点核对
+- [ ] 前端改动已浏览器验证
+- [ ] architecture / requirement / roadmap 回写都有结论：无变化 / 跳过 / 已实际写入
+- [ ] `.codestable/reference/workflow-conventions.md` 第 3.5 节通用质量检查已跑完，失败项已修复或明确 blocker
+- [ ] 有 checklist 时所有 checks 都 `passed`
 - [ ] 用户终审确认
 
 ---
@@ -233,7 +251,7 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 
 按 `shared-conventions.md` 第 3 节收尾顺序处理：
 
-1. 第 8 节有知识沉淀候选 → 按下面规则处理，**不要只提示用户去执行另一个技能，也不要把内部技能名暴露成用户待办**：
+1. 知识沉淀节有候选 → 按下面规则处理，**不要只提示用户去执行另一个技能，也不要把内部技能名暴露成用户待办**：
    - 自动提醒项 → 若是客观事实 / 命令陷阱 / 环境要求，内部路由到 `cs-note` 落档；对用户说"已加入启动必读提醒"。拿不准是否每次都该提醒时才问用户
    - 长期规则项 → 若已由 design review 拍板、实现跑通、acceptance 验证通过，内部路由到 `cs-decide` 落档；对用户说"已归档为长期规则"。只在"还在讨论 / 理由缺失 / 是否长期适用不确定"时问用户
    - 可检索经验项 → 内部路由到 `cs-learn` 落档；对用户说"已归档为可检索经验"。如果只是一次性噪音、没有未来检索价值才跳过
@@ -243,7 +261,7 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 2. 文档同步盘点：README / docs / guide / libdoc 已存在且被本次能力改到或变得过期 → **在 acceptance 内直接更新**，不要留成后续文档待办。只有需要从零写一份完整外部指南或大批量 API 参考时，才作为独立文档工作处理。
 3. 最后问是否代为 scoped-commit
 
-收尾提交规则看 `shared-conventions.md` 第 4 节。提交范围：功能代码 + 方案 doc + 验收报告 + 本次实际更新的架构 doc / req doc / roadmap items.yaml + 主文档。
+收尾提交规则看 `workflow-conventions.md` 第 4 节。提交范围：功能代码 + 方案 doc + 验收报告 + 本次实际更新的架构 doc / req doc / roadmap items.yaml + 主文档。
 
 ---
 

@@ -159,7 +159,7 @@ design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在�
 - **复杂度档位对齐**——需求里出现"对外 SDK / 高并发 / 一次性工具"等偏离信号时，打开 `.codestable/reference/code-dimensions.md` 列偏离点；无信号写"走默认档位"
 - **grep 找"叫法不同的类似模块"**——直觉"可能已有人做过但命名不同"时，grep 同义词
 
-详细规则看 `.codestable/reference/shared-conventions.md` 第 5 节。
+详细规则看 `.codestable/reference/workflow-conventions.md` 第 5 节。
 
 ### 2. 想清楚这功能该放在哪儿
 

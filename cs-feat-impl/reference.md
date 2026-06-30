@@ -25,14 +25,13 @@
 {对照 steps 逐条列 action + exit_signal + proof_required + evidence + status（应全为 done；否则说明 partial/blocked 原因）}
 
 ### 设计谓词对照
-{引用 `{slug}-implementation-evidence.md` Predicate Matrix；说明是否发现更宽或更窄的实现，以及怎么修正}
+{普通改动写"未触发"；predicate-heavy feature 引用 checklist evidence 或可选 `{slug}-implementation-evidence.md`，说明是否发现更宽或更窄的实现，以及怎么修正}
 
 ### 验收场景自检
-**标准 design**：对照第 3 节关键场景清单，每条靠什么证据满足（类型 / 单测 / 集成 / 手工 / assert）+ 反向核对项是否守住
-**Fastforward design**：对照第 2 节验收标准逐条核对
+对照第 3 节关键场景清单，每条靠什么证据满足（类型 / 单测 / 集成 / 手工 / assert）+ 反向核对项是否守住
 
 ### Red-Team 复核
-{引用 `{slug}-implementation-evidence.md` Red-Team Review；列出被降级为 partial/blocked 的项；如果无，说明每个 passed 的反证尝试结果}
+{引用 checklist evidence；若创建了 `{slug}-implementation-evidence.md` 再引用 Red-Team Review。列出被降级为 partial/blocked 的项；如果无，说明关键 passed 项的反证尝试结果}
 ```
 
 ## 容易踩的坑

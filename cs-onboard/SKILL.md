@@ -41,6 +41,7 @@ description: 把新仓库或有零散文档的仓库接入 CodeStable 体系，�
 │   └── validate-yaml.py
 └── reference/                  跨子技能共享参考（onboard 释放）
     ├── shared-conventions.md
+    ├── workflow-conventions.md
     ├── tools.md
     └── maintainer-notes.md
 ```
@@ -192,6 +193,7 @@ Copy-Item -Recurse -Force <技能包路径>\cs-onboard\reference\*  .codestable\
 ## 相关文档
 
 - `.codestable/reference/system-overview.md` — CodeStable 体系总览
-- `.codestable/reference/shared-conventions.md` — 目录结构和共享口径的权威版本
+- `.codestable/reference/shared-conventions.md` — 目录结构和共享口径入口
+- `.codestable/reference/workflow-conventions.md` — 质量检查、收尾提交、归档守护、写代码反射检查
 - `.codestable/attention.md` — CodeStable 技能启动必读的项目注意事项
 - `.codestable/architecture/ARCHITECTURE.md` — 架构总入口骨架

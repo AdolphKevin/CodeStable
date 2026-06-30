@@ -13,15 +13,15 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 - `cs` — 介绍体系全貌 + 把诉求路由到正确技能。本技能不做事,只做分诊和提示
 
-**做事**——从一段模糊想法走到上线的功能、或者从一份错误报告走到修好的 bug:
+**做事**——从一段模糊想法走到上线的功能、或者从一份错误报告走到修好的 bug。默认先走轻量路径，复杂时再升级:
 
-- `cs-feat` — 新功能,design → implement → acceptance（想法还模糊时先走讨论层 `cs-brainstorm` 做分诊，不属于 feature 流程内部）
-- `cs-issue` — 修 bug,report → analyze → fix
-- `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),scan → design → apply
+- `cs-feat` — 新功能,默认 fastforward；跨模块 / 新能力边界 / 高风险时升级为 design → implement → acceptance
+- `cs-issue` — 修 bug,默认 fix-note 快速通道；根因不明 / 多模块影响时升级为 report → analyze → fix
+- `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),默认小重构；跨模块 / 公开接口 / 无测试时升级为 scan → design → apply
 
-两类都不直接让 AI 写代码,而是先产出 spec(功能方案 / 问题分析),用户 review 后再动手,代码和 doc 一起交付。针对的是术语冲突、范围失控、改完不留存档这三种 AI 默认会出的问题。
+轻量路径直接改代码，但必须读 `attention.md`、跑通用质量检查、留下最小记录并 scoped commit。标准路径才先产出 spec(功能方案 / 问题分析),用户 review 后再动手。针对的是术语冲突、范围失控、改完不留存档这三种 AI 默认会出的问题。
 
-**沉淀**——把做事过程产生的知识存下来,下次遇到同类问题直接复用。普通 feature / issue / fastforward 收尾时先做"知识沉淀盘点"，用户只确认候选是否保留，AI 再按用途路由到具体执行器:
+**沉淀**——把做事过程产生的知识存下来,下次遇到同类问题直接复用。普通 feature / issue / fastforward 收尾时只做轻量判断；只有下次一定会再踩、每次启动都必须知道、已拍板长期规则、或明确可复用做法才归档:
 
 - `cs-note` — 自动提醒项：一两行、每次启动 CodeStable 技能都必须知道
 - `cs-learn` — 可检索经验项：踩坑、失败尝试、调试路径、经验回顾
@@ -70,16 +70,16 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 完整的操作手册、退出条件、和其他工作流的关系,各子技能里讲。
 
 
-## 知识沉淀盘点
+## 知识沉淀判断
 
-收尾阶段不再让用户先区分 learning / decision / attention。AI 先按"未来怎么被用到"列候选:
+收尾阶段不再让用户先区分 learning / decision / attention。默认不写沉淀；AI 只在满足归档条件时按"未来怎么被用到"列候选:
 
 - **自动提醒项**：每次 CodeStable 会话开始都必须知道,且一两句话能讲清 → `cs-note` 写入 `.codestable/attention.md`
 - **长期规则项**：以后做类似工作必须遵守的规约、约束、选型或架构决定 → `cs-decide` 归档
 - **可检索经验项**：一次踩坑、失败尝试、调试路径或经验回顾,未来搜到就够 → `cs-learn` 归档
 - **可复用处方项**："以后做 X 就这样做"的可复用技巧、库用法或技术处方 → `cs-trick` 归档
 
-用户只确认候选是否保留；`doc_type` 是 AI 内部归档路由。`learning` / `trick` / `decision` / `explore` 仍共用 `.codestable/compound/` 目录,靠 frontmatter 的 `doc_type` 字段和文件名中间的类型段(`YYYY-MM-DD-{doc_type}-{slug}.md`)区分。`attention.md` 不属于 compound,它是所有 CodeStable 技能启动时强制读取的短摘要入口。
+没有候选就一句"无沉淀项"结束。用户只确认不确定候选是否保留；`doc_type` 是 AI 内部归档路由。`learning` / `trick` / `decision` / `explore` 仍共用 `.codestable/compound/` 目录,靠 frontmatter 的 `doc_type` 字段和文件名中间的 type 段(`YYYY-MM-DD-{doc_type}-{slug}.md`)区分。`attention.md` 不属于 compound,它是所有 CodeStable 技能启动时强制读取的短摘要入口。
 
 
 ## 愿景档案 vs 结构档案 vs 规划档案 vs 单次动作
@@ -94,18 +94,23 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 用户说"我想要一个 X 系统"这种大需求,先走 roadmap 拆成若干子 feature,再一条一条走 feature 流程。直接起 feature 会变成巨型 design 塞不下、拆了又没有追踪抓手。
 
 
-## feature 和 issue 的阶段不可跳
+## 默认快路径，复杂再升级
 
-feature 走 brainstorm(可选) → design → implement → acceptance,issue 走 report → analyze → fix。每个阶段有退出条件,上一个没满足,下一个不开始。
+CodeStable 的默认生命周期是：
 
-AI 最常见的问题是一口气铺几百行代码才让人看——等发现问题已经很难中止。阶段间的人工 checkpoint 就是为了早一步中止。每个 checkpoint 具体检查什么,对应子技能里讲。
+```
+Orient → Change → Check → Close
+```
 
-例外两种:issue 根因一眼确定时走快速通道,跳过 analyze 直接 fix;feature 范围小时走 `cs-feat-ff`,写完 spec 直接进实现。
+小 feature 走 `cs-feat-ff`，小 bug 直接 fix-note，小重构走 `cs-refactor-ff`。升级条件：跨模块、新术语或新能力边界、高风险数据路径、根因不明、多候选方案、公开接口变化、无测试却要求行为等价。
+
+升级后才进入分阶段流程：feature 走 brainstorm(可选) → design → implement → acceptance, issue 走 report → analyze → fix。每个阶段有退出条件,上一个没满足,下一个不开始。
 
 
 ## 进一步参考
 
-- `.codestable/reference/shared-conventions.md` — 目录结构、YAML frontmatter 口径、`{slug}-checklist.yaml` 生命周期、收尾 commit 约定、归档类共享规则
+- `.codestable/reference/shared-conventions.md` — 目录结构、YAML frontmatter 口径、`{slug}-checklist.yaml` 生命周期
+- `.codestable/reference/workflow-conventions.md` — 质量检查、收尾 commit 约定、归档类共享规则、写代码反射检查
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记
 

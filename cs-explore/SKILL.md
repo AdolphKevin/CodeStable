@@ -62,7 +62,7 @@ frontmatter / 正文结构 / 各节写法说明和示例见同目录 `reference.
 
 ### Phase 1.5：查重叠与意图分流（必做）
 
-按 `shared-conventions.md` §6 第 5/6 条执行：
+按 `workflow-conventions.md` §6 第 5/6 条执行：
 
 - 含"更新 / 复查 / 某次 explore / 这个模块之前探过"或指向某份旧 explore → 走**更新或 supersede**。explore 特性：**代码已变导致旧结论失效**时旧文档 `status: outdated` + 新建一份（supersede）；只补证据 / 收紧结论但核心结论未变时走"更新已有"
 - 否则用搜索工具按关键词 / 模块查一遍，命中相近旧 explore 时先读它，能直接回答就告诉用户"已有一份在 {路径}，复用还是重探一遍？"
@@ -89,7 +89,7 @@ frontmatter / 正文结构 / 各节写法说明和示例见同目录 `reference.
 
 - 新建：写入 `.codestable/compound/YYYY-MM-DD-explore-{slug}.md`，frontmatter 带 `doc_type: explore`
 - 更新：写回 Phase 1.5 定位的原文件 + `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条；旧文档 `status: outdated` + `superseded-by`
+- supersede：按 `workflow-conventions.md` §6 第 5 条；旧文档 `status: outdated` + `superseded-by`
 
 ### Phase 5：给出下一步建议
 
@@ -126,7 +126,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ## 守护规则
 
-> 归档类共享规则见 `shared-conventions.md` 第 6 节。本技能特有反模式：
+> 归档类共享规则见 `workflow-conventions.md` 第 6 节。本技能特有反模式：
 
 - 不读代码直接给结论
 - 证据只写"看起来像"不写 file:line

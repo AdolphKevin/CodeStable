@@ -100,7 +100,7 @@ CodeStable models real coding work as **6 entities** and **3 flows**.
 | **Roadmap** | roadmap | "I want a permission system" — too big to throw at AI as a feature; cut it into a roadmap and advance step by step |
 | **Feature** | feature | The actual engineering execution. Human and AI collaborate, jointly responsible for design / implementation / acceptance |
 | **Issue** | issue | The bug list after release. AI and human solve it together |
-| **Knowledge** | compound / attention | The compounding-engineering knowledge base — wrap-up first classifies candidates by future use, then AI routes them to the right sink |
+| **Knowledge** | compound / attention | The compounding-engineering knowledge base — wrap-up only archives candidates with clear reuse value |
 
 ### 3 flows
 
@@ -209,13 +209,13 @@ CodeStable's skills aren't a single linear pipeline — they're **layered + even
 ───────────────────────────────────────────────────────────────────────
 
   ▸ Event: new capability                                  ┌──────────┐
-       cs-feat-design ──▶ cs-feat-impl ──▶ cs-feat-accept  │ features │
-       cs-feat-ff     ──(light lane, skips design/accept)─▶│ /YYYY-…/ │
+       cs-feat-ff     ──(default light path)─────────────▶ │ features │
+       cs-feat-design ──▶ cs-feat-impl ──▶ cs-feat-accept  │ /YYYY-…/ │
                                                             └──────────┘
 
   ▸ Event: fix a defect                                     ┌──────────┐
-       cs-issue-report ──▶ cs-issue-analyze ──▶ cs-issue-fix│  issues  │
-                                                            │ /YYYY-…/ │
+       quick fix-note ──(default light path)──────────────▶ │  issues  │
+       cs-issue-report ──▶ cs-issue-analyze ──▶ cs-issue-fix│ /YYYY-…/ │
                                                             └──────────┘
 
   ▸ Event: code rot (beta)                                  ┌──────────┐
@@ -226,7 +226,7 @@ CodeStable's skills aren't a single linear pipeline — they're **layered + even
                               │
                 ▼ trigger any time something is worth recording ▼
 ═══════════════════════════════════════════════════════════════════════
- Cross-cut · Knowledge capture review (compounding engineering)
+ Cross-cut · Knowledge capture judgment (archive only when useful)
 ───────────────────────────────────────────────────────────────────────
    Auto reminder        ──▶ cs-note   ──▶ codestable/attention.md
    Long-term rule       ──▶ cs-decide ──▶ codestable/compound/YYYY-MM-DD-decision-{slug}.md
@@ -241,8 +241,8 @@ CodeStable's skills aren't a single linear pipeline — they're **layered + even
 **How to read this diagram:**
 
 - **Vertical = layers**, not strict time order — Layer 1 is refreshed repeatedly, Layer 2 is only entered for big needs
-- **Layer 3 is event-driven**: new need → feature flow, bug → issue flow, rot → refactor flow
-- **Cross-cut is the flywheel**: every flow wrap-up first reviews knowledge-capture candidates. Users only confirm whether to keep them; AI routes them to the right executor, and the next round of work reads them back. This is the physical implementation of CodeStable's "compounding"
+- **Layer 3 is event-driven**: new needs default to fastforward, bugs default to quick fix-note, rot defaults to small refactor; complex work upgrades to the standard flow
+- **Cross-cut is the flywheel**: wrap-up only archives knowledge when it clearly prevents repeat pain, must be known at startup, records a decided long-term rule, or is a reusable practice
 
 ---
 

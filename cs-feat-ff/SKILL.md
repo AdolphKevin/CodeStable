@@ -17,6 +17,8 @@ description: feature 流程的超轻量通道——不写 design / checklist 直
 
 ## 动手前先扫一眼 .codestable/
 
+先按 `.codestable/reference/workflow-conventions.md` 第 5 节做最小上下文读取：只读本次改动相关的 attention / architecture / requirements / compound，不做全库扫描。
+
 Glob `.codestable/` 发现可用目录和文档，按需取用：
 
 - **`architecture/`** — ARCHITECTURE.md 总入口 + 子系统 doc。改跨模块的东西前看一眼避免违反边界
@@ -95,7 +97,7 @@ design / implement 的硬约束在 fastforward 的精简版。没 design doc 不
 - 往 `utils.ts` / `helpers.ts` 万能 util 堆东西
 - 新起概念名时先 grep 同名 / 近义命名
 
-完整清单看 `.codestable/reference/shared-conventions.md` 第 7 节。
+完整清单看 `.codestable/reference/workflow-conventions.md` 第 7 节。
 
 ---
 
@@ -137,14 +139,14 @@ tags: [...]
 ## 顺手发现（可选，不阻塞）
 - {文件:行号} {问题简述} — 不在本次范围
 
-## 知识沉淀盘点
+## 知识沉淀判断
 - 自动提醒项：{有 / 无；有则一句话说明}
 - 长期规则项：{有 / 无；有则一句话说明}
 - 可检索经验项：{有 / 无；有则一句话说明}
 - 可复用处方项：{有 / 无；有则一句话说明}
 ```
 
-**写得真的轻**：每节就那么几行，不要把它写成迷你 design / 迷你 acceptance。知识沉淀盘点也只列候选用途，不在 ff-note 里展开背景和理由。这份文档的目标是"半年后有人看 git log 能跳进来 30 秒搞清楚做了啥"，不是替代标准流程。
+**写得真的轻**：每节就那么几行，不要把它写成迷你 design / 迷你 acceptance。知识沉淀默认写"无"；只有下次一定会再踩、每次启动都必须知道、已拍板长期规则、或明确可复用做法才列候选。这份文档的目标是"半年后有人看 git log 能跳进来 30 秒搞清楚做了啥"，不是替代标准流程。
 
 落盘后告诉用户："已写 `{slug}-ff-note.md`，本次 fastforward 闭环。"
 
@@ -181,19 +183,19 @@ tags: [...]
 
 ## 收尾提交
 
-按 `.codestable/reference/shared-conventions.md` 第 4 节"scoped-commit"规则执行。本通道：
+按 `.codestable/reference/workflow-conventions.md` 第 4 节"scoped-commit"规则执行。本通道：
 
 - **提交范围**：本次代码改动 + `{slug}-ff-note.md`
 - ff-note 落盘后告诉用户"已就绪，是否代为 commit？"，用户明确同意才执行
 
-按 `shared-conventions.md` 第 3 节先做轻量"知识沉淀盘点"，再问是否提交（用户"不用"立即跳过）：
+按 `shared-conventions.md` 第 3 节先做轻量"知识沉淀判断"，再问是否提交（用户"不用"立即跳过）：
 
-1. ff-note 的"知识沉淀盘点"有候选 → 先列候选内容和建议用途，再问"这些要保留吗？"用户确认后按内部路由触发对应执行器：
+1. ff-note 的"知识沉淀判断"有满足归档条件的候选 → 先列候选内容和建议用途，再问不确定项是否保留；确认后按内部路由触发对应执行器：
    - 自动提醒项 → `cs-note`
    - 长期规则项 → `cs-decide`
    - 可检索经验项 → `cs-learn`
    - 可复用处方项 → `cs-trick`
-2. ff-note 无候选 → 写"本次 fastforward 无知识沉淀候选"
+2. ff-note 无候选 → 写"本次 fastforward 无沉淀项"
 3. 最后问是否代为 scoped-commit
 
 ---

@@ -37,6 +37,7 @@ your-project/
 │   ├── tools/                            # Shared scripts
 │   └── reference/                        # Shared references
 │       ├── shared-conventions.md
+│       ├── workflow-conventions.md
 │       ├── system-overview.md
 │       └── ...
 └── AGENTS.md
@@ -48,10 +49,10 @@ your-project/
 - `requirements/` and `architecture/` are long-lived archives that only record current state.
 - `roadmap/` is the planning layer for big-need breakdowns and interface contracts.
 - `features/`, `issues/`, and `refactors/` use `YYYY-MM-DD-{slug}/` to bundle one unit of work.
-- Wrap-up first reviews knowledge-capture candidates by future use; users only confirm whether to keep them, and AI routes them to the right executor.
+- Wrap-up only archives knowledge-capture candidates with clear reuse value, then AI routes them to the right executor.
 - `compound/` stores searchable archive docs. learning, trick, decision, and explore are distinguished by the `doc_type` field.
 - `attention.md` is not part of compound; it stores short reminders every CodeStable skill must know at startup.
-- `reference/` is copied by `cs-onboard` from the skill package. To change shared conventions, edit `cs-onboard/reference/` templates.
+- `reference/` is copied by `cs-onboard` from the skill package. To change shared conventions or workflow rules, edit `cs-onboard/reference/` templates.
 
 ## Hard Constraint
 
