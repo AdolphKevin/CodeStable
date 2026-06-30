@@ -71,7 +71,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 ## 三命令入口
 
-`cs plan` / `cs do` / `cs review` 是用户界面，不替代内部技能：
+`cs plan` / `cs do` / `cs review` 是用户界面，不替代内部技能；`cs-plan` / `cs-do` / `cs-review` 是同义薄入口：
 
 | 命令 | 做什么 | 常见内部路由 |
 |---|---|---|

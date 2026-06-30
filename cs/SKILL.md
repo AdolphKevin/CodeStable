@@ -28,7 +28,7 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 | `cs do ...` | 推进当前可执行项 | 找到当前 ready 的 feature / issue / refactor；有 approved design / analysis / checklist 才进入执行，没计划就退回 `plan` |
 | `cs review ...` | 验收、验证、项目级同步和收口 | feature 进验收，issue 做复现验证 + fix-note，refactor 做行为等价验证；然后统一执行 Project Sync |
 
-`cs plan/do/review` 只是统一入口，不新增一套平行流程。用户显式点名 `cs-feat` / `cs-issue` / `cs-refactor` 时仍按原技能走。
+`cs plan/do/review` 只是统一入口，不新增一套平行流程。`cs-plan` / `cs-do` / `cs-review` 是同义薄入口，全部回到这里分诊。用户显式点名 `cs-feat` / `cs-issue` / `cs-refactor` 时仍按原技能走。
 
 ---
 

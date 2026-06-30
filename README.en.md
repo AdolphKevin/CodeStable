@@ -12,7 +12,7 @@ Tired of OpenSpec's flimsiness, Oh-My-OpenAgent's over-engineering, and Superpow
 
 <p>
   <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-29-6366F1?style=flat-square" alt="Skills"/>
+  <img src="https://img.shields.io/badge/skills-32-6366F1?style=flat-square" alt="Skills"/>
   <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
 </p>
 
@@ -39,6 +39,14 @@ For daily use, when you don't know which skill fits, call the root entry:
 ```
 
 `cs` reads your intent and tells you which `cs-xxx` to run.
+
+You can also use the three-command entrypoints:
+
+```bash
+/cs-plan    # plan: turn intent into a spec / root cause / roadmap
+/cs-do      # do: advance the current ready item
+/cs-review  # review: verify + Project Sync + close
+```
 
 ---
 
@@ -116,7 +124,10 @@ CodeStable models real coding work as **6 entities** and **3 flows**.
 
 <table>
 <tr><th>Group</th><th>Skill</th><th>Purpose</th></tr>
-<tr><td><b>Root entry</b></td><td><code>cs</code></td><td>Unified entry — introduces the system and routes open-ended intents to the right skill. Call it when you don't know which one fits</td></tr>
+<tr><td rowspan="4"><b>Root entry</b></td><td><code>cs</code></td><td>Unified entry — introduces the system and routes open-ended intents to the right skill. Call it when you don't know which one fits</td></tr>
+<tr><td><code>cs-plan</code></td><td>Thin three-command entry: plan into a spec / root cause / roadmap</td></tr>
+<tr><td><code>cs-do</code></td><td>Thin three-command entry: execute the current ready feature / issue / refactor</td></tr>
+<tr><td><code>cs-review</code></td><td>Thin three-command entry: verify, Project Sync, and close</td></tr>
 <tr><td><b>Onboard</b></td><td><code>cs-onboard</code></td><td>Bring CodeStable into a new repo or one with scattered docs</td></tr>
 <tr><td rowspan="2"><b>Requirement & architecture</b></td><td><code>cs-req</code></td><td>Curate / accumulate raw requirement docs</td></tr>
 <tr><td><code>cs-arch</code></td><td>Draft or update architecture docs under <code>codestable/architecture/</code></td></tr>
