@@ -110,7 +110,7 @@ Orient → Change → Check → Close
 ## 进一步参考
 
 - `.codestable/reference/shared-conventions.md` — 目录结构、YAML frontmatter 口径、`{slug}-checklist.yaml` 生命周期
-- `.codestable/reference/workflow-conventions.md` — 质量检查、收尾 commit 约定、归档类共享规则、写代码反射检查
+- `.codestable/reference/workflow-conventions.md` — 最小实现纪律、质量检查、收尾 commit 约定、归档类共享规则、写代码反射检查
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记
 

@@ -49,6 +49,8 @@ Glob `.codestable/` 发现可用目录和文档，按需取用：
 
 design / implement 的硬约束在 fastforward 的精简版。没 design doc 不代表可以不讲——这些是让你"直接动手"时不偏向 AI 默认会踩的坑。
 
+先执行 `.codestable/reference/workflow-conventions.md` 第 3 节"最小实现纪律"：能不做就不做，能复用就复用，能用标准库 / 平台能力就不用自定义层。
+
 ### 先想"放在哪儿"再写
 
 30 秒回答：**这次要加的东西在项目结构里属于哪儿？**

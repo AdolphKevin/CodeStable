@@ -105,7 +105,7 @@ CodeStable 把开发活动建模成 **8 个实体 + 1 个维护报告目录 + 3 
 
 ### 小改别升级成标准流程
 
-用户要的是小功能 / 小 bug / 小重构，且范围清楚、影响面小、可用现有测试或手工路径证明 → 默认走 fastforward。不要为了"有记录"强行起 design / checklist / acceptance；轻量 note + 通用质量检查 + scoped commit 就够。
+用户要的是小功能 / 小 bug / 小重构，且范围清楚、影响面小、可用现有测试或手工路径证明 → 默认走 fastforward，并套 `.codestable/reference/workflow-conventions.md` 第 3 节"最小实现纪律"压缩实现范围。不要为了"有记录"强行起 design / checklist / acceptance；轻量 note + 通用质量检查 + scoped commit 就够。
 
 升级条件只有这些：跨 3 个以上子系统、新术语或能力边界、高风险数据路径、根因不明、多候选方案、公开接口变化、无测试却要求行为等价。命中再切标准流程。
 

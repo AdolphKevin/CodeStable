@@ -31,6 +31,8 @@ description: refactor 流程的超轻量通道——直接识别 1-3 条低风�
 
 fastforward 不读完整方法库，但要守住"**每一处改动都能对应到一个经典重构方法**"。AI 心里想不出"我这步是 Extract Function / Memoization / Guard Clauses / ..." 里的哪一个 → 这次不是简单重构退完整流程查方法库。
 
+同时执行 `.codestable/reference/workflow-conventions.md` 第 3 节"最小实现纪律"：能删就删，能用现有代码就复用，不为一次小重构新建抽象层。
+
 常用方法（覆盖 fastforward 80% 场景）：
 
 - **Extract Function**：> 5 行、内聚、能命名的片段 → 抽出独立函数

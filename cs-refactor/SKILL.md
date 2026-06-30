@@ -158,6 +158,8 @@ summary: {本次要做的几条是什么，一句话}
 
 ### 推进规则
 
+先执行 `.codestable/reference/workflow-conventions.md` 第 3 节"最小实现纪律"：能删就删，能复用就复用，不为重构新建没有当前调用方支撑的抽象。
+
 1. **一步一做不批量**——严格按 checklist 顺序，当前步不完成不开下一步
 2. **每步完成走验证**：
    - AI 自证：跑指定测试 / 类型检查 / lint / grep 无残留旧引用。通过了记 apply-notes 继续
@@ -234,3 +236,4 @@ refactor: {YYYY-MM-DD}-{slug}
 - `reference/refusal-routing.md` — scan 前置检查 7 条 + 路由表
 - `reference/methods.md` — 方法库（L1-L4 四层分类）
 - `.codestable/reference/shared-conventions.md` — 跨工作流共享口径
+- `.codestable/reference/workflow-conventions.md` — 最小实现纪律 / 质量检查 / 收尾提交 / 反射检查
