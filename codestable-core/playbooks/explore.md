@@ -1,4 +1,4 @@
-# explore executor reference
+# explore playbook
 
 `explore.plan` 是一次**定向代码探索**，由 `cs-plan` 直接执行。它不是独立 Skill，也不是长期知识写回；长期沉淀只在用户后续通过 `cs-review：记录 explore 结论：...` 时发生。
 
@@ -42,8 +42,10 @@ This keeps exploration execution and durable knowledge writeback separate.
 
 ```text
 Route: explore.plan
+Playbook: codestable-core/playbooks/explore.md#execution-steps
 Reason: <why this is code exploration, not feature/issue/refactor>
 Read: <paths/symbols inspected>
+Evidence: <paths/symbols/tests that support the answer>
 Write-intent: none
 Long-term record candidate: <none | explore record candidate for cs-review>
 Next: stop | review | plan
@@ -66,4 +68,4 @@ Recommended next route: <none or CodeStable route>
 - Do not change code during exploration.
 - Do not create feature/issue/refactor artifacts unless the user asks to continue into that workflow.
 - Do not write long-term compound entries from `cs-plan`; hand durable explore persistence to a later `cs-review：记录 explore 结论：...` request.
-- Do not treat long-term knowledge writeback as the executor for exploration; it is only a later persistence decision.
+- Do not treat long-term knowledge writeback as the implementation of exploration; it is only a later persistence decision.

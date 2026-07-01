@@ -1,6 +1,6 @@
 # CodeStable 维护者说明
 
-本文件由 the onboard executor reference 复制到项目的 `.codestable/reference/maintainer-notes.md`。维护 CodeStable 技能家族时需要反复查阅、但不适合放在各子技能正文里的说明。
+本文件由 onboard playbook 复制到项目的 `.codestable/reference/maintainer-notes.md`。维护 CodeStable 技能家族时需要反复查阅、但不适合放在各子技能正文里的说明。
 
 ---
 

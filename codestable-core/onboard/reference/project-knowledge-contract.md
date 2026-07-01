@@ -3,71 +3,102 @@
 
 Use this map first, then open only the section needed:
 
-- Read contract for every CodeStable entry
-- Index files and detail files
-- Plan-time read path
-- Do-time read path
-- Review-time writeback path
-- Freshness and drift rules
+- Knowledge layers
+- Startup read contract
+- Code inventory contract
+- Plan contract
+- Do contract
+- Review/writeback contract
+- Doc-sweep contract
+- Freshness rules
 
-## Read contract for every CodeStable entry
+## Knowledge layers
 
-Every `cs-plan`, `cs-do`, and `cs-review` run starts with:
+Project knowledge is layered. Keep facts close to their authority:
 
-1. Read `.codestable/INDEX.md`.
-2. Read `.codestable/attention.md`.
-3. Read this file when index/update behavior matters.
-4. Use index files to decide which detailed documents to open.
+```text
+.codestable/INDEX.md                 # root index, summaries and links only
+.codestable/attention.md             # short always-read warnings
+.codestable/reference/code-inventory.* # current repo implementation inventory
+.codestable/architecture/            # current structural facts with code anchors
+.codestable/requirements/            # current user/system capability facts
+.codestable/roadmap/                 # planning state
+.codestable/compound/                # decisions, learnings, tricks, explore records
+.codestable/doc-sweeps/              # doc lifecycle reports
+```
 
-Do not full-scan `.codestable/architecture/`, `.codestable/requirements/`, or `.codestable/compound/` unless the user asks for an audit/doc-sweep.
+`INDEX.md` points to where facts live; it must not become a dumping ground.
 
-## Index files and detail files
+## Startup read contract
 
-| Layer | Index | Detail files |
-|---|---|---|
-| Requirements | `.codestable/requirements/VISION.md` | `.codestable/requirements/{slug}.md` |
-| Architecture | `.codestable/architecture/ARCHITECTURE.md` | `.codestable/architecture/{type}-{slug}.md` or grouped subdirs |
-| Roadmap | `.codestable/roadmap/{slug}/{slug}-roadmap.md` | `{slug}-items.yaml`, child feature docs |
-| Compound | `.codestable/compound/INDEX.md` | `.codestable/compound/YYYY-MM-DD-{doc_type}-{slug}.md` |
-| Attention | `.codestable/attention.md` | optional links to compound / architecture docs |
+Every CodeStable entry starts with:
 
-Indexes contain summaries and links, not long explanations. Detailed documents contain durable facts, evidence, and change notes.
+1. `.codestable/INDEX.md`
+2. `.codestable/attention.md`
+3. `.codestable/reference/project-knowledge-contract.md`
+4. `.codestable/reference/code-inventory.md` only when route/context requires current implementation map
+5. Specific architecture / requirements / compound / roadmap docs only after the index says they are relevant
 
-## Plan-time read path
+Do not full-scan `.codestable/architecture/`, `.codestable/requirements/`, or `.codestable/compound/` unless the user asks for audit/doc-sweep/refresh.
 
-`cs-plan` should:
+## Code inventory contract
 
-1. Read `.codestable/INDEX.md` and `.codestable/attention.md`.
-2. Identify the likely route.
-3. Read only the relevant index layer: requirements, architecture, compound, or roadmap.
-4. Open detailed docs only when an index entry names a module, capability, decision, pitfall, or roadmap item that may constrain the plan.
-5. Mention conflicts or outdated knowledge in `Reason` and route to `ask-user` when the current source of truth is ambiguous.
+`code-inventory.json` and `code-inventory.md` are generated during onboard and refresh. They are not product truth; they are a map to current code anchors.
 
-## Do-time read path
+Refresh inventory when:
 
-`cs-do` should:
+- onboarding a repo for the first time;
+- user says “根据当前实现重新整理 .codestable”;
+- doc-sweep is requested;
+- route/debug output suggests indexes are stale;
+- a major directory/framework/test setup changed.
 
-1. Read the current feature/issue/refactor artifact first.
-2. Read `.codestable/INDEX.md` and `.codestable/attention.md`.
-3. Use indexes to open only the detailed docs that constrain implementation.
-4. If code evidence contradicts an index, do not silently fix docs during implementation; finish or stop and leave Project Sync for `cs-review`.
+Inventory updates are safe because they are generated facts. Architecture/requirements updates still need careful evidence and index sync.
 
-## Review-time writeback path
+## Plan contract
+
+`cs-plan` must:
+
+- read root index + attention before planning;
+- use code inventory or targeted code reads when project facts are missing or suspect;
+- route to `onboard.refresh-knowledge` when `.codestable` is placeholder-heavy or stale;
+- output `Playbook` and `Evidence` so route decisions are debuggable;
+- avoid writing durable facts except through onboard initialization/refresh artifacts.
+
+## Do contract
+
+`cs-do` must:
+
+- read current plan/artifact plus root index + attention;
+- read only the specific project facts that constrain implementation;
+- prefer current code over stale docs when executing, but report conflicts;
+- not opportunistically rewrite architecture/requirements/compound docs;
+- leave durable knowledge freshness to `cs-review`.
+
+## Review/writeback contract
 
 `cs-review` owns durable knowledge freshness:
 
-1. Verify the change or manual source.
-2. Update detailed current-fact docs first.
-3. Update the corresponding index in the same turn.
-4. Update `.codestable/INDEX.md` when a new major capability/module/decision/roadmap appears, is renamed, or becomes outdated.
-5. Report `Index Sync` with yes/no for root, architecture, requirements, compound, and roadmap indexes.
+1. Verify code/diff/checks or manual source.
+2. Write/update the concrete detail doc first.
+3. Update the corresponding index.
+4. Update `.codestable/INDEX.md` only when top-level summary/link/status changed.
+5. Output `Writeback Matrix` and `Index Sync`.
 
-If an index would only duplicate unchanged text, write `Index Sync: no-change` and explain why.
+## Doc-sweep contract
 
-## Freshness and drift rules
+Doc-sweep is code-grounded lifecycle maintenance:
 
-- Do not let an index point to a missing or superseded detail file without marking it.
-- Do not update an index without updating or verifying the linked detail file.
-- Do not write future plans as current architecture.
-- Do not use generic notes; classify durable knowledge as attention, decision, learning, trick, explore, guide, or libdoc.
-- Prefer small index entries with strong links over large summaries that will drift.
+- refresh/read code inventory first;
+- compare document claims against current code anchors and current indexes;
+- write a sweep report by default;
+- classify stale docs instead of deleting them;
+- require explicit confirmation for deletion/archive operations.
+
+## Freshness rules
+
+- Prefer current code/manifests/tests over old docs for factual claims.
+- Prefer accepted review artifacts over draft plans.
+- Mark unverified or conflicting facts; do not silently rewrite history.
+- Every new durable fact needs a source path, code anchor, or user decision.
+- Every stale finding needs an evidence path and a recommended action.

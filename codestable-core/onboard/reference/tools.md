@@ -67,7 +67,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter tags
 
 # 按时间排序
 python .codestable/tools/search-yaml.py --dir .codestable/compound --sort-by date --order desc                     # 最近归档的在前
-python .codestable/tools/search-yaml.py --dir .codestable/library-docs --sort-by last_reviewed --order asc         # 最久没 review 的在前（找陈旧文档）
+python .codestable/tools/scan-codestable-docs.py --root .codestable --json .codestable/doc-sweeps/doc-inventory.json  # 文档熵减前生成库存
 python .codestable/tools/search-yaml.py --dir .codestable/guides --filter status=current --sort-by last_reviewed --order asc
 ```
 
@@ -78,7 +78,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/guides --filter status
 | feature-design 开始前查已有归档 | 搜 `.codestable/compound` 目录，按 `--query "{关键词}"` 全文搜；要分类看就加 `--filter "doc_type=learning\|trick\|decision\|explore"` |
 | issue-analyze 根因分析前查历史 | 搜 `.codestable/compound` `--filter doc_type=learning --filter track=pitfall`、再搜 `--filter doc_type=trick --filter type=library`，按相关组件/框架过滤 |
 | 归档落盘后查重叠 | 搜 `.codestable/compound --query "{关键词}" --json`，看有无语义重叠 |
-| doc-sweep 查旧 spec | anchor 模式用 `--query "{关键词}" --json` 找候选；project 模式分别导出 features / issues / refactors 全量 JSON 后聚类 |
+| doc-sweep 查旧 spec | 先用 `scan-codestable-docs.py` 建库存，再用 current code inventory 给每个候选补证据 |
 | 新人了解项目规约 | `--dir .codestable/compound --filter doc_type=decision --filter status=active` |
 | 按技术栈浏览技巧 | `--dir .codestable/compound --filter doc_type=trick --filter language={语言} --filter status=active` |
 | 找最久没 review 的库文档 / 指南 | `--dir {目录} --filter status=current --sort-by last_reviewed --order asc` |
@@ -100,3 +100,26 @@ python .codestable/tools/validate-yaml.py --file {文件路径} --require doc_ty
 # 批量校验目录下所有文件
 python .codestable/tools/validate-yaml.py --dir {目录} --require doc_type --require status
 ```
+
+
+## Code inventory tools
+
+### `scan-project.py`
+
+Use during onboard, refresh, and doc-sweep:
+
+```bash
+python .codestable/tools/scan-project.py --root . --json .codestable/reference/code-inventory.json --markdown .codestable/reference/code-inventory.md
+```
+
+It records observable manifests, commands, entrypoints, tests, route/API hints, schema/model hints, and top modules. It does not claim business truth.
+
+### `scan-codestable-docs.py`
+
+Use during doc-sweep to inventory CodeStable docs before classification:
+
+```bash
+python .codestable/tools/scan-codestable-docs.py --root .codestable --json .codestable/doc-sweeps/doc-inventory.json
+```
+
+It excludes `.codestable/reference/` and `.codestable/tools/` by default so runtime assets are not mixed with project lifecycle docs.

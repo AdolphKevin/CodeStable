@@ -12,7 +12,7 @@ Use this map first, then open only the section needed for the current route:
 
 ## 0. 目录结构与路径命名
 
-onboard 完成后骨架（the onboard executor reference 负责搭建）：
+onboard 完成后骨架（onboard playbook 负责搭建）：
 
 ```
 .codestable/
@@ -20,12 +20,12 @@ onboard 完成后骨架（the onboard executor reference 负责搭建）：
 ├── attention.md           CodeStable 技能启动必读的短硬约束
 ├── requirements/          能力愿景层（"用户需要什么、系统提供什么能力来满足"，过去/现在/未来）
 │   ├── VISION.md           中心索引（按 status 分组，每条带 pitch 一句话）
-│   └── {slug}.md           一个能力一份，扁平（project-sync workflow 产出）
+│   └── {slug}.md           一个能力一份，扁平（project-sync playbook 产出）
 ├── architecture/          架构中心目录（"用什么结构实现"，只记现状）
 │   ├── ARCHITECTURE.md    总入口（索引 + 关键架构决定）
-│   └── {type}-{slug}.md   子系统 / 模块 doc（project-sync workflow 产出）
+│   └── {type}-{slug}.md   子系统 / 模块 doc（project-sync playbook 产出）
 ├── roadmap/               规划层（"接下来怎么做这块大需求 + 模块怎么切 + 接口怎么定"）
-│   └── {slug}/            一个大需求一个子目录（roadmap workflow 产出）
+│   └── {slug}/            一个大需求一个子目录（roadmap playbook 产出）
 │       ├── {slug}-roadmap.md   主文档：背景 / 范围 / 模块拆分 / 接口契约 / 子 feature 清单 / 排期
 │       ├── {slug}-items.yaml   机器可读子 feature 清单，acceptance 回写状态
 │       └── drafts/             可选
@@ -50,18 +50,22 @@ onboard 完成后骨架（the onboard executor reference 负责搭建）：
 │       ├── {slug}-checklist.yaml
 │       ├── {slug}-apply-notes.md
 │       └── {slug}-doc-sweep.md  （可选，手动 anchor sweep 产物）
-├── doc-sweeps/            全项目文档熵维护报告（project-sync workflow 手动 project 模式）
+├── doc-sweeps/            全项目文档熵维护报告（project-sync playbook 手动 project 模式）
 │   └── YYYY-MM-DD-{slug}/
 │       └── index.md
 ├── compound/              沉淀类文档统一目录
 │   ├── INDEX.md            长期知识索引
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │                          doc_type ∈ {learning, trick, decision, explore}
-├── brainstorm/            brainstorm 阶段 spike 实验代码区（由 cs-plan 路由、feature workflow 临时产出）
+├── brainstorm/            brainstorm 阶段 spike 实验代码区（由 cs-plan 路由、feature playbook 临时产出）
 │   └── {slug}/            一次 spike 一个子目录，文件名随意
 │                          验完不强制清理，结论回写到对应 brainstorm note
 ├── tools/                 跨工作流共享脚本（onboard 从技能包释放）
+│   ├── scan-project.py     当前代码库存生成工具
+│   └── scan-codestable-docs.py 文档熵减库存工具
 └── reference/             共享参考文档（onboard 从技能包释放）
+    ├── code-inventory.json 当前代码库存（机器可读）
+    └── code-inventory.md   当前代码库存（人类可读）
 ```
 
 ### 命名规则
@@ -84,7 +88,7 @@ onboard 完成后骨架（the onboard executor reference 负责搭建）：
 
 **只升不降**：删到 ≤5 份也不折回平铺。
 
-**触发时谁负责**：the project-sync workflow 的 `backfill` / `update` 模式在 Phase 6 落盘前主动检查并搬迁；命中阈值时这次操作要把"本次新加 / 改的 + 已有同类全部"一起搬，并同步改 `ARCHITECTURE.md` 链接（搬迁本身要在 Phase 5 给用户 review，不偷偷做）。`check` 模式不主动搬迁，但发现 ≥6 仍平铺时在报告末尾列为观察项。
+**触发时谁负责**：project-sync playbook 的 `backfill` / `update` 模式在 Phase 6 落盘前主动检查并搬迁；命中阈值时这次操作要把"本次新加 / 改的 + 已有同类全部"一起搬，并同步改 `ARCHITECTURE.md` 链接（搬迁本身要在 Phase 5 给用户 review，不偷偷做）。`check` 模式不主动搬迁，但发现 ≥6 仍平铺时在报告末尾列为观察项。
 
 ### 改目录结构
 
@@ -113,7 +117,7 @@ onboard 完成后骨架（the onboard executor reference 负责搭建）：
 
 ### action spec 生命周期标记
 
-feature / issue / refactor 的 `status` 表示原工作流阶段，**不表示当前设计有效性**。用户手动触发 the project-sync workflow 后，旧 spec 被当前有效文档覆盖或推翻时，补生命周期字段：
+feature / issue / refactor 的 `status` 表示原工作流阶段，**不表示当前设计有效性**。用户手动触发 project-sync playbook 后，旧 spec 被当前有效文档覆盖或推翻时，补生命周期字段：
 
 - `lifecycle: absorbed`：旧文档说的是同一需求 / 问题，已被新锚点完整覆盖
 - `lifecycle: superseded`：旧文档的设计 / 修法 / 重构方案已被新锚点推翻
@@ -128,8 +132,8 @@ feature / issue / refactor 的 `status` 表示原工作流阶段，**不表示�
 ## 2. {slug}-checklist.yaml 生命周期
 
 - 是 feature 工作流的唯一执行清单
-- 由 the feature workflow 在 design 确认通过后一次生成 `steps` + `checks`
-- `feature.fastforward` **不生成** checklist（也不写 design / acceptance），是跳过 spec 流程直接写代码的超轻量通道；唯一留下的痕迹是动手后回写的 `{slug}-ff-note.md`（轻量回顾，参与 scoped-commit、可被 project-sync workflow backfill 检索到）
+- 由 the feature playbook 在 design 确认通过后一次生成 `steps` + `checks`
+- `feature.fastforward` **不生成** checklist（也不写 design / acceptance），是跳过 spec 流程直接写代码的超轻量通道；唯一留下的痕迹是动手后回写的 `{slug}-ff-note.md`（轻量回顾，参与 scoped-commit、可被 project-sync playbook backfill 检索到）
 - checklist 是标准 feature 的**默认唯一证据载体**。不要再默认创建 `{slug}-implementation-evidence.md`；只有触发条件复杂、predicate 风险高、或用户明确要求独立证明材料时才建。
 
 `steps` 的粒度是 **编排-计算分离维度的切片策略**——按"先编排骨架、后计算节点、最后持久化与测试"写（最简 Workflow 先行 → 逐个节点填充），**不下沉到 file:line / 函数级**。具体改哪个文件由 implement 阶段决定。
@@ -159,16 +163,16 @@ feature / issue / refactor 的 `status` 表示原工作流阶段，**不表示�
 **items.yaml 状态机**：
 
 ```
-planned  → in-progress  （feature workflow 开始实现时改）
+planned  → in-progress  （feature playbook 开始实现时改）
 in-progress → done      （cs-review Project Sync 验收通过后改）
-planned  → dropped      （roadmap workflow update 模式，用户决定不做时改）
+planned  → dropped      （roadmap playbook update 模式，用户决定不做时改）
 ```
 
 `done` / `dropped` 是终态。需要回退重做的新加一条 slug 略改的条目，不改终态。
 
-**roadmap workflow 的职责**：生成和维护 roadmap 主文档 + items.yaml；把 `planned` 改 `dropped`（用户放弃时）；不改 `in-progress` / `done`。
+**roadmap playbook 的职责**：生成和维护 roadmap 主文档 + items.yaml；把 `planned` 改 `dropped`（用户放弃时）；不改 `in-progress` / `done`。
 
-**feature workflow 的职责**（从 roadmap 起头时）：
+**feature playbook 的职责**（从 roadmap 起头时）：
 
 1. design.md frontmatter 加 `roadmap: {roadmap-slug}` + `roadmap_item: {子 feature slug}`
 2. items.yaml 对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`
@@ -199,7 +203,7 @@ feature-acceptance / issue-fix / feature-ff 收尾时做一次轻量知识沉淀
 | 候选 | 判据 | 内部路由 |
 |---|---|---|
 | 自动提醒项 | 每次 CodeStable 会话开始都必须知道，且一两句话能讲清 | the knowledge-sync workflow 写入 `.codestable/attention.md` |
-| 长期规则项 | 以后做类似工作必须遵守的规约、约束、选型或架构决定 | the knowledge-sync workflow 归档，必要时后续由 the project-sync workflow 引用 |
+| 长期规则项 | 以后做类似工作必须遵守的规约、约束、选型或架构决定 | the knowledge-sync workflow 归档，必要时后续由 project-sync playbook 引用 |
 | 可检索经验项 | 一次踩坑、失败尝试、调试路径或经验回顾，未来搜到就够 | the knowledge-sync workflow 归档 |
 | 可复用处方项 | "以后做 X 就这样做"的可复用技巧、库用法或技术处方 | the knowledge-sync workflow 归档 |
 

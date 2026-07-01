@@ -12,22 +12,22 @@
 | `cs-do` | 推进当前 ready 的实现、修复或重构；没有 ready 输入就退回 plan |
 | `cs-review` | 验证结果、Project Sync、状态收口和提交前范围确认 |
 
-## 内部工程纪律：reference，不是 Skill
+## 共享工程纪律：playbook，不是 Skill
 
-内部执行器不以 `SKILL.md` 形式存在，而是由三入口读取自身包内 reference，并在 onboard 后通过 `.codestable/reference/` 共享项目口径。
+共享工程纪律不以 `SKILL.md` 形式存在，而是由三入口读取包内 playbook，并在 onboard 后通过 `.codestable/reference/` 共享项目口径。
 
-| Reference | 负责内容 |
+| Playbook | 负责内容 |
 |---|---|
-| onboard executor reference | 初始化或修复 `.codestable/` 骨架、reference、tools |
-| feature workflow reference | feature brainstorm / fastforward / design / checklist / implement / acceptance |
-| issue workflow reference | bug report / root-cause analysis / quickfix / standard fix / fix-note |
-| refactor workflow reference | fastforward refactor / standard scan-design-apply / behavior equivalence |
-| roadmap workflow reference | 大需求拆解、roadmap 主文档、items.yaml 子 feature 清单 |
-| project-sync workflow reference | architecture / requirements / roadmap / audit / doc-sweep 同步 |
-| knowledge-sync workflow reference | attention / decision / learning / trick / explore / guide / libdoc 沉淀 |
-| explore executor reference | 定向代码探索，由 `cs-plan` 直接执行 |
+| onboard playbook | 初始化或修复 `.codestable/` 骨架、reference、tools |
+| feature playbook | feature brainstorm / fastforward / design / checklist / implement / acceptance |
+| issue playbook | bug report / root-cause analysis / quickfix / standard fix / fix-note |
+| refactor playbook | fastforward refactor / standard scan-design-apply / behavior equivalence |
+| roadmap playbook | 大需求拆解、roadmap 主文档、items.yaml 子 feature 清单 |
+| project-sync playbook | architecture / requirements / roadmap / audit / doc-sweep 同步 |
+| knowledge-sync playbook | attention / decision / learning / trick / explore / guide / libdoc 沉淀 |
+| explore playbook | 定向代码探索，由 `cs-plan` 直接执行 |
 
-旧阶段型 Skill 名称不再作为可发现 Skill 存在；其工程纪律已合并到上面的 runtime references。
+工程纪律已收敛到上面的 runtime playbooks；用户只需要三入口。
 
 ## 独立 utility Skill
 
@@ -37,17 +37,17 @@
 
 | 场景 | 入口 route | Runtime authority |
 |---|---|---|
-| 仓库未接入 / 骨架缺失 | `onboard.required` / `onboard.repair` | onboard executor reference |
-| 只做代码理解，不改代码 | `explore.plan` | explore executor reference |
-| 想法模糊但可能是功能 | `feature.brainstorm` | feature workflow reference |
-| 小功能 | `feature.fastforward.*` | feature workflow reference |
-| 标准功能 | `feature.standard.*` | feature workflow reference |
-| 大需求 / 平台能力 | `roadmap.plan` | roadmap workflow reference |
-| 根因明确 bug | `issue.quickfix.*` | issue workflow reference |
-| 根因不明 bug | `issue.standard.*` | issue workflow reference |
-| 小重构 | `refactor.fastforward.*` | refactor workflow reference |
-| 标准重构 | `refactor.standard.*` | refactor workflow reference |
-| 验收后的项目事实同步 | Project Sync matrix | project-sync / knowledge-sync references |
+| 仓库未接入 / 骨架缺失 | `onboard.required` / `onboard.repair` | onboard playbook |
+| 只做代码理解，不改代码 | `explore.plan` | explore playbook |
+| 想法模糊但可能是功能 | `feature.brainstorm` | feature playbook |
+| 小功能 | `feature.fastforward.*` | feature playbook |
+| 标准功能 | `feature.standard.*` | feature playbook |
+| 大需求 / 平台能力 | `roadmap.plan` | roadmap playbook |
+| 根因明确 bug | `issue.quickfix.*` | issue playbook |
+| 根因不明 bug | `issue.standard.*` | issue playbook |
+| 小重构 | `refactor.fastforward.*` | refactor playbook |
+| 标准重构 | `refactor.standard.*` | refactor playbook |
+| 验收后的项目事实同步 | Project Sync matrix | project-sync / knowledge-sync playbooks |
 
 ## 文档分层
 

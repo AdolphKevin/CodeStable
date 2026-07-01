@@ -25,7 +25,7 @@ Usage examples:
   python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_type=learning --filter track=knowledge --json
 
   # Sort by a frontmatter date field (works on any ISO-8601 date string, YAML date, or sortable value)
-  python .codestable/tools/search-yaml.py --dir .codestable/library-docs --sort-by last_reviewed --order asc   # oldest first (stalest)
+  python .codestable/tools/scan-codestable-docs.py --root .codestable --json .codestable/doc-sweeps/doc-inventory.json  # doc inventory before sweep
   python .codestable/tools/search-yaml.py --dir .codestable/compound --sort-by date --order desc              # newest first
 
   # Works on any yaml-frontmatter markdown directory

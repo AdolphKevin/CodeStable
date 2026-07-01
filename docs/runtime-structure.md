@@ -1,77 +1,60 @@
 # CodeStable 运行时结构
 
-首次通过 `cs-plan` 的 onboard 路由后，会在你的项目根下生成一个 `.codestable/` 目录。这是 CodeStable 所有产物的聚合根，也是三个 CodeStable 入口在项目里唯一会读写的工作区。初始化、修复和检查骨架都通过 `cs-plan` 执行，不需要单独的 onboard Skill。
+首次通过 `cs-plan` onboard 后，项目根下会生成 `.codestable/`。它是 CodeStable 所有产物的聚合根，也是三个 CodeStable 入口在项目里读写长期知识的唯一工作区。
 
 ```text
-你的项目/
-├── .codestable/
-│   ├── INDEX.md                           # 项目知识总索引，三入口启动后先读
-│   ├── requirements/                     # 需求实体
-│   │   ├── VISION.md                       # 能力/需求索引
-│   │   └── {slug}.md
-│   ├── architecture/                     # 架构实体
-│   │   ├── ARCHITECTURE.md
-│   │   └── {type}-{slug}.md
-│   ├── roadmap/                          # 大需求规划
-│   │   └── {slug}/
-│   │       ├── {slug}-roadmap.md
-│   │       ├── {slug}-items.yaml
-│   │       └── drafts/
-│   ├── features/                         # 特性流程
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-brainstorm.md
-│   │       ├── {slug}-design.md
-│   │       ├── {slug}-checklist.yaml
-│   │       └── {slug}-acceptance.md
-│   ├── issues/                           # 问题流程
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-report.md
-│   │       ├── {slug}-analysis.md
-│   │       └── {slug}-fix-note.md
-│   ├── refactors/                        # 重构流程
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-scan.md
-│   │       ├── {slug}-refactor-design.md
-│   │       ├── {slug}-checklist.yaml
-│   │       └── {slug}-apply-notes.md
-│   ├── compound/                         # 可检索经验 / 长期规则 / 可复用处方
-│   │   ├── INDEX.md                       # 长期知识索引
-│   │   └── YYYY-MM-DD-{doc_type}-{slug}.md
-│   ├── tools/                            # 共享脚本
-│   └── reference/                        # 共享参考文档
-│       ├── shared-conventions.md
-│       ├── workflow-conventions.md
-│       ├── system-overview.md
-│       └── ...
+.codestable/
+├── INDEX.md                           # 项目知识总索引，三入口先读
+├── attention.md                       # 每次启动必读短提醒
+├── requirements/
+│   ├── VISION.md                       # 能力/需求索引
+│   └── {slug}.md
+├── architecture/
+│   ├── ARCHITECTURE.md                 # 架构索引
+│   └── {type}-{slug}.md
+├── roadmap/
+├── features/
+├── issues/
+├── refactors/
+├── doc-sweeps/                         # 文档熵减报告
+├── compound/
+│   ├── INDEX.md
+│   └── YYYY-MM-DD-{doc_type}-{slug}.md
+├── tools/
+│   ├── scan-project.py
+│   ├── scan-codestable-docs.py
+│   └── ...
+└── reference/
+    ├── project-knowledge-contract.md
+    ├── code-inventory.json
+    ├── code-inventory.md
+    ├── shared-conventions.md
+    ├── workflow-conventions.md
+    ├── system-overview.md
+    └── ...
 ```
 
-## 显式记录入口
+## 知识新鲜度
 
-- 记录 architecture / requirements / roadmap 状态：使用 `cs-review：记录 architecture/requirements/roadmap：...`。
-- 记录 decision / learning / trick / explore / attention：使用 `cs-review：记录 decision/learning/trick/explore/attention：...`；通用 note 必须先归类。
-- 这些操作会进入 `project-sync.manual` 或 `knowledge-sync.manual`，仍需来源和证据，不会凭空写长期文档。
-
-## 要点
-
-- 所有产物都聚在 `.codestable/` 下，让历史 feature、bug 和决策容易检索。
-- `requirements/` 和 `architecture/` 是长效档案，只记现状。
-- `roadmap/` 是规划层，用于大需求拆解和接口契约。
-- `features/`、`issues/`、`refactors/` 用 `YYYY-MM-DD-{slug}/` 聚合单次工作。
-- `compound/` 保存可检索的归档文档，learning、trick、decision、explore 通过 `doc_type` 字段区分。
-- `attention.md` 不属于 compound，它保存每次 CodeStable 技能启动都必须知道的短提醒。
-- `.codestable/INDEX.md` 是每次 Plan/Do/Review 的项目知识总入口；索引只放摘要和链接，具体事实在 architecture / requirements / roadmap / compound 文档。
-- `reference/` 和 `tools/` 由 `cs-plan` 的 onboard 路径从 `codestable-core/onboard/` 复制到项目。
-
-## 硬约束
-
-CodeStable runtime 把共享 executor reference 放在包级 `codestable-core/`，而不是复制到多个 Skill 目录。不要在一个 Skill 里依赖另一个 Skill 目录中的 reference；需要共享的规则只放 `codestable-core/` 一份。
-
-跨入口共享项目事实必须走工作项目这一层：`cs-plan` onboard 释放 `.codestable/INDEX.md` 和 `.codestable/reference/`，之后三入口先读索引，再按需读具体文档。
-
+- `INDEX.md`：只放摘要和链接，不写长事实。
+- `code-inventory.*`：当前代码地图，onboard/refresh/doc-sweep 时刷新。
+- `ARCHITECTURE.md`：当前结构事实，必须有代码锚点或已验收 diff。
+- `VISION.md`：用户/系统能力索引，onboard 推断项要标 `inferred`。
+- `compound/`：decision、learning、trick、explore 等可复用知识。
+- `doc-sweeps/`：旧文档 lifecycle 报告，不默认删除。
 
 ## 维护入口归属
 
-- `.codestable/` 初始化、修复和 reference/tools 刷新：通过 `cs-plan` 的 `onboard.required` / `onboard.repair` 完成。
-- `.codestable/architecture/` 与 `.codestable/requirements/`：通过 `cs-review` 的 `project-sync.manual` 或验收后的 Project Sync 更新。
-- `.codestable/compound/`、`.codestable/attention.md`、guide/libdoc：通过 `cs-review` 显式记录或验收后的长期知识同步更新。
-- 普通 `cs-do` 不负责创建长期文档；它只记录执行证据并把收口交给 `cs-review`。
+- 初始化、修复、刷新 `.codestable/`：`cs-plan` 的 `onboard.required` / `onboard.repair` / `onboard.refresh-knowledge`。
+- 执行代码改动：`cs-do`，不顺手改长期事实。
+- 长期事实、索引和文档熵减：`cs-review`。
+
+## Runtime playbook
+
+共享工程纪律只放在包级：
+
+```text
+codestable-core/playbooks/*.md
+```
+
+不要把同一规则复制到多个 Skill 目录；需要调试时看三入口输出的 `Playbook:` 字段。

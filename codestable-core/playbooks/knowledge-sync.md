@@ -1,4 +1,4 @@
-# Knowledge Sync reference
+# Knowledge Sync playbook
 ## Document map
 
 Use this map first, then open only the section needed for the current route:
@@ -210,7 +210,7 @@ Entry sections:
 
 ## Project Sync coordination
 
-`cs-review` owns the unified matrix. The knowledge-sync workflow reference handles compound/attention/guide/libdoc entries when the matrix says yes or when `knowledge-sync.manual` is routed explicitly. It should report paths updated and reasons for skipped candidates.
+`cs-review` owns the unified matrix. The knowledge-sync playbook handles compound/attention/guide/libdoc entries when the matrix says yes or when `knowledge-sync.manual` is routed explicitly. It should report paths updated and reasons for skipped candidates.
 
 ## Index maintenance contract
 

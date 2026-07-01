@@ -1,102 +1,129 @@
-# onboard 参考模板
-
-本文件提供 the onboard executor reference 使用的骨架模板。
-
+# Onboard reference templates
 ## Document map
 
-Use this map first, then open only the template needed:
+Use these templates when `cs-plan` runs onboard. They are code-informed templates, not empty skeletons:
 
-- `.codestable/INDEX.md` 项目知识总索引模板
-- `.codestable/architecture/ARCHITECTURE.md` 占位模板
-- `.codestable/requirements/VISION.md` 能力索引模板
-- `.codestable/compound/INDEX.md` 长期知识索引模板
-- `.codestable/attention.md` 最小模板
+- `.codestable/INDEX.md`
+- `.codestable/architecture/ARCHITECTURE.md`
+- `.codestable/requirements/VISION.md`
+- `.codestable/compound/INDEX.md`
+- `.codestable/attention.md`
 
+## Template rules
 
-## 0. `.codestable/INDEX.md` 项目知识总索引模板
+Replace every `{...}` placeholder with observed facts or `unknown`. Do not leave generic “待补充” when the repo has code evidence. Use the confidence vocabulary: `observed`, `documented`, `inferred`, `unknown`.
+
+## `.codestable/INDEX.md`
 
 ```markdown
 # CodeStable Project Index
 
-> 状态：骨架（待填充）
-> 创建日期：YYYY-MM-DD
-> 维护规则：索引只放摘要和链接；具体事实写入对应 architecture / requirements / roadmap / compound 文档。
+> 状态：code-informed
+> 创建/刷新日期：YYYY-MM-DD
+> 维护规则：索引只放摘要和链接；具体事实写入 architecture / requirements / roadmap / compound。
 
 ## 启动必读
 
 - Attention: `attention.md`
 - Knowledge contract: `reference/project-knowledge-contract.md`
-- System overview: `reference/system-overview.md`
+- Code inventory: `reference/code-inventory.md` / `reference/code-inventory.json`
 - Workflow conventions: `reference/workflow-conventions.md`
 
 ## 当前项目概览
 
-- 项目简介：待补充
-- 主要技术栈：待补充
-- 关键入口：待补充
+- 项目简介：{from README or unknown}
+- 主要技术栈：{observed stack hints from manifests}
+- 包管理/构建：{observed package manager and key manifests}
+- 关键入口：{observed app entrypoints, routes, CLIs, services}
+- 测试入口：{observed test dirs and commands}
 
-## 知识索引
+## 代码实况索引
 
-| 类别 | 索引入口 | 何时打开具体文档 |
-|---|---|---|
-| Requirements | `requirements/VISION.md` | 需求、能力边界、用户可见行为变化时 |
-| Architecture | `architecture/ARCHITECTURE.md` | 模块边界、数据流、API、配置、主流程相关时 |
-| Roadmap | `roadmap/` | 大需求、阶段拆解、子 feature 状态相关时 |
-| Compound knowledge | `compound/INDEX.md` | 决策、踩坑、技巧、探索结论可能影响当前工作时 |
+| 主题 | 当前摘要 | 证据锚点 | 何时打开 |
+|---|---|---|---|
+| Architecture | 见 `architecture/ARCHITECTURE.md` | `{code anchors}` | 模块边界、数据流、API、配置、主流程相关时 |
+| Requirements | 见 `requirements/VISION.md` | `{README/routes/UI anchors}` | 用户可见能力、业务规则、成功标准变化时 |
+| Code inventory | 见 `reference/code-inventory.md` | `reference/code-inventory.json` | 不确定入口/模块/命令时 |
+| Compound knowledge | 见 `compound/INDEX.md` | `{none initially}` | 决策、踩坑、技巧、探索结论影响当前工作时 |
 
 ## 当前进行中事项
 
-- Features: 查看 `features/`
-- Issues: 查看 `issues/`
-- Refactors: 查看 `refactors/`
-- Roadmaps: 查看 `roadmap/`
+- Features: `features/`
+- Issues: `issues/`
+- Refactors: `refactors/`
+- Roadmaps: `roadmap/`
+- Doc sweeps: `doc-sweeps/`
+
+## 未确认 / 需要 owner 拍板
+
+- {unknown or inferred product intent}
 
 ## 最近知识更新
 
 <!-- cs-review managed: append short links to important index changes -->
 ```
 
-## 1. `.codestable/architecture/ARCHITECTURE.md` 占位模板
+## `.codestable/architecture/ARCHITECTURE.md`
 
 ```markdown
-# {项目名} 架构总入口
+# {Project name} Architecture Index
 
-> 状态：骨架（待填充）
-> 创建日期：YYYY-MM-DD
+> 状态：code-informed
+> 创建/刷新日期：YYYY-MM-DD
+> 事实来源：当前代码、manifests、README、测试和配置。
 
-## 1. 项目简介
+## 1. Observed stack
 
-## 2. 核心概念 / 术语表
-
-## 3. 子系统 / 模块索引
-
-| 模块/子系统 | 当前职责 | 具体文档 | 代码锚点 |
+| Area | Observation | Confidence | Evidence |
 |---|---|---|---|
+| Runtime / language | {observed} | observed | `{manifest}` |
+| Framework | {observed/inferred} | observed/inferred | `{config or entrypoint}` |
+| Build / test | {observed} | observed | `{script or manifest}` |
 
-## 4. 关键架构决定
+## 2. Entrypoints and flows
 
-| 决定 | 当前状态 | 详情/证据 |
+| Entrypoint / flow | Current role | Evidence |
 |---|---|---|
+| `{path}` | {role} | observed |
 
-## 5. 已知约束 / 硬边界
+## 3. Modules / subsystems
 
-## 6. 索引维护记录
+| Module | Current responsibility | Confidence | Code anchors | Detail doc |
+|---|---|---|---|---|
+| `{module}` | {responsibility} | observed/inferred | `{path}` | — |
 
-<!-- cs-review project-sync managed: update when architecture docs are added/renamed/outdated -->
+## 4. Data / state / API anchors
+
+| Area | Current observation | Evidence |
+|---|---|---|
+| Models / schema | {observed or unknown} | `{path or unknown}` |
+| Routes / API | {observed or unknown} | `{path or unknown}` |
+| Config / env | {observed or unknown} | `{path or unknown}` |
+
+## 5. Known constraints and unknowns
+
+- {observed constraints from tests/config}
+- {unknowns requiring owner confirmation}
+
+## 6. Index maintenance log
+
+<!-- cs-review project-sync managed -->
 ```
 
-## 1.5 `.codestable/requirements/VISION.md` 能力索引模板
+## `.codestable/requirements/VISION.md`
 
 ```markdown
 # Requirements Vision
 
-> 状态：骨架（待填充）
+> 状态：code-informed-initial
 > 维护规则：这里只放能力摘要和链接；具体业务规则写入 `requirements/{slug}.md`。
+> 注意：onboard 初稿中的能力可能来自 README、routes、UI 文案或测试名；未被用户确认的条目标为 `inferred-needs-owner-confirmation`。
 
-## Current capabilities
+## Current / observed capabilities
 
-| Capability | Status | Summary | Detail |
-|---|---|---|---|
+| Capability | Status | Summary | Evidence | Detail |
+|---|---|---|---|---|
+| `{capability}` | observed/documented/inferred-needs-owner-confirmation | {summary} | `{path}` | — |
 
 ## Draft / proposed capabilities
 
@@ -109,12 +136,12 @@ Use this map first, then open only the template needed:
 |---|---|---|
 ```
 
-## 1.6 `.codestable/compound/INDEX.md` 长期知识索引模板
+## `.codestable/compound/INDEX.md`
 
 ```markdown
 # Compound Knowledge Index
 
-> 状态：骨架（待填充）
+> 状态：initialized
 > 维护规则：这里只放可检索摘要和链接；全文写入 `YYYY-MM-DD-{doc_type}-{slug}.md`。
 
 ## Decisions
@@ -138,30 +165,32 @@ Use this map first, then open only the template needed:
 |---|---|---|
 ```
 
-## 2. `.codestable/attention.md` 最小模板
-
-attention.md 是 CodeStable 技能启动必读的项目注意事项入口。onboard 创建最小骨架，不替项目 owner 填实质内容；后续短规则由 `cs-review` 的长期知识记录规则追加；长解释应写入 compound 并在此处链接。
+## `.codestable/attention.md`
 
 ```markdown
 # Attention
 
-本文件是 CodeStable 技能启动必读的项目注意事项入口。所有 CodeStable 入口开始工作前必须读取它。
+本文件是 CodeStable 技能启动必读的短提醒入口。只记录每次都可能影响 plan/do/review 的项目特有规则。长解释写入 compound 并在此链接。
 
-## 项目碎片知识
+## Observed operational facts
 
-<!-- knowledge-sync managed: new entries are appended below by cs-review Project Sync when needed -->
+### Build / run / test commands
 
-### 编译与构建
+- {observed command from package.json/Makefile/etc.}
 
-### 运行与本地起服务
+### Environment / credentials
 
-### 测试
+- {observed env/config requirement or unknown; never include secret values}
 
-### 命令与脚本陷阱
+### Path conventions
 
-### 路径与目录约定
+- {observed source/test/generated directories}
 
-### 环境变量与凭证
+## Owner-confirmation needed
 
-### 其他
+- {inferred items that need confirmation}
+
+## Project-specific warnings
+
+<!-- knowledge-sync managed: append short confirmed warnings below -->
 ```
