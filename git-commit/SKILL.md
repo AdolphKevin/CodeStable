@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: Generate and create clean git commits from staged changes. Use when the user asks to commit already staged work, generate a commit message from `git diff --cached`, or run a commit workflow that infers type, scope, subject, body, and risk from the staged diff.
+description: Independent utility Skill for creating clean git commits from already staged changes. Use when the user asks to commit staged work, generate a commit message from git diff --cached, or run a scoped commit workflow. Not part of the CodeStable plan/do/review workflow.
 ---
 
 # Git Commit

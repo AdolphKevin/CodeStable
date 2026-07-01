@@ -1,0 +1,4 @@
+interface:
+  display_name: "CodeStable Plan"
+  short_description: "初始化、规划、路由和只读代码探索入口"
+  default_prompt: "Use $cs-plan to initialize CodeStable, plan work, route a request, or explore code without changing it."

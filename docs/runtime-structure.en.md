@@ -1,11 +1,13 @@
 # CodeStable Runtime Structure
 
-After `/cs-onboard`, a `codestable/` directory appears at your project root. It is the aggregate root for all CodeStable artifacts and the only workspace each skill reads or writes at runtime.
+After onboarding through `cs-plan`, a `.codestable/` directory is created at your project root. It is the aggregate root for all CodeStable artifacts and the only project workspace the three CodeStable entries read or write. Initialization, repair, and status checks are all handled through `cs-plan`; there is no separate onboard Skill.
 
 ```text
 your-project/
-├── codestable/
+├── .codestable/
+│   ├── INDEX.md                           # project knowledge index
 │   ├── requirements/                     # Requirement entities
+│   │   ├── VISION.md                       # capability/requirements index
 │   │   └── {slug}.md
 │   ├── architecture/                     # Architecture entities
 │   │   ├── ARCHITECTURE.md
@@ -33,6 +35,7 @@ your-project/
 │   │       ├── {slug}-checklist.yaml
 │   │       └── {slug}-apply-notes.md
 │   ├── compound/                         # Searchable lessons / long-term rules / reusable prescriptions
+│   │   ├── INDEX.md                       # durable knowledge index
 │   │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │   ├── tools/                            # Shared scripts
 │   └── reference/                        # Shared references
@@ -40,22 +43,40 @@ your-project/
 │       ├── workflow-conventions.md
 │       ├── system-overview.md
 │       └── ...
-└── AGENTS.md
 ```
 
-## Key Points
+## Explicit record entry
 
-- All artifacts aggregate under `codestable/`, so historical features, bugs, and decisions are easy to find.
+- Record architecture / requirements / roadmap state with `cs-review: record architecture/requirements/roadmap: ...`.
+- Record decision / learning / trick / explore / attention with `cs-review: record decision/learning/trick/explore/attention: ...`; generic notes must be classified first.
+- These operations route to `project-sync.manual` or `knowledge-sync.manual`; they still require a source/evidence and must not invent long-term facts.
+
+## Key points
+
+- All artifacts aggregate under `.codestable/`, so historical features, bugs, and decisions are easy to find.
 - `requirements/` and `architecture/` are long-lived archives that only record current state.
 - `roadmap/` is the planning layer for big-need breakdowns and interface contracts.
 - `features/`, `issues/`, and `refactors/` use `YYYY-MM-DD-{slug}/` to bundle one unit of work.
-- Wrap-up only archives knowledge-capture candidates with clear reuse value, then AI routes them to the right executor.
-- `compound/` stores searchable archive docs. learning, trick, decision, and explore are distinguished by the `doc_type` field.
-- `attention.md` is not part of compound; it stores short reminders every CodeStable skill must know at startup.
-- `reference/` is copied by `cs-onboard` from the skill package. To change shared conventions or workflow rules, edit `cs-onboard/reference/` templates.
+- `compound/` stores searchable archive docs. learning, trick, decision, and explore are distinguished by `doc_type`.
+- `attention.md` stores short reminders every CodeStable entry must know at startup.
+- `.codestable/INDEX.md` is the project knowledge entry point for every Plan/Do/Review run; indexes contain summaries and links, while details live in architecture / requirements / roadmap / compound docs.
+- `reference/` and `tools/` are copied by the onboard path in `cs-plan` from `codestable-core/onboard/`.
 
-## Hard Constraint
+## Hard constraint
 
-A skill is an independent install unit. At runtime, each skill can only see files inside its own package. References like `B-skill/reference/xxx.md` written in skill A's `SKILL.md` are unreachable at runtime.
+CodeStable runtime stores shared executor references in package-level `codestable-core/`, not in multiple Skill directories. Do not make one Skill depend on another Skill directory's reference files; shared rules live in exactly one `codestable-core/` file.
 
-Cross-skill shared references must go through the working project layer: `cs-onboard` copies them from the skill package to the project's `codestable/reference/`, and other skills read them via project-relative paths.
+Cross-entry shared project facts go through the working project layer: `cs-plan` onboard releases `.codestable/INDEX.md` and `.codestable/reference/`, then all three entries read indexes before opening detailed docs.
+
+
+## Maintenance entry ownership
+
+- `.codestable/` initialization, repair, and reference/tools refresh: use `cs-plan` with `onboard.required` / `onboard.repair`.
+- `.codestable/architecture/` and `.codestable/requirements/`: use `cs-review` with `project-sync.manual` or Project Sync after review.
+- `.codestable/compound/`, `.codestable/attention.md`, guide/libdoc: use `cs-review` explicit records or Knowledge Sync after review.
+- `cs-do` does not own long-lived documentation. It records execution evidence and hands closure to `cs-review`.
+
+
+## Project knowledge index
+
+Every CodeStable entry starts from `.codestable/INDEX.md` and `.codestable/attention.md`. Indexes point to detailed requirement, architecture, roadmap, and compound knowledge documents. `cs-review` updates both details and indexes when durable project facts change.

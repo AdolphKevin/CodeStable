@@ -1,0 +1,4 @@
+interface:
+  display_name: "CodeStable Do"
+  short_description: "执行已 ready 的 feature、bug 修复或重构"
+  default_prompt: "Use $cs-do to execute ready CodeStable work with minimal implementation and evidence."

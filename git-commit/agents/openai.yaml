@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Commit"
+  short_description: "根据 staged diff 生成并创建规范 commit"
+  default_prompt: "Use $git-commit to create a clean commit from staged changes."

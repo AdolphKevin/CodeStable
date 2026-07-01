@@ -1,303 +1,105 @@
-<div align="center">
+# CodeStable Balanced Runtime
 
-# CodeStable
+CodeStable Balanced Runtime 是一个面向 Codex / Claude Code 的工程化开发任务管理 Skill 包。它的原则是：**精简 Skill，而不是精简工程纪律**。
 
-![](./asset/PromotionalImage.png)
+## 可发现 Skill
 
-[English](./README.en.md) · **中文**
+Runtime 包只包含 5 个可发现 `SKILL.md`：
 
-**面向严肃工程的 AI 编码工作流**
+| Skill | 作用 |
+|---|---|
+| `cs-plan` | 规划：判断任务类型、边界、复杂度、产物和下一步；也承接初始化与代码探索 |
+| `cs-do` | 执行：推进 ready 的 feature / issue / refactor 工作 |
+| `cs-review` | 验收与同步：验证结果、Project Sync、状态收口；也承接显式记录架构/决策/经验 |
+| `git-commit` | 独立 utility：基于 staged diff 生成提交 |
+| `business-flow-mapper` | 独立 utility：梳理业务流程 |
 
-厌倦了 OpenSpec 的草台、Oh-My-OpenAgent 的过度设计、Superpowers 的散装——我从 0 写了一套简单轻巧、围绕**人在环**的 AI Harness。
+`git-commit` 与 `business-flow-mapper` 不是 CodeStable 生命周期的一部分，不参与 `cs-plan` / `cs-do` / `cs-review` 路由。
 
-<p>
-  <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-32-6366F1?style=flat-square" alt="Skills"/>
-  <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
-</p>
+## 显式操作怎么调用
 
-</div>
+内部执行器不再是独立 Skill，但操作没有消失。请通过三入口表达意图：
 
----
+| 你想做的事 | 调用方式 |
+|---|---|
+| 初始化新项目 `.codestable/` | `cs-plan：初始化 CodeStable / onboard this repo` |
+| 修复或检查 `.codestable/` 骨架 | `cs-plan：检查并修复 CodeStable 初始化状态` |
+| 只摸代码、解释流程、不改代码 | `cs-plan：探索 auth 登录流程，不改代码` |
+| 规划新功能 / bug / 重构 / roadmap | `cs-plan：<你的需求>` |
+| 执行已经 ready 的任务 | `cs-do：继续执行当前 feature / issue / refactor` |
+| 验收本次改动并同步文档 | `cs-review：验收并做 Project Sync` |
+| 显式记录当前架构事实 | `cs-review：记录 architecture：<事实、边界、证据或代码锚点>` |
+| 显式记录需求/业务规则 | `cs-review：记录 requirements：<能力、成功标准、边界>` |
+| 显式记录技术决策 | `cs-review：记录 decision：<决定、背景、取舍、后果>` |
+| 显式记录踩坑/技巧/探索结论/注意事项 | `cs-review：记录 learning/trick/explore/attention：<内容和证据>` |
 
-## 安装
+详细语法见 `docs/manual-operations.md`。
 
-```bash
-npx skills add https://github.com/AdolphKevin/CodeStable.git
+## Balanced runtime 拓扑
+
+CodeStable 的内部工程纪律保留为 reference，而不是顶层 Skill：
+
+```text
+onboard executor reference
+feature workflow reference
+issue workflow reference
+refactor workflow reference
+roadmap workflow reference
+project-sync workflow reference
+knowledge-sync workflow reference
+explore executor reference
 ```
 
-只需要一键，开始工作：
+这些 reference 集中在包级 `codestable-core/` 下，三入口只通过相对路径读取同一份权威规则，不再复制 feature / issue / refactor / roadmap executor。即使宿主只按 `SKILL.md` 文件发现技能，也不会把内部执行器作为 Skill 发现或触发。
 
-```bash
-/cs-onboard
+## 运行时目录
+
+CodeStable 在项目里使用统一目录：
+
+```text
+.codestable/
+├── INDEX.md
+├── attention.md
+├── requirements/
+│   └── VISION.md
+├── architecture/
+│   └── ARCHITECTURE.md
+├── roadmap/
+├── features/
+├── issues/
+├── refactors/
+├── doc-sweeps/
+├── compound/
+│   └── INDEX.md
+├── tools/
+└── reference/
+    ├── project-knowledge-contract.md
+    ├── shared-conventions.md
+    ├── workflow-conventions.md
+    ├── system-overview.md
+    └── tools.md
 ```
 
-之后日常使用时，不知道该用哪个技能就喊根入口：
+`.codestable/reference/` 和 `.codestable/tools/` 由 `cs-plan` 的 onboard 路径从 `codestable-core/onboard/` 释放到项目，供三个 CodeStable 入口在项目层共享。`.codestable/INDEX.md` 是每次 plan/do/review 的项目知识入口；review 写回长期事实时同时维护索引。
 
-```bash
-/cs
+## 常见流程
+
+```text
+新项目：       cs-plan → onboard.required / onboard.repair / onboard.status
+代码探索：     cs-plan → explore.plan
+小功能：       cs-plan → feature.fastforward.plan → cs-do → cs-review
+标准功能：     cs-plan → feature.standard.design → cs-do → cs-review
+不明 bug：     cs-plan → issue.standard.report-analysis → cs-do → cs-review
+明确 bug：     cs-plan → issue.quickfix.plan → cs-do → cs-review
+小重构：       cs-plan → refactor.fastforward.plan → cs-do → cs-review
+大需求：       cs-plan → roadmap.plan → 子 feature 逐个执行
+手动架构记录： cs-review：记录 architecture：...
+手动决策记录： cs-review：记录 decision：...
 ```
 
-`cs` 会读你的诉求，告诉你这次该走哪个 `cs-xxx`。
+## 参考文档
 
-也可以直接用三命令入口：
-
-```bash
-/cs-plan    # 规划：把事定清楚
-/cs-do      # 执行：推进当前 ready 项
-/cs-review  # 收口：验收 + Project Sync
-```
-
----
-
-## 缘起
-
-我在开发一套新的 Harness Agent（[MA](https://github.com/liuzhengdongfortest/MA)），一开始当然是 VibeCoding——我只写设计和需求，代码由 AI 来改。这样支撑了大部分特性的开发。直到有一天 Codex 反复解决不了一个我认为比较简单的问题，并且反复在同一个地方犯错。我就知道项目需要一套工作流来维持它继续进行了。
-
-我调研了 OpenSpec、SuperPowers、Oh-My-OpenAgent 这一类工具，没一个用着顺手：
-
-- **OpenSpec** 太简单，没有复利工程，生成的 Spec 抽象到人类没法读
-- **SuperPowers** 没有流程约束，不知道该用哪个
-- **Oh-My-OpenAgent** 太重，且哲学上认为"人介入 = 失败"
-
-CodeStable 的目标是**解决严肃工程的软件实现和编码问题**，不是造一个新名词、追求热点。
-
----
-
-## 与其他框架的核心区别：编排的目标是谁
-
-我看了一圈现在主流的 AI 编码框架——Superpowers、CCW、Oh-My-OpenAgent 等等——它们其实都在做**同一件事**：
-
-> **如何把 Agent 编排得更好。** 让它们组队、协作、头脑风暴、跑流水线、自动接力。围绕的实体始终是 **Agent**。
-
-CodeStable 走的是**另一个方向**：
-
-> **编排的不是 Agent，而是软件本身的生命周期。** 围绕的实体是**构成软件的要素**——每一个需求、每一个架构决定、每一个特性、每一个 bug、每一条历史里留下来的约束。
-
-<table>
-<tr><th></th><th>Agent 编排派</th><th>CodeStable</th></tr>
-<tr><td><b>核心实体</b></td><td>Agent / Role / Team</td><td>Requirement / Architecture / Feature / Issue / Decision</td></tr>
-<tr><td><b>主线问题</b></td><td>Agent 之间怎么分工、传递、协调？</td><td>软件的需求、约束、决策怎么被记下来、被检索、被复用？</td></tr>
-<tr><td><b>状态存在哪</b></td><td>Agent 的 session / 消息总线 / 队列</td><td>项目里的 <code>codestable/</code> 文件树（人和 AI 都能读）</td></tr>
-<tr><td><b>解决的痛点</b></td><td>单 Agent 能力不够，需要协同放大</td><td>软件复杂度膨胀撑破上下文、隐知识丢失、需求漂移</td></tr>
-<tr><td><b>对人的定位</b></td><td>人少介入越好，理想是全自动</td><td>人在环 —— 程序员对整体把控负责，AI 是高效的执行体</td></tr>
-</table>
-
-![](./asset/CodeStableVSAgent.png)
-
-
-**这两个方向没有谁对谁错。**
-
-如果你的任务是"用 AI 跑一个端到端的自动化产线"、"让多个 Agent 互相讨论方案"，Agent 编排派会更顺手。
-
-如果你的任务是"维护一个会跨年迭代的严肃软件"、"让今天写下的需求和决策三个月后还能被准确召回"——那 CodeStable 这套以软件要素为中心的建模会更合适。
-
-我做 CodeStable 是因为我相信：**软件工程的混乱本质上不是 Agent 不够强，而是要素没被组织好**。Agent 再强，也写不了一个把需求、架构、历史决策全丢失的项目。
-
----
-
-## 设计：6 个实体 + 3 个流程
-
-CodeStable 顺着软件编码的真实流程来设计，把开发活动建模成 **6 个实体** 和 **3 个流程**。
-
-### 6 个实体
-
-| 实体 | 英文 | 干什么 |
-|------|------|--------|
-| **需求** | requirements | 原始用户故事、当时的讨论与权衡。最终的逃生通道——代码烂成一坨屎时，可以摒弃所有代码、让 AI 重新生成 |
-| **架构** | architecture | 为实现需求，系统的编排层长什么样。文档要尽可能精简、统一，**给人读的**，不是给 AI 自嗨的 |
-| **路线图** | roadmap | "我想要一个权限校验系统"——直接塞 feature AI 接不住，先拆成路线图分步推进 |
-| **特性** | feature | 实际落地的工程执行过程，人与 AI 共同协作，对 design / 实现 / 验收负责 |
-| **问题** | issue | 开发完成后的 BUG 单子，AI 和人一同解决 |
-| **知识** | compound / attention | 复利工程的知识库：收尾先按未来用途盘点候选，再由 AI 路由到归档执行器 |
-
-### 3 个流程
-
-| 流程 | 关键技能链 | 说明 |
-|------|------------|------|
-| **特性引入** | `cs-feat` → `cs-feat-design` → `cs-feat-impl` → `cs-feat-accept` | 想清楚 → 综合架构设计 → 逐步编码 → 验收测试。各位程序员怎么顺手怎么来 |
-| **问题修改** | `cs-issue-report` → `cs-issue-analyze` → `cs-issue-fix` | 跟 AI 说哪里有问题 → 让 AI 分析根因 → 让 AI 定点修复 |
-| **代码重构** | `cs-refactor` (beta) | 软件架构腐化不是一蹴而就的。AI 辅助重构，但**终归是人在重构**——还在迭代中，欢迎赐教 |
-
-
----
-
-## 技能总览
-
-<table>
-<tr><th>分组</th><th>技能</th><th>用途</th></tr>
-<tr><td rowspan="4"><b>根入口</b></td><td><code>cs</code></td><td>统一入口——介绍体系全貌 + 把开放式诉求路由到正确技能。不知道用哪个时就喊它</td></tr>
-<tr><td><code>cs-plan</code></td><td>三命令薄入口：规划，把诉求转成方案 / 根因 / roadmap</td></tr>
-<tr><td><code>cs-do</code></td><td>三命令薄入口：执行当前 ready 的 feature / issue / refactor</td></tr>
-<tr><td><code>cs-review</code></td><td>三命令薄入口：验收、验证、Project Sync 和收口</td></tr>
-<tr><td rowspan="1"><b>接入</b></td><td><code>cs-onboard</code></td><td>把 CodeStable 接入到一个新仓库 / 已有零散文档的仓库</td></tr>
-<tr><td rowspan="2"><b>需求 & 架构</b></td><td><code>cs-req</code></td><td>整理 / 沉淀原始需求文档</td></tr>
-<tr><td><code>cs-arch</code></td><td>起草或更新 <code>codestable/architecture/</code> 下的架构文档</td></tr>
-<tr><td><b>路线图</b></td><td><code>cs-roadmap</code></td><td>承载一块大需求的事前规划：概设（模块拆分）+ 架构层详设（接口契约 / 共享协议）+ 子 feature 拆解清单</td></tr>
-<tr><td><b>讨论入口</b></td><td><code>cs-brainstorm</code></td><td>想法模糊时的统一讨论入口，做分诊：直接 design / 进 feature 写 brainstorm.md / 移交 roadmap</td></tr>
-<tr><td rowspan="5"><b>特性流程</b></td><td><code>cs-feat</code></td><td>新特性子流程入口</td></tr>
-<tr><td><code>cs-feat-design</code></td><td>起草 <code>{slug}-design.md</code> 作为后续唯一输入</td></tr>
-<tr><td><code>cs-feat-impl</code></td><td>按 design 的推进顺序写代码</td></tr>
-<tr><td><code>cs-feat-accept</code></td><td>逐层对照 design 核对实现，做完整验收闭环</td></tr>
-<tr><td><code>cs-feat-ff</code></td><td>超轻量通道：不写 design、不分阶段，让 AI 直接做</td></tr>
-<tr><td rowspan="4"><b>问题流程</b></td><td><code>cs-issue</code></td><td>问题修复子流程入口</td></tr>
-<tr><td><code>cs-issue-report</code></td><td>把脑子里的问题落成可复现、可追溯的 report</td></tr>
-<tr><td><code>cs-issue-analyze</code></td><td>找根因、评估修复风险、给方案</td></tr>
-<tr><td><code>cs-issue-fix</code></td><td>定点修复 + 验证 + 写 fix-note</td></tr>
-<tr><td rowspan="2"><b>重构流程</b></td><td><code>cs-refactor</code></td><td>(beta) 重构主流程</td></tr>
-<tr><td><code>cs-refactor-ff</code></td><td>(beta) 轻量重构通道</td></tr>
-<tr><td rowspan="3"><b>维护 & 审计</b></td><td><code>cs-audit</code></td><td>主动审计代码，产出 bug、安全、性能和架构偏离清单</td></tr>
-<tr><td><code>cs-doc-sweep</code></td><td>手动清理旧设计文档和过期 spec</td></tr>
-<tr><td><code>cs-note</code></td><td>自动提醒项执行器：记录短小但每次启动都必须知道的项目注意事项</td></tr>
-<tr><td rowspan="3"><b>知识沉淀</b></td><td><code>cs-learn</code></td><td>可检索经验项执行器：沉淀踩坑、失败尝试、调试路径和经验回顾</td></tr>
-<tr><td><code>cs-trick</code></td><td>可复用处方项执行器：整理编程模式 / 库用法 / 技术处方</td></tr>
-<tr><td><code>cs-decide</code></td><td>长期规则项执行器：归档已拍板的技术选型、架构决定、长期约束</td></tr>
-<tr><td rowspan="3"><b>探索 & 文档</b></td><td><code>cs-explore</code></td><td>定向代码探索，把"提问 → 读代码 → 得结论"沉淀成证据</td></tr>
-<tr><td><code>business-flow-mapper</code></td><td>梳理业务处理流程，生成精确中文 Mermaid 流程图</td></tr>
-<tr><td><code>cs-guide</code> / <code>cs-libdoc</code></td><td>对外的开发者指南 / 库参考文档</td></tr>
-<tr><td><b>浏览器自动化</b></td><td><code>browser-bridge</code></td><td>通过 Chrome 扩展控制真实浏览器，抽取 DOM、点击、填写和验证页面</td></tr>
-<tr><td><b>版本控制</b></td><td><code>git-commit</code></td><td>根据 staged diff 生成规范提交信息并创建提交</td></tr>
-</table>
-
----
-
-## 工作流示意
-
-CodeStable 的技能不是一条线性流水，而是**分层 + 事件驱动**的：
-
-```
-═══════════════════════════════════════════════════════════════════════
- 根入口 · 路由                              （任何时刻都可以调用）
-───────────────────────────────────────────────────────────────────────
-   cs ──▶ 介绍体系 / 把开放式诉求路由到下面任一具体子技能
-          （本身不做事，只做分诊和提示）
-═══════════════════════════════════════════════════════════════════════
-                              │
-              ┌───────────────┼───────────────┐
-              ▼               ▼               ▼
-        （未接入）        （已接入）      （想了解体系）
-         走阶段 0       直达 1~4 层 / 横切    给速读
-              │
-              ▼
-═══════════════════════════════════════════════════════════════════════
- 阶段 0 · 接入                                  （只在新项目跑一次）
-───────────────────────────────────────────────────────────────────────
-   cs-onboard ──▶ 生成 codestable/ 骨架 + 释放 reference/、tools/
-═══════════════════════════════════════════════════════════════════════
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
- 第 1 层 · 长效档案（"系统现在长什么样"，只记现状）
-───────────────────────────────────────────────────────────────────────
-   cs-req   ──▶ codestable/requirements/{slug}.md
-   cs-arch  ──▶ codestable/architecture/ARCHITECTURE.md
-                                       └─ {type}-{slug}.md（子系统）
-═══════════════════════════════════════════════════════════════════════
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
- 第 2 层 · 规划（"接下来打算怎么做这块大需求"，大需求才需要）
-───────────────────────────────────────────────────────────────────────
-   cs-roadmap ──▶ codestable/roadmap/{slug}/
-                  把一个"我想要 X 系统"做成完整的事前规划：
-                    ① 概设          —— 拆成哪几个模块 / 组件
-                    ② 架构层详设    —— 模块间接口契约 / 共享协议
-                    ③ 子 feature    —— 把方案分解成多条可执行的 feature
-                  ② 是 feature-design 的硬约束输入
-                  （小需求可跳过本层，直接进第 3 层）
-═══════════════════════════════════════════════════════════════════════
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
- 讨论入口（可选 · 想法模糊时进入，做分诊后路由到下游）
-───────────────────────────────────────────────────────────────────────
-                          ┌── case 1 已经够清楚 ──▶ cs-feat-design
-   cs-brainstorm ────────▶┼── case 2 小需求方向定 ─▶ feature 流（落 brainstorm.md）
-                          └── case 3 大需求只有一个词 ─▶ cs-roadmap
-═══════════════════════════════════════════════════════════════════════
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
- 第 3 层 · 执行流程（按事件类型选一条进入）
-───────────────────────────────────────────────────────────────────────
-
-  ▸ 事件：新增能力                                          ┌──────────┐
-       cs-feat-ff     ──(默认轻量路径)──────────────────▶  │ features │
-       cs-feat-design ──▶ cs-feat-impl ──▶ cs-feat-accept  │ /YYYY-…/ │
-                                                            └──────────┘
-
-  ▸ 事件：修复缺陷                                          ┌──────────┐
-       quick fix-note ──(默认轻量路径)──────────────────▶  │  issues  │
-       cs-issue-report ──▶ cs-issue-analyze ──▶ cs-issue-fix│ /YYYY-…/ │
-                                                            └──────────┘
-
-  ▸ 事件：代码腐化（beta）                                   ┌──────────┐
-       cs-refactor / cs-refactor-ff                         │refactors │
-                                                            │ /YYYY-…/ │
-                                                            └──────────┘
-═══════════════════════════════════════════════════════════════════════
-                              │
-                ▼ 任意阶段觉得"这个值得记下来"都能触发 ▼
-═══════════════════════════════════════════════════════════════════════
- 横切层 · 知识沉淀判断（有价值才归档）
-───────────────────────────────────────────────────────────────────────
-   自动提醒项 ──▶ cs-note   ──▶ codestable/attention.md
-   长期规则项 ──▶ cs-decide ──▶ codestable/compound/YYYY-MM-DD-decision-{slug}.md
-   可检索经验 ──▶ cs-learn  ──▶ codestable/compound/YYYY-MM-DD-learning-{slug}.md
-   可复用处方 ──▶ cs-trick  ──▶ codestable/compound/YYYY-MM-DD-trick-{slug}.md
-                   ↑
-          下一次 cs-arch / cs-feat-design / cs-issue-analyze
-          会回头读 attention + compound/，让经验在新工作里被复用
-═══════════════════════════════════════════════════════════════════════
-```
-
-**怎么读这张图：**
-
-- **纵向是层次**，不是严格的时间顺序——长效档案层会反复被刷新，规划层只在大需求时进入
-- **第 3 层是事件入口**：来了新需求默认走 fastforward，发现 bug 默认快速 fix-note，发现腐化默认小重构；复杂时再升级标准流程
-- **横切层是飞轮**：流程收尾只做轻量知识沉淀判断；只有下次一定会再踩、每次启动都必须知道、已拍板长期规则、或明确可复用做法才归档
-
----
-
-## 运行时结构
-
-`/cs-onboard` 跑完后，会在你的项目根下生成一个 `codestable/` 目录——这是 CodeStable 所有产物的聚合根，也是各个子技能在运行时唯一会读写的工作区。
-
-运行时目录、共享 reference 机制和跨 skill 可见性约束见 [CodeStable 运行时结构](./docs/runtime-structure.md)。
-
----
-
-## 设计哲学
-
-CodeStable 与 OMO 做的是**完全相反**的哲学。
-
-- OMO 认为：人只要干预就是失败的信号
-- CodeStable 认为：**程序员是软件编码中的在环对象**——可以对黑盒实现不了解，但对整体实现必须有所把控，必要时也可深入
-
-软件架构必须要 **可演进**、**可观测**、**可控制**。
-
-也许这一点在 AI 发展强大以后会变得不再重要，但**当下这样做能让程序员在现状下舒服**——这就是价值所在。
-
-CodeStable 面向真实开发场景，对此进行建模，期望通过一个闭环系统处理开发中常见的问题。**现有大部分框架围绕 AI 建模，而不是围绕人。** 我认为这些框架的作者驱动 AI 的能力很强，但绝对不是严肃软件的开发者——因为缺少对软件开发中需求和设计的基础组织能力，缺乏对代码实现的尊重。
-
----
-
-## Roadmap
-
-CodeStable 会根据模型能力的发展进行调整。如果未来某个模型做到某个模块的稳定产出，那么这个模块就可以删除。
-
-- [ ] 代码重构流程需要强化（`cs-refactor` 还在 beta）
-- [ ] ……
-
-欢迎在 Issue 区贴你的真实开发困境和重构经验。
-
----
-## Star History
-
-[![Star History Chart](https://api.star-history.com/chart?repos=AdolphKevin/CodeStable&type=date&legend=top-left)](https://www.star-history.com/?repos=AdolphKevin%2FCodeStable&type=date&legend=top-left)
-
-<div align="center">
-
-MIT License · 作者 [@liuzhengdong](https://github.com/liuzhengdongfortest)
-
-</div>
+- `docs/manual-operations.md` — 三入口下的显式初始化、探索、手动记录语法。
+- `docs/three-command-mode.md` — 三命令模式与 runtime reference 拓扑。
+- `docs/skill-consolidation-map.md` — 旧 Skill 到 runtime reference 的合并映射。
+- `docs/runtime-structure.md` — `.codestable/` 运行时结构。

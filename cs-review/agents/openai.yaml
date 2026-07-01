@@ -1,0 +1,4 @@
+interface:
+  display_name: "CodeStable Review"
+  short_description: "验收、验证、Project Sync 和长期知识记录入口"
+  default_prompt: "Use $cs-review to verify changes, close work, sync project docs, or record architecture/decision/learning/trick/explore/attention facts."
