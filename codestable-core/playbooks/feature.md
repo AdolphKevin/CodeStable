@@ -8,8 +8,10 @@ Use this map first, then open only the section needed for the current route:
 - Brainstorm discipline
 - Fastforward discipline
 - Standard design discipline
+- Task memory and context pack
 - Checklist discipline
 - Implementation discipline
+- Minimality checkpoints
 - Acceptance discipline
 - Roadmap handoff
 - Project Sync candidates
@@ -97,6 +99,12 @@ Rules:
 - Every feature should be removable or reversible in principle.
 - Do not generate checklist or write code until the design is approved or the user explicitly combines phases.
 
+## Task memory and context pack
+
+Standard features and long-running fastforward work should have a task capsule under `.codestable/tasks/YYYY-MM-DD-{slug}/`. The feature design remains canonical; the task context pack links only the high-signal architecture, requirements, compound, roadmap, code, and test anchors needed by the next step.
+
+Do not paste full files into the context pack. Record owner decisions, non-goals, reuse targets, forbidden changes, and open questions.
+
 ## Checklist discipline
 
 A feature checklist is an execution plan, not a file-by-file script.
@@ -128,6 +136,10 @@ Implementation self-check:
 - Tests or manual paths cover the user-visible contract.
 - New logic has a nearby home consistent with project patterns.
 
+## Minimality checkpoints
+
+Before implementation, apply `minimality.md`: reuse existing project patterns, platform capabilities, or existing dependencies before writing new code. A standard design may justify new abstractions, but acceptance must still check whether the final diff added unplanned dependencies, generic helpers, or broad churn.
+
 ## Acceptance discipline
 
 Acceptance compares the final diff against the approved goal, non-goals, design contract, checklist evidence, and roadmap item when present.
@@ -140,7 +152,7 @@ Acceptance should record:
 - Any accepted deviation from the original design.
 - Project Sync candidates.
 
-Do not rewrite the approved design to match what happened. If implementation diverged, write that divergence into acceptance.
+Do not rewrite the approved design to match what happened. If implementation diverged, write that divergence into acceptance. Finish the linked task capsule when present: final journal entry, status update, and durable knowledge candidates.
 
 ## Roadmap handoff
 

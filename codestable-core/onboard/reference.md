@@ -6,6 +6,8 @@ Use these templates when `cs-plan` runs onboard. They are code-informed template
 - `.codestable/INDEX.md`
 - `.codestable/architecture/ARCHITECTURE.md`
 - `.codestable/requirements/VISION.md`
+- `.codestable/specs/INDEX.md`
+- `.codestable/tasks/INDEX.md`
 - `.codestable/compound/INDEX.md`
 - `.codestable/attention.md`
 
@@ -26,6 +28,11 @@ Replace every `{...}` placeholder with observed facts or `unknown`. Do not leave
 
 - Attention: `attention.md`
 - Knowledge contract: `reference/project-knowledge-contract.md`
+- Collaboration contract: `reference/human-ai-collaboration.md`
+- Task memory contract: `reference/task-memory-contract.md`
+- Real-repo reliability: `reference/real-repo-reliability.md`
+- Minimality ladder: `reference/minimality-ladder.md`
+- Scoped specs: `specs/INDEX.md`
 - Code inventory: `reference/code-inventory.md` / `reference/code-inventory.json`
 - Workflow conventions: `reference/workflow-conventions.md`
 
@@ -45,6 +52,8 @@ Replace every `{...}` placeholder with observed facts or `unknown`. Do not leave
 | Requirements | 见 `requirements/VISION.md` | `{README/routes/UI anchors}` | 用户可见能力、业务规则、成功标准变化时 |
 | Code inventory | 见 `reference/code-inventory.md` | `reference/code-inventory.json` | 不确定入口/模块/命令时 |
 | Compound knowledge | 见 `compound/INDEX.md` | `{none initially}` | 决策、踩坑、技巧、探索结论影响当前工作时 |
+| Scoped specs | 见 `specs/INDEX.md` | `{commands/config/tests/docs}` | 编码规范、测试约定、平台约束影响当前工作时 |
+| Task memory | 见 `tasks/INDEX.md` | `{active work or none}` | 继续标准 feature/issue/refactor/roadmap 或跨会话工作时 |
 
 ## 当前进行中事项
 
@@ -52,6 +61,8 @@ Replace every `{...}` placeholder with observed facts or `unknown`. Do not leave
 - Issues: `issues/`
 - Refactors: `refactors/`
 - Roadmaps: `roadmap/`
+- Tasks: `tasks/`
+- Scoped specs: `specs/`
 - Doc sweeps: `doc-sweeps/`
 
 ## 未确认 / 需要 owner 拍板
@@ -134,6 +145,39 @@ Replace every `{...}` placeholder with observed facts or `unknown`. Do not leave
 
 | Capability | Superseded by | Note |
 |---|---|---|
+```
+
+## `.codestable/specs/INDEX.md`
+
+```markdown
+# Scoped Specs Index
+
+> 状态：code-informed-initial
+> 维护规则：这里放会影响实现的工程标准入口；具体规则可以拆到 `specs/{scope}.md`。
+
+## Current scoped specs
+
+| Scope | Summary | Evidence | Detail | Freshness |
+|---|---|---|---|---|
+| Build / test | {observed commands and conventions} | `{manifest/CI/README}` | — | current |
+| Code style / structure | {observed patterns or unknown} | `{source anchors}` | — | observed/inferred |
+| API / data / UI conventions | {observed or unknown} | `{path}` | — | observed/inferred |
+
+## Owner-confirmation needed
+
+- {rules that look like conventions but need confirmation}
+```
+
+## `.codestable/tasks/INDEX.md`
+
+```markdown
+# Task Memory Index
+
+> 状态：initialized
+> 维护规则：这里登记跨会话任务胶囊；feature/issue/refactor/roadmap 仍是生命周期事实来源。
+
+| Task | Status | Linked artifact | Context pack | Proof trace | Last journal |
+|---|---|---|---|---|---|
 ```
 
 ## `.codestable/compound/INDEX.md`

@@ -1,6 +1,6 @@
 # CodeStable Runtime Structure
 
-After onboarding through `cs-plan`, the project root contains `.codestable/`, the aggregate workspace for CodeStable artifacts and durable project knowledge.
+After `cs-plan` onboarding, the project contains `.codestable/`, a human/AI shared software lifecycle knowledge base.
 
 ```text
 .codestable/
@@ -8,6 +8,14 @@ After onboarding through `cs-plan`, the project root contains `.codestable/`, th
 ├── attention.md
 ├── requirements/VISION.md
 ├── architecture/ARCHITECTURE.md
+├── specs/INDEX.md
+├── tasks/INDEX.md
+├── tasks/YYYY-MM-DD-{slug}/
+│   ├── task.md
+│   ├── context-pack.md
+│   ├── journal.md
+│   ├── proof.md
+│   └── status.yaml
 ├── roadmap/
 ├── features/
 ├── issues/
@@ -15,17 +23,14 @@ After onboarding through `cs-plan`, the project root contains `.codestable/`, th
 ├── doc-sweeps/
 ├── compound/INDEX.md
 ├── tools/
-│   ├── scan-project.py
-│   └── scan-codestable-docs.py
 └── reference/
     ├── project-knowledge-contract.md
+    ├── human-ai-collaboration.md
+    ├── task-memory-contract.md
+    ├── minimality-ladder.md
+    ├── specs-contract.md
     ├── code-inventory.json
-    ├── code-inventory.md
-    ├── shared-conventions.md
-    ├── workflow-conventions.md
-    └── system-overview.md
+    └── code-inventory.md
 ```
 
-`INDEX.md` is the first project-knowledge entry point. `code-inventory.*` maps the current implementation and is refreshed by onboard, refresh, and doc-sweep. Long-term facts are written by `cs-review`, with index sync.
-
-Shared discipline lives in package-level `codestable-core/playbooks/*.md`, not in discoverable Skills.
+`specs/` stores scoped engineering standards. `tasks/` stores resumable task capsules, journals, and proof traces. `cs-review` owns durable writeback and index freshness.

@@ -7,10 +7,13 @@ Use this map first, then open only the section needed for the current route:
 - Artifact layout
 - Refusal and reroute checks
 - Fastforward discipline
+- Equivalence gate
+- Task memory for risky refactors
 - Standard scan discipline
 - Method library summary
 - Design discipline
 - Apply discipline
+- Minimality checkpoints
 - Equivalence evidence options
 - Project Sync boundary
 - Hard stops
@@ -61,6 +64,23 @@ Required evidence:
 - One-sentence equivalence claim: what behavior should remain unchanged.
 
 Do not add abstractions “for later.” Do not change formatting broadly unless the task is formatting.
+
+## Equivalence gate
+
+Before `refactor.fastforward.do` or `refactor.standard.apply`, require an equivalence proof path:
+
+- existing tests that cover the behavior;
+- characterization test added before the refactor;
+- snapshot/golden output comparison;
+- API response or CLI output comparison;
+- manual path with expected/observed result;
+- explicit uncovered-risk statement accepted by the owner.
+
+If the proof path is missing, route to `blocked.missing-equivalence-proof`. Do not refactor on style preference alone.
+
+## Task memory for risky refactors
+
+Create a task capsule for standard refactors and multi-session fastforward refactors. The context pack links current behavior contract, equivalence evidence, affected callers, owner decisions, and forbidden behavior changes.
 
 ## Standard scan discipline
 
@@ -116,6 +136,10 @@ A refactor design must include:
 - Remove old paths after new paths are verified.
 - Update checklist evidence after each step.
 - Stop immediately when behavior changes or requirements emerge.
+
+## Minimality checkpoints
+
+Refactor minimality means removing or simplifying real maintenance risk, not creating architecture for its own sake. Apply `minimality.md` before adding an abstraction; require real callers, real duplication, or a real boundary.
 
 ## Equivalence evidence options
 

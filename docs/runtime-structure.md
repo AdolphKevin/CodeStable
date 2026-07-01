@@ -1,6 +1,6 @@
 # CodeStable 运行时结构
 
-首次通过 `cs-plan` onboard 后，项目根下会生成 `.codestable/`。它是 CodeStable 所有产物的聚合根，也是三个 CodeStable 入口在项目里读写长期知识的唯一工作区。
+首次通过 `cs-plan` onboard 后，项目根下会生成 `.codestable/`。它是人与 AI 共同维护的软件生命周期知识库。
 
 ```text
 .codestable/
@@ -12,11 +12,22 @@
 ├── architecture/
 │   ├── ARCHITECTURE.md                 # 架构索引
 │   └── {type}-{slug}.md
+├── specs/
+│   ├── INDEX.md                        # scoped engineering standards
+│   └── {scope}.md
+├── tasks/
+│   ├── INDEX.md                        # task capsule 总索引
+│   └── YYYY-MM-DD-{slug}/
+│       ├── task.md
+│       ├── context-pack.md
+│       ├── journal.md
+│       ├── proof.md
+│       └── status.yaml
 ├── roadmap/
 ├── features/
 ├── issues/
 ├── refactors/
-├── doc-sweeps/                         # 文档熵减报告
+├── doc-sweeps/
 ├── compound/
 │   ├── INDEX.md
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
@@ -26,28 +37,33 @@
 │   └── ...
 └── reference/
     ├── project-knowledge-contract.md
+    ├── human-ai-collaboration.md
+    ├── task-memory-contract.md
+    ├── minimality-ladder.md
+    ├── specs-contract.md
     ├── code-inventory.json
     ├── code-inventory.md
-    ├── shared-conventions.md
     ├── workflow-conventions.md
-    ├── system-overview.md
     └── ...
 ```
 
-## 知识新鲜度
+## 知识层职责
 
 - `INDEX.md`：只放摘要和链接，不写长事实。
-- `code-inventory.*`：当前代码地图，onboard/refresh/doc-sweep 时刷新。
-- `ARCHITECTURE.md`：当前结构事实，必须有代码锚点或已验收 diff。
-- `VISION.md`：用户/系统能力索引，onboard 推断项要标 `inferred`。
+- `attention.md`：短到每次都能读完的硬约束。
+- `specs/`：Trellis 式 scoped specs，保存工程标准、测试命令、API/UI/data/security 约定。
+- `tasks/`：Trellis 式 task memory，保存 context pack、journal 和 proof trace，让跨会话工作可恢复且可验证。
+- `reference/code-inventory.*`：当前代码地图，onboard/refresh/doc-sweep 时刷新。
+- `architecture/`：当前结构事实，必须有代码锚点或已验收 diff。
+- `requirements/`：用户/系统能力事实；onboard 推断项要标 `inferred`。
 - `compound/`：decision、learning、trick、explore 等可复用知识。
 - `doc-sweeps/`：旧文档 lifecycle 报告，不默认删除。
 
 ## 维护入口归属
 
-- 初始化、修复、刷新 `.codestable/`：`cs-plan` 的 `onboard.required` / `onboard.repair` / `onboard.refresh-knowledge`。
+- 初始化、修复、刷新 `.codestable/`：`cs-plan`。
 - 执行代码改动：`cs-do`，不顺手改长期事实。
-- 长期事实、索引和文档熵减：`cs-review`。
+- 长期事实、索引、task finish、doc-sweep：`cs-review`。
 
 ## Runtime playbook
 
@@ -57,4 +73,4 @@
 codestable-core/playbooks/*.md
 ```
 
-不要把同一规则复制到多个 Skill 目录；需要调试时看三入口输出的 `Playbook:` 字段。
+这些文件不是 Skill。需要调试时看三入口输出的 `Route / Playbook / Human Gate / Evidence / Task Memory / Minimality` 字段。

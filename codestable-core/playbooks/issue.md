@@ -8,11 +8,14 @@ Use this map first, then open only the section needed for the current route:
 - Report discipline
 - Analysis discipline
 - Quickfix discipline
+- Task memory for investigations
 - Fix implementation discipline
 - Debug escalation
 - Fix-note minimum
+- Reproduction gate
 - Verification checklist
 - Anti-regression reflection
+- Minimality checkpoints
 - Project Sync boundary
 - Hard stops
 
@@ -79,6 +82,10 @@ Required compact output:
 
 Quickfix is not a permission to skip evidence or broaden the diff.
 
+## Task memory for investigations
+
+Create a task capsule when the investigation spans sessions, has multiple hypotheses, or touches many modules. The context pack links reproduction evidence, failing path, candidate owners, relevant requirements/architecture, and open questions. The journal records hypothesis changes so later sessions do not repeat failed attempts.
+
 ## Fix implementation discipline
 
 During fixing:
@@ -104,6 +111,18 @@ A fix-note or final summary must include:
 - Verification result: failing path before / passing path after when possible.
 - Regression risk and uncovered areas.
 - Project Sync result.
+- Proof trace path when task memory exists.
+
+## Reproduction gate
+
+Before `issue.quickfix.do` or `issue.standard.fix`, require one of:
+
+- failing test or command output;
+- deterministic manual reproduction path;
+- production/user evidence such as log, request ID, screenshot, or exact input;
+- explicit no-repro rationale plus a targeted validation plan.
+
+If none exists, route to `blocked.missing-reproduction` or `issue.standard.report-analysis`. Do not implement from a vague symptom.
 
 ## Verification checklist
 
@@ -119,6 +138,10 @@ At review time, verify at least one:
 
 Spend a brief reflection when any signal appears: recurring bug, second fix attempt, unclear cross-layer contract, missing tests, hidden data assumption, or production incident. Only durable, reusable lessons go to knowledge-sync.
 
+## Minimality checkpoints
+
+Apply `minimality.md`: fix the smallest shared root cause, avoid caller-by-caller patches, avoid new abstractions/dependencies, and keep safety checks. A tiny patch with missing validation is still blocked.
+
 ## Project Sync boundary
 
 Most bug fixes do not update architecture or requirements. Sync only when the fix changes public behavior, data format, config semantics, user-visible capability boundary, or long-lived project rule.
@@ -126,6 +149,7 @@ Most bug fixes do not update architecture or requirements. Sync only when the fi
 ## Hard stops
 
 - Coding before root cause is known on a non-trivial issue.
+- Coding a bug fix without reproduction evidence or a no-repro rationale.
 - Continuing after the root-cause hypothesis fails.
 - Expanding bug fix into refactor or feature work.
 - Claiming verification with no command, reproduction, or substitute evidence.

@@ -8,6 +8,8 @@
 - 手动记录 architecture / requirements / roadmap
 - 手动记录 decision / learning / trick / explore / attention
 - Doc-sweep / 文档熵减
+- Task memory / 上下文包
+- Scoped specs / 工程标准
 - 项目知识索引维护
 
 ## 入口选择
@@ -22,6 +24,7 @@
 | 文档熵减、找过时文档 | `cs-review` | 需要代码证据优先和删除门槛 |
 | 手动记录 architecture / requirements / roadmap 状态 | `cs-review` | Project Sync 显式模式 |
 | 手动记录 decision / learning / trick / explore / attention / guide / libdoc | `cs-review` | Knowledge Sync 显式模式；不保留通用 `note` 类型 |
+| 记录或更新工程标准 / 测试命令 / API 约定 | `cs-review` | Scoped specs 写回需要来源证据 |
 
 ## Onboard / 初始化与刷新
 
@@ -62,6 +65,8 @@ Route: onboard.status             # 骨架完整，只报告状态
 .codestable/INDEX.md
 .codestable/architecture/ARCHITECTURE.md
 .codestable/requirements/VISION.md
+.codestable/specs/INDEX.md
+.codestable/tasks/INDEX.md
 .codestable/compound/INDEX.md
 .codestable/attention.md
 ```
@@ -133,6 +138,29 @@ Route: project-sync.doc-sweep
 - 每个旧文档 claim 必须映射到当前代码锚点、当前索引或更新的已验收文档。
 - 默认只写 `.codestable/doc-sweeps/YYYY-MM-DD-{slug}/index.md` 和 lifecycle 标记。
 - 不默认删除文件；删除需要用户明确确认、逐文件列表和充分证据。
+
+## Task memory / 上下文包
+
+非平凡任务会由 `cs-plan` 创建或更新：
+
+```text
+.codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md
+.codestable/tasks/YYYY-MM-DD-{slug}/journal.md
+.codestable/tasks/YYYY-MM-DD-{slug}/proof.md
+.codestable/tasks/YYYY-MM-DD-{slug}/status.yaml
+```
+
+它用于跨会话恢复，不替代 feature/issue/refactor/roadmap 产物。`cs-do` 追加 journal 和 proof evidence，`cs-review` 收口并只把长期事实提升到 architecture/requirements/compound/attention/specs。
+
+## Scoped specs / 工程标准
+
+记录工程标准时使用：
+
+```text
+cs-review：记录 specs：本项目 API handler 必须返回统一 ResultEnvelope，证据见 src/api/* 和 tests/api/*。
+```
+
+只记录经代码、测试、CI、README 或 owner 决策确认的规则。不要把单个偶然写法升级成团队规范。
 
 ## 项目知识索引维护
 

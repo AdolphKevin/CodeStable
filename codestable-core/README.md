@@ -1,32 +1,50 @@
 # CodeStable Core Playbooks
 
-`codestable-core/` 是 CodeStable runtime 的共享工程纪律库，不是可发现 Skill。这里的文件只给 `cs-plan` / `cs-do` / `cs-review` 读取，宿主不会因为这里有规则就多发现一个技能。
+`codestable-core/` is the shared engineering discipline library for CodeStable runtime. It is **not** a discoverable Skill and must not contain `SKILL.md`.
 
-## Why playbooks
+## Current design
 
-v6 开始把共享工程纪律统一建模为 **playbook**：
+The runtime makes lifecycle workflow explicit as auditable playbooks:
 
-- 明确支持哪些 route；
-- 明确由哪个入口拥有写权限；
-- 明确输入、证据、禁止事项和输出；
-- 便于调试时直接定位到单一权威文件。
+```text
+playbooks/collaboration.md   # human ownership and gates
+playbooks/task-memory.md     # task capsule, context pack, journal, proof trace
+playbooks/minimality.md      # minimal implementation ladder and overbuild checks
+playbooks/onboard.md         # code-aware initialization and refresh
+playbooks/explore.md         # read-only exploration
+playbooks/feature.md
+playbooks/issue.md
+playbooks/refactor.md
+playbooks/roadmap.md
+playbooks/project-sync.md
+playbooks/knowledge-sync.md
+```
 
 ## Debugging contract
 
-三个入口的输出都包含：
+The public entries emit:
 
 ```text
 Route: ...
 Playbook: codestable-core/playbooks/<name>.md#<section>
+Human Gate: ...
 Evidence: ...
+Task Memory: ...
+Proof Trace: ...
+Minimality Plan / Minimality / Overbuild Check: ...
 Next: ...
 ```
 
-当效果不满意时，优先调对应 playbook 的 route 小节。
+When behavior is bad, debug in this order: route, human gate, evidence, context pack, minimality rung, review/writeback.
 
 ## Maintenance rules
 
 - Do not copy playbooks into individual Skill directories.
-- Entry Skills reference playbooks by package-relative path, for example `../codestable-core/playbooks/feature.md`.
+- Do not reintroduce internal `SKILL.md` files for lifecycle phases.
 - Onboard copies `codestable-core/onboard/reference/` and `codestable-core/onboard/tools/` into the target project as `.codestable/reference/` and `.codestable/tools/`.
-- This directory must not contain `SKILL.md`; it must not participate in Skill discovery.
+- Runtime packages must not include eval harness files.
+
+
+## Real-repo reliability
+
+`playbooks/reliability.md` defines evidence levels, proof traces, bug/refactor gates, and doc-sweep claim mapping. Public entries surface those fields in their final protocol so route quality can be debugged.

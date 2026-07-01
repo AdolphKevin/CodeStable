@@ -5,6 +5,8 @@ Use this map first, then open only the section needed for the current route:
 
 - 1. search-yaml.py
 - 2. validate-yaml.py
+- 3. task-proof.py
+- 4. doc-claim-audit.py
 
 ## 1. search-yaml.py
 
@@ -123,3 +125,22 @@ python .codestable/tools/scan-codestable-docs.py --root .codestable --json .code
 ```
 
 It excludes `.codestable/reference/` and `.codestable/tools/` by default so runtime assets are not mixed with project lifecycle docs.
+
+
+## 3. task-proof.py
+
+Create a compact proof trace for non-trivial real-repo work:
+
+```bash
+python .codestable/tools/task-proof.py .codestable/tasks/YYYY-MM-DD-slug/proof.md --title "Fix auth redirect" --route issue.quickfix.do
+```
+
+## 4. doc-claim-audit.py
+
+Generate a claim-matrix scaffold before doc-sweep mutation:
+
+```bash
+python .codestable/tools/doc-claim-audit.py --root .codestable --out .codestable/doc-sweeps/YYYY-MM-DD-scope/claim-matrix.md
+```
+
+The tool inventories candidate docs and headings. It does not decide truth; `cs-review` must map claims to current code anchors or superseding sources.

@@ -1,56 +1,73 @@
 ---
 name: cs-review
-description: CodeStable 用户可见三命令入口之一。用于验收改动、验证修复、Project Sync、代码证据优先的文档熵减、显式记录架构/需求/决策/知识，并输出可调试 route/playbook/evidence。
+description: "CodeStable public entry for verification and knowledge freshness: acceptance, fix/refactor verification, doc-sweep, project sync, task finish, and durable learning promotion."
 ---
 
 # cs-review
 
-`cs-review` 是 CodeStable 的 **Review / Sync / Closure** 入口。它验证本次变更是否真的完成，并决定哪些长期文档应该回写；也承接用户显式要求的架构、需求、决策、踩坑、技巧、注意事项、文档熵减等长期维护操作。
+## Document map
 
-本 runtime 只暴露三个 CodeStable Skill：`cs-plan` / `cs-do` / `cs-review`。背后规则是 `codestable-core/playbooks/` 里的可审计 playbook。
+- Runtime playbook map
+- Startup scan
+- Fixed output protocol
+- User intent table
+- Review and sync rules
+- Doc-sweep rules
+- Human gate rules
+- Hard stops
+
+`cs-review` is the public **Review / Sync / Closure** entry. It verifies that work is complete, prevents overbuild and stale documentation, finishes task memory, and promotes only durable facts into project knowledge.
+
+Shared rules live in `../codestable-core/playbooks/`; they are auditable references, not hidden Skills.
 
 ## Runtime playbook map
 
-| Route family / Sync target | Runtime authority |
+| Concern | Runtime authority |
 |---|---|
-| `feature.acceptance` | `../codestable-core/playbooks/feature.md` |
-| `issue.fix-verify` | `../codestable-core/playbooks/issue.md` |
-| `refactor.apply-verify` | `../codestable-core/playbooks/refactor.md` |
-| roadmap item status / roadmap closure | `../codestable-core/playbooks/roadmap.md` + `../codestable-core/playbooks/project-sync.md` |
-| `project-sync.manual` / architecture / requirements / roadmap / audit | `../codestable-core/playbooks/project-sync.md` |
-| `project-sync.doc-sweep` | `../codestable-core/playbooks/project-sync.md#doc-sweep-rules` |
-| `knowledge-sync.manual` / decision / learning / trick / explore / attention / guide / libdoc | `../codestable-core/playbooks/knowledge-sync.md` |
+| Human gates / destructive approval | `../codestable-core/playbooks/collaboration.md` |
+| Task finish / journal | `../codestable-core/playbooks/task-memory.md` |
+| Minimality / overbuild review | `../codestable-core/playbooks/minimality.md` |
+| Real-repo reliability gates | `../codestable-core/playbooks/reliability.md` |
+| Feature / issue / refactor verification | `../codestable-core/playbooks/{feature,issue,refactor}.md` |
+| Roadmap closure and status | `../codestable-core/playbooks/roadmap.md` + `../codestable-core/playbooks/project-sync.md` |
+| Architecture / requirements / roadmap / doc-sweep | `../codestable-core/playbooks/project-sync.md` |
+| Decisions / learnings / tricks / explore / attention / guide / libdoc | `../codestable-core/playbooks/knowledge-sync.md` |
 
-## 启动扫描
+## Startup scan
 
-1. 检查 `.codestable/` 和 `.codestable/INDEX.md`；不存在则停止，输出 `Next: plan`，提示先用 `cs-plan：初始化 CodeStable`。
-2. 读取 `.codestable/INDEX.md`、`.codestable/attention.md`、`.codestable/reference/project-knowledge-contract.md`；再根据目标读取 `requirements/VISION.md`、`architecture/ARCHITECTURE.md`、`compound/INDEX.md` 或对应 roadmap index。
-3. 判断用户是否显式要求：
-   - 记录 / 同步 architecture、requirements、roadmap、decision、learning、trick、explore、attention、guide、libdoc → manual sync；
-   - 文档熵减、清理旧文档、找过时文档、doc-sweep → `project-sync.doc-sweep`；
-   - 否则进入普通 review，查看 diff、artifact 和验证证据。
-4. manual sync 不要求当前代码 diff，但必须有用户事实、代码锚点、已有文档、reviewed diff 或明确来源。
-5. doc-sweep 必须刷新/读取 code inventory，并用当前代码锚点验证文档，不得只凭旧文档互相覆盖。
-6. 普通 review 要区分本次范围和旁路脏文件。
+1. Ensure `.codestable/INDEX.md` exists. If missing, stop with `Next: plan`.
+2. Read `.codestable/INDEX.md`, `.codestable/attention.md`, `.codestable/reference/project-knowledge-contract.md`, and any relevant `.codestable/tasks/*/context-pack.md`.
+3. If the user asks to record architecture, requirements, roadmap, decision, learning, trick, explore, attention, guide, or libdoc, use manual sync with a traceable source.
+4. If the user asks for 文档熵减 / doc-sweep / 清理过时文档, use `project-sync.doc-sweep` and refresh/read code inventory first.
+5. Otherwise review current diff, lifecycle artifacts, task journal, checks, and related code.
+6. Distinguish current-scope changes from unrelated dirty files.
 
-## 固定输出协议
+## Fixed output protocol
 
-每次结束都输出：
+Every response ends with:
 
 ```text
 Route: <route-id>
 Playbook: <codestable-core/playbooks/*.md#section or none>
-Reason: <验收结论和证据摘要；manual/doc-sweep 要写明来源>
-Read: <关键 artifact / diff / check / doc / code anchor 路径>
-Evidence: <测试、diff、代码锚点、用户来源、库存报告或 stale 证据>
-Write-intent: <实际写回或不写回的文档范围>
-Checks: <已跑命令/手工路径；manual 可写 not-applicable + 来源>
-Writeback Matrix: architecture=<yes/no>, requirements=<yes/no>, roadmap=<yes/no>, compound=<yes/no>, attention=<yes/no>, guides-or-libdoc=<yes/no>, doc-sweep=<yes/no>
-Index Sync: root=<yes/no>, architecture-index=<yes/no>, requirements-index=<yes/no>, compound-index=<yes/no>, roadmap-index=<yes/no>, doc-sweep-index=<yes/no>
-Next: <commit | do | plan | ask-user | stop>
+Reason: <review conclusion and evidence summary>
+Human Gate: none | owner-confirmation | design-approval | risk-approval | merge-approval
+Owner decision: <known decision, pending question, or not-applicable>
+Read: <artifact/diff/check/doc/code/task paths>
+Evidence: <tests, diff, code anchors, user source, inventory, doc claim mapping>
+Evidence Level: L0 | L1 | L2 | L3 | L4
+Reliability Gate: pass | blocked:<reason> | not-applicable
+Proof Trace: none | update:<path> | finish:<path>
+Overbuild Check: pass | blocked | not-applicable
+Task Memory: none | update:<path> | finish:<path>
+Write-intent: <actual or proposed doc updates>
+Claim Matrix: <not-applicable | path -> claim -> current anchor/status>
+Checks: <commands/manual paths; manual sync may be not-applicable + source>
+Writeback Matrix: architecture=<yes/no>, requirements=<yes/no>, roadmap=<yes/no>, compound=<yes/no>, attention=<yes/no>, guides-or-libdoc=<yes/no>, specs=<yes/no>, task-memory=<yes/no>, doc-sweep=<yes/no>
+Index Sync: root=<yes/no>, architecture-index=<yes/no>, requirements-index=<yes/no>, compound-index=<yes/no>, roadmap-index=<yes/no>, specs-index=<yes/no>, task-index=<yes/no>, doc-sweep-index=<yes/no>
+Next: commit | do | plan | ask-user | stop
 ```
 
-合法 `route-id`：
+Legal `route-id` values:
 
 ```text
 feature.acceptance
@@ -62,48 +79,51 @@ knowledge-sync.manual
 review.status-only
 review.blocked-unrelated-dirty-files
 review.blocked-insufficient-evidence
+review.blocked-overbuild
+review.blocked-weak-evidence
 ```
 
-## 用户意图表
+## User intent table
 
-| 用户说法 | Route | 目标 |
+| User says | Route | Target |
 |---|---|---|
-| `cs-review：验收这个 feature` | `feature.acceptance` | 对照 design/checklist/diff/checks 验收 |
-| `cs-review：验证 bug 修复` | `issue.fix-verify` | 对照 report/analysis/fix-note 和复现路径验证 |
-| `cs-review：检查这次重构是否等价` | `refactor.apply-verify` | 对照 refactor plan 和测试证明行为不变 |
-| `cs-review：记录 architecture/requirements/roadmap：...` | `project-sync.manual` | 写当前项目事实或规划状态，必须有来源 |
-| `cs-review：做文档熵减 / 清理过时文档 / doc-sweep` | `project-sync.doc-sweep` | 先用当前代码和索引核验，再产出 sweep report；默认不删除 |
-| `cs-review：记录 decision/learning/trick/explore/attention/guide/libdoc：...` | `knowledge-sync.manual` | 写可复用长期知识，必须有来源或代码锚点 |
+| `cs-review：验收这个 feature` | `feature.acceptance` | Compare design/checklist/context pack/diff/checks |
+| `cs-review：验证 bug 修复` | `issue.fix-verify` | Verify report/analysis/fix-note and reproduction path |
+| `cs-review：检查这次重构是否等价` | `refactor.apply-verify` | Prove behavior equivalence |
+| `cs-review：记录 architecture/requirements/roadmap：...` | `project-sync.manual` | Write current project facts or planning state with source |
+| `cs-review：做文档熵减 / 清理过时文档 / doc-sweep` | `project-sync.doc-sweep` | Code-grounded claim classification report; no deletion by default |
+| `cs-review：记录 decision/learning/trick/explore/attention/guide/libdoc：...` | `knowledge-sync.manual` | Durable reusable knowledge with source or code anchor |
+| Evidence below required level for closure or mutation | `review.blocked-weak-evidence` | Stop with missing evidence list and next route |
 
-不保留通用 `note` 类型。用户说“备注/项目说明”时先归类；归类不了则 `Next: ask-user`。
+Generic `note` is not a durable type. Classify it or ask.
 
-## Project Sync 判断
+## Review and sync rules
 
-写长期文档必须满足“当前事实 + 来源证据 + 索引同步”。没有信号时输出 `no-sync` 是正确行为。
+- Verification first, writeback second. Do not use documentation updates to hide incomplete work.
+- Detail doc first, scoped index second, root index last.
+- Finish task memory by updating task status/journal/proof trace before promoting durable facts.
+- Run the overbuild check: dependencies, abstractions, broad churn, custom platform replacements, missing safety checks.
+- Use `no-sync` when no durable fact changed.
 
-| 信号 | 写哪里 | 不写哪里 |
-|---|---|---|
-| 公开接口、模块边界、数据/状态归属、配置格式、主流程改变 | architecture | requirements，除非用户可见能力也变了 |
-| 用户可见能力、业务规则、成功标准、失败模式改变 | requirements | architecture，除非实现结构也变了 |
-| roadmap item 状态、依赖、scope/blocker 改变 | roadmap | architecture/requirements，除非当前事实也变了 |
-| 当前变更产生可复用决策/踩坑/技巧/探索结论 | compound 或 attention | requirements，除非它是业务规则 |
-| 用户要求文档熵减 | doc-sweep report + index lifecycle | 不直接删除、不凭旧文档覆盖当前代码 |
+## Doc-sweep rules
 
-## Doc-sweep 硬规则
+Doc-sweep is a two-step operation:
 
-文档熵减必须走 `project-sync.doc-sweep`，不是普通 `project-sync.manual` 的随手改写。
+1. **Audit**: refresh/read code inventory, map each document claim to current code anchors / current index / newer doc / unknown, and write a report with a `Claim Matrix`.
+2. **Mutation**: archive/delete/rewrite only after explicit user approval with exact path list and rollback note.
 
-1. 先刷新或读取 `.codestable/reference/code-inventory.json`；缺失时运行 `.codestable/tools/scan-project.py` 或使用包内工具。
-2. 读取 `.codestable/INDEX.md`、architecture/requirements/compound/roadmap 索引和目标文档。
-3. 对每个候选文档建立 `doc claim -> code anchor / current index / newer doc` 映射。
-4. 分类只能是：`current`、`unverified`、`conflicts-with-code`、`superseded-by`、`archive-candidate`。
-5. 默认只写 `.codestable/doc-sweeps/YYYY-MM-DD-{slug}/index.md` 报告和索引 lifecycle 标记；**不删除文件**。
-6. 只有同时满足“用户明确要求删除 + 当前代码/索引/新文档证据充分 + 删除列表逐项列出”时，才可以删除；否则 `Next: ask-user`。
+Classifications are only `current`, `unverified`, `conflicts-with-code`, `superseded-by`, and `archive-candidate`. Unknown is not stale.
 
-## Review / Sync 退出条件
+## Human gate rules
 
-- 验收类 review 必须有 checks 或手工路径；没有则 `review.blocked-insufficient-evidence`。
-- manual sync 必须有来源；没有则 `ask-user`。
-- doc-sweep 必须有代码锚点核验；不能只根据旧文档互相判断新旧。
-- 写长期事实时先写具体文档，再更新对应索引，最后必要时更新 `.codestable/INDEX.md`。
-- 不静默改 approved design / analysis / roadmap history；需要变更时写 addendum 或新版本。
+Use `risk-approval` before destructive doc changes, migrations, broad rewrites, security-sensitive decisions, or roadmap closure with ambiguity. Use `merge-approval` before commit/close operations. Manual sync requires user source, reviewed diff, code anchor, or existing doc anchor.
+
+## Hard stops
+
+- Review without verification evidence.
+- Closing tasks without finishing the proof trace when one exists.
+- Manual sync without traceable source.
+- Doc-sweep based only on old docs.
+- Marking task done while checks or owner gates are pending.
+- Writing future plans as current architecture.
+- Deleting or archiving docs without explicit confirmation.

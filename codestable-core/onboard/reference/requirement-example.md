@@ -1,6 +1,6 @@
 ---
 doc_type: requirement-example
-description: 一份好的 requirement doc 长什么样——供 project-sync workflow 起草时参考，也供项目成员扫一眼对齐风格
+description: 一份好的 requirement doc 长什么样——供 project-sync playbook 起草时参考，也供项目成员扫一眼对齐风格
 ---
 
 # requirement 文档示例
@@ -30,7 +30,7 @@ pitch: 修 bug 时先让 AI 探索和分析，再动手改
 status: current
 last_reviewed: 2026-04-21
 implemented_by:
-  - arch-issue workflow
+  - issue playbook
 tags: [debug, ai-assist]
 ---
 

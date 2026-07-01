@@ -1,11 +1,11 @@
-# CodeStable 项目知识索引契约
+# CodeStable Project Knowledge Contract
 ## Document map
-
-Use this map first, then open only the section needed:
 
 - Knowledge layers
 - Startup read contract
-- Code inventory contract
+- Scoped specs
+- Task memory
+- Code inventory
 - Plan contract
 - Do contract
 - Review/writeback contract
@@ -14,20 +14,22 @@ Use this map first, then open only the section needed:
 
 ## Knowledge layers
 
-Project knowledge is layered. Keep facts close to their authority:
+Keep facts close to their authority:
 
 ```text
-.codestable/INDEX.md                 # root index, summaries and links only
-.codestable/attention.md             # short always-read warnings
-.codestable/reference/code-inventory.* # current repo implementation inventory
-.codestable/architecture/            # current structural facts with code anchors
-.codestable/requirements/            # current user/system capability facts
-.codestable/roadmap/                 # planning state
-.codestable/compound/                # decisions, learnings, tricks, explore records
-.codestable/doc-sweeps/              # doc lifecycle reports
+.codestable/INDEX.md                    # root summaries and links only
+.codestable/attention.md                # short always-read warnings
+.codestable/specs/INDEX.md              # scoped engineering standards index
+.codestable/tasks/INDEX.md              # resumable task capsules index
+.codestable/reference/code-inventory.*  # generated current implementation map
+.codestable/architecture/               # current structural facts with code anchors
+.codestable/requirements/               # current capability / business facts
+.codestable/roadmap/                    # planning state
+.codestable/compound/                   # decisions, learnings, tricks, explore records
+.codestable/doc-sweeps/                 # code-grounded doc lifecycle reports
 ```
 
-`INDEX.md` points to where facts live; it must not become a dumping ground.
+Root and scoped indexes are navigation aids. Detail docs own facts.
 
 ## Startup read contract
 
@@ -36,69 +38,85 @@ Every CodeStable entry starts with:
 1. `.codestable/INDEX.md`
 2. `.codestable/attention.md`
 3. `.codestable/reference/project-knowledge-contract.md`
-4. `.codestable/reference/code-inventory.md` only when route/context requires current implementation map
-5. Specific architecture / requirements / compound / roadmap docs only after the index says they are relevant
+4. `.codestable/reference/real-repo-reliability.md`
+5. relevant `.codestable/tasks/*/context-pack.md` and `proof.md` when resuming work
+6. `.codestable/specs/INDEX.md` when implementing/reviewing code style, commands, API, UI, data, or security conventions
+7. `.codestable/reference/code-inventory.md` when implementation map, onboard, refresh, or doc-sweep matters
+8. specific architecture / requirements / compound / roadmap docs only after an index says they are relevant
 
-Do not full-scan `.codestable/architecture/`, `.codestable/requirements/`, or `.codestable/compound/` unless the user asks for audit/doc-sweep/refresh.
+Do not full-scan all knowledge folders unless the user asks for audit, doc-sweep, or refresh.
 
-## Code inventory contract
+## Scoped specs
 
-`code-inventory.json` and `code-inventory.md` are generated during onboard and refresh. They are not product truth; they are a map to current code anchors.
+Scoped specs are high-signal rules shared by humans and AI. Examples: test commands, API conventions, UI accessibility expectations, schema migration rules, naming, or module ownership. `cs-plan` and `cs-do` read them selectively; `cs-review` keeps them fresh.
 
-Refresh inventory when:
+## Task memory
 
-- onboarding a repo for the first time;
-- user says “根据当前实现重新整理 .codestable”;
-- doc-sweep is requested;
-- route/debug output suggests indexes are stale;
-- a major directory/framework/test setup changed.
+Task capsules make non-trivial work resumable:
 
-Inventory updates are safe because they are generated facts. Architecture/requirements updates still need careful evidence and index sync.
+```text
+.codestable/tasks/YYYY-MM-DD-{slug}/task.md
+.codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md
+.codestable/tasks/YYYY-MM-DD-{slug}/journal.md
+.codestable/tasks/YYYY-MM-DD-{slug}/status.yaml
+```
+
+Feature/issue/refactor/roadmap artifacts remain canonical lifecycle records. Task memory is the curated context and session journal.
+
+## Code inventory
+
+`code-inventory.json` and `code-inventory.md` are generated maps to current code anchors. They are not product truth.
+
+Refresh inventory when onboarding, refreshing knowledge, doing doc-sweep, seeing stale indexes, or after major framework/directory/test setup changes.
 
 ## Plan contract
 
 `cs-plan` must:
 
-- read root index + attention before planning;
-- use code inventory or targeted code reads when project facts are missing or suspect;
+- read root index + attention;
+- use code inventory or targeted code reads when facts are missing or suspect;
 - route to `onboard.refresh-knowledge` when `.codestable` is placeholder-heavy or stale;
-- output `Playbook` and `Evidence` so route decisions are debuggable;
-- avoid writing durable facts except through onboard initialization/refresh artifacts.
+- create/update task context packs and proof traces for non-trivial work;
+- identify human gates and minimality plan;
+- avoid durable fact writes except onboard/refresh artifacts.
 
 ## Do contract
 
 `cs-do` must:
 
 - read current plan/artifact plus root index + attention;
-- read only the specific project facts that constrain implementation;
-- prefer current code over stale docs when executing, but report conflicts;
-- not opportunistically rewrite architecture/requirements/compound docs;
+- read task context pack and proof trace when present;
+- read scoped specs and project facts that constrain the implementation;
+- apply the minimality ladder before new code;
+- prefer current code over stale docs while reporting conflicts;
 - leave durable knowledge freshness to `cs-review`.
 
 ## Review/writeback contract
 
-`cs-review` owns durable knowledge freshness:
+`cs-review` owns durable freshness:
 
 1. Verify code/diff/checks or manual source.
-2. Write/update the concrete detail doc first.
-3. Update the corresponding index.
-4. Update `.codestable/INDEX.md` only when top-level summary/link/status changed.
-5. Output `Writeback Matrix` and `Index Sync`.
+2. Run overbuild/minimality review when code changed.
+3. Finish task memory and proof trace when present.
+4. Write/update concrete detail doc first.
+5. Update scoped index.
+6. Update `.codestable/INDEX.md` only when top-level summary/link/status changed.
+7. Output `Writeback Matrix` and `Index Sync`.
 
 ## Doc-sweep contract
 
 Doc-sweep is code-grounded lifecycle maintenance:
 
 - refresh/read code inventory first;
-- compare document claims against current code anchors and current indexes;
+- compare document claims against current code anchors, current indexes, and newer docs;
 - write a sweep report by default;
 - classify stale docs instead of deleting them;
-- require explicit confirmation for deletion/archive operations.
+- require explicit confirmation for archive/delete/rewrite operations.
 
 ## Freshness rules
 
-- Prefer current code/manifests/tests over old docs for factual claims.
+- Prefer current code/manifests/tests over old docs for implementation facts.
 - Prefer accepted review artifacts over draft plans.
 - Mark unverified or conflicting facts; do not silently rewrite history.
-- Every new durable fact needs a source path, code anchor, or user decision.
-- Every stale finding needs an evidence path and a recommended action.
+- Every durable fact needs a source path, code anchor, user decision, or review proof trace.
+- Every stale finding needs evidence and a recommended action.

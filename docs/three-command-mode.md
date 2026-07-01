@@ -1,83 +1,52 @@
 # CodeStable 三命令模式
 
-## Document map
-
-- 可发现入口
-- 三入口显式 intent
-- Playbook 拓扑
-- 调试口径
-- 项目知识闭环
-
-## 可发现入口
-
-CodeStable 默认只暴露三个生命周期入口：
+CodeStable 生命周期入口只有三个：
 
 ```text
-cs-plan
-cs-do
-cs-review
+cs-plan    # 计划 / 初始化 / 刷新 / 探索
+cs-do      # 执行 ready 工作
+cs-review  # 验收 / 同步 / 收口 / 长期记录
 ```
 
-另外两个独立 utility：
+## 为什么不是更多 Skill
 
-```text
-git-commit
-business-flow-mapper
-```
-
-CodeStable 不依赖 frontmatter 可见性字段隐藏内部能力。共享规则是 `codestable-core/playbooks/` 下的普通 playbook 文件，不是 `SKILL.md`。
-
-## 三入口显式 intent
-
-| 操作 | 用户说法 | Route |
-|---|---|---|
-| 初始化 `.codestable/` | `cs-plan：初始化 CodeStable` | `onboard.required` |
-| 修复骨架 | `cs-plan：检查并修复 .codestable` | `onboard.repair` |
-| 根据当前代码刷新项目知识 | `cs-plan：根据当前实现重新整理 .codestable` | `onboard.refresh-knowledge` |
-| 检查状态 | `cs-plan：检查 CodeStable 初始化状态` | `onboard.status` |
-| 只读代码探索 | `cs-plan：探索 <模块>，不改代码` | `explore.plan` |
-| 功能 / bug / 重构 / roadmap 规划 | `cs-plan：<需求>` | `feature.*` / `issue.*` / `refactor.*` / `roadmap.*` |
-| 执行 ready 工作 | `cs-do：继续执行` | `*.do` / `*.implement` / `*.fix` / `*.apply` |
-| 验收并同步 | `cs-review：验收并做 Project Sync` | `feature.acceptance` / `issue.fix-verify` / `refactor.apply-verify` |
-| 手动记录长期事实 | `cs-review：记录 architecture/requirements/decision/...` | `project-sync.manual` / `knowledge-sync.manual` |
-| 文档熵减 | `cs-review：做文档熵减，范围是 <scope>` | `project-sync.doc-sweep` |
-
-## Playbook 拓扑
+旧版阶段型能力没有消失，而是收敛为 playbook：
 
 ```text
 codestable-core/playbooks/
-├── onboard.md          # 代码实况初始化、repair、refresh、status
-├── explore.md          # 只读代码探索
-├── feature.md          # feature fastforward / standard design / implementation / acceptance
-├── issue.md            # bug report / analysis / fix / verify
-├── refactor.md         # refactor scan / plan / apply / verify
-├── roadmap.md          # 大需求拆解和 roadmap 状态
-├── project-sync.md     # architecture / requirements / roadmap / doc-sweep / audit
-└── knowledge-sync.md   # decision / learning / trick / explore / attention / guide / libdoc
+  collaboration.md
+  task-memory.md
+  minimality.md
+  feature.md
+  issue.md
+  refactor.md
+  roadmap.md
+  project-sync.md
+  knowledge-sync.md
 ```
 
-这些 playbook 是单一权威源。不要在 `cs-plan` / `cs-do` / `cs-review` 目录里复制同名规则。
+宿主只发现三个 CodeStable 入口；工程纪律仍在单一权威 playbook 中，可调试、可修改、不会参与 Skill 触发竞争。
 
-## 调试口径
+## 三入口职责
 
-三入口必须输出：
+| 入口 | 负责 | 不负责 |
+|---|---|---|
+| `cs-plan` | 初始化、刷新、路由、设计、任务上下文包、只读探索、human gate 判断 | 写业务代码、关闭任务、长期知识沉淀 |
+| `cs-do` | 执行 ready 工作、应用 minimality ladder、更新 evidence/journal/proof trace | 猜产品决策、顺手改架构/需求/知识库 |
+| `cs-review` | 验收、overbuild 检查、task finish、Project Sync、doc-sweep、手动记录长期事实 | 未验证就同步、无确认删除文档 |
+
+## 固定调试字段
+
+三个入口都会输出可追踪字段：
 
 ```text
 Route: ...
-Playbook: codestable-core/playbooks/<name>.md#<section>
+Playbook: ...
+Human Gate: ...
 Evidence: ...
+Task Memory: ...
+Minimality Plan / Minimality / Overbuild Check: ...
+Next: ...
 ```
 
-当行为不满意：
-
-1. 先看 `Route` 是否错；错则改入口路由表。
-2. Route 对但动作错，改 `Playbook` 指向的小节。
-3. Evidence 不足，补对应 playbook 的 evidence/hard-stop。
-4. 文档写偏，优先检查 `project-sync.md` 或 `knowledge-sync.md` 的写权限和证据门槛。
-
-## 项目知识闭环
-
-- `cs-plan` 读 `.codestable/INDEX.md`、`attention.md` 和索引，再按需读具体知识；初始化/刷新时生成代码实况索引。
-- `cs-do` 按 ready artifact + 项目索引实现，不顺手改长期事实。
-- `cs-review` 负责长期事实新鲜度：先验证，再写具体文档，再更新索引。
-- 文档熵减走 `project-sync.doc-sweep`：代码证据优先，默认报告和 lifecycle 标记，不默认删除。
+这让调试从“猜模型为什么这么做”变成检查：路由是否错、human gate 是否漏、context pack 是否不足、minimality rung 是否选错、review 证据是否不足。

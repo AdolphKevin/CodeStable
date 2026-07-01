@@ -188,7 +188,7 @@ items:
 ### 状态机
 
 ```
-planned  → in-progress  （feature workflow 开始实现时改）
+planned  → in-progress  （feature playbook 开始实现时改）
 in-progress → done      （cs-review Project Sync 验收通过后改）
 planned  → dropped      （用户决定不做，roadmap update 改）
 done / dropped 终态
@@ -221,7 +221,7 @@ python .codestable/tools/validate-yaml.py --file .codestable/roadmap/{slug}/{slu
 - [ ] 标了"所属模块"？该模块在第 3 节存在？
 - [ ] 依赖关系讲得清具体理由？"B 需要 A 提供的 {具体产物}"
 - [ ] 最小闭环真是"最窄的端到端路径"？还是只是"最容易的一条"？
-- [ ] 有条目其实应该是 requirement 变化而不是 feature？（"把 XX 能力的边界改一下"）那种转 the project-sync workflow
+- [ ] 有条目其实应该是 requirement 变化而不是 feature？（"把 XX 能力的边界改一下"）那种转 project-sync playbook
 
 ---
 

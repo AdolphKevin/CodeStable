@@ -21,13 +21,13 @@ Use this map first, then open only the section needed for the current route:
 - Hard stops
 
 
-This is the authoritative runtime reference for balanced knowledge synchronization. It covers attention, learning, tricks, decisions, explore docs, guide docs, and library docs. Generic `note` is intentionally not a runtime target; route durable content to the most specific target.
+This is the authoritative runtime reference for durable knowledge synchronization after review or explicit manual recording. It covers attention, learning, tricks, decisions, explore docs, guide docs, and library docs. Generic `note` is intentionally not a runtime target; route durable content to the most specific target.
 
 ## Principle
 
 Most changes should not create durable knowledge. `no-sync` is an intentional precision decision, not a skipped task.
 
-Write knowledge only when the information will likely help future agents or humans avoid mistakes, reuse a pattern, understand a decision, or use a public interface.
+Write knowledge only when the information will likely help future humans or AI sessions avoid mistakes, reuse a pattern, understand a decision, or use a public interface. Ephemeral attempts stay in task journal.
 
 ## Target map
 
@@ -58,17 +58,18 @@ Each doc type may add fields, but shared fields should stay consistent with `.co
 `knowledge-sync.manual` is allowed when the user explicitly asks to record durable knowledge such as decision, learning, trick, explore, attention, guide, or libdoc. It does not require a code diff, but it does require at least one source:
 
 - user explicitly states the decision/fact/lesson;
+- a finished task journal contains a durable lesson confirmed by review;
 - code anchors or docs support the claim;
 - the current conversation contains a concrete investigation result;
 - a reviewed feature/issue/refactor produced the knowledge.
 
-Manual record should still deduplicate against existing compound docs and attention. If the content has no future reuse value, report `Project Sync: no-sync` instead of writing a document.
+Manual record should still deduplicate against existing compound docs, task journals, and attention. If the content has no future reuse value, report `Project Sync: no-sync` instead of writing a document.
 
 ## Deduplication and intent routing
 
 Before writing durable knowledge:
 
-1. Search existing compound docs, attention, guides, and libdoc for overlap.
+1. Search existing compound docs, task memory, attention, guides, and libdoc for overlap.
 2. Decide whether to update an existing doc, create a new doc, or skip.
 3. Keep one doc focused on one durable point.
 4. Ask for user review when the entry asserts a decision or changes reader-facing docs.
@@ -228,6 +229,10 @@ Report index work as:
 ```text
 Index Sync: compound-index=<yes/no>, root=<yes/no>, reason=<short reason>
 ```
+
+## Task-memory promotion
+
+When closing a task, promote only durable, reusable conclusions from `tasks/*/journal.md` into compound/attention/specs. Keep failed commands, temporary debugging, and local progress notes in the task journal. If a journal item is not clearly reusable, leave it there.
 
 ## Hard stops
 

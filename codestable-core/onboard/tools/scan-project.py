@@ -32,7 +32,9 @@ CONFIG_PATTERNS = (
     "drizzle", "sequelize", "typeorm", "knex", "openapi", "swagger",
 )
 SOURCE_DIR_NAMES = {"src", "app", "pages", "components", "lib", "server", "api", "routes", "services", "core", "cmd", "internal", "pkg"}
-TEST_HINTS = ("test", "tests", "spec", "__tests__", "e2e")
+TEST_DIR_HINTS = {"test", "tests", "__tests__", "e2e"}
+TEST_FILE_MARKERS = (".test.", ".spec.", "_test.", "-test.")
+TEST_FILE_PREFIXES = ("test_",)
 ROUTE_HINTS = ("route", "routes", "router", "controller", "handler", "api", "endpoint")
 SCHEMA_HINTS = ("schema", "model", "models", "migration", "migrations", "prisma", "drizzle")
 
@@ -55,6 +57,14 @@ def iter_files(root: Path) -> Iterable[Path]:
                 yield p
 
 
+def is_test_path(path: Path) -> bool:
+    parts = [part.lower() for part in path.parts]
+    lower = path.name.lower()
+    if any(part in TEST_DIR_HINTS for part in parts):
+        return True
+    return lower.startswith(TEST_FILE_PREFIXES) or any(marker in lower for marker in TEST_FILE_MARKERS)
+
+
 def file_kind(path: Path) -> str:
     name = path.name
     lower = name.lower()
@@ -64,7 +74,7 @@ def file_kind(path: Path) -> str:
         return "project-doc"
     if any(x in lower for x in CONFIG_PATTERNS):
         return "config"
-    if any(x in part.lower() for part in path.parts for x in TEST_HINTS):
+    if is_test_path(path):
         return "test"
     if any(x in part.lower() or x in lower for part in path.parts for x in ROUTE_HINTS):
         return "route-api"
