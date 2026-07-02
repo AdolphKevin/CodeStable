@@ -1,51 +1,53 @@
 # CodeStable
 
-> Balanced runtime: three public lifecycle entries plus real-repo reliability gates, proof traces, task memory, and minimal implementation discipline.
+CodeStable 是面向 Codex / Claude Code 的工程化开发任务管理 Skill 包。它把一次软件开发工作拆成三个公开入口：先规划和收集证据，再执行最小可验证改动，最后验收并把长期事实写回项目知识库。
 
-## Document map
+它解决的不是“多加几个 Agent”，而是几个真实仓库里常见的问题：
 
-- 可发现 Skill
-- 面向真实仓库的四条工程纪律
-- 背后是可审计 playbook
-- 常用调用
-- 代码实况初始化
-- 文档熵减安全边界
-- 运行时目录
-- 参考文档
+- 任务跨会话后上下文丢失；
+- AI 直接实现但没有复现、验证或等价证据；
+- 小需求被做成大框架；
+- README、架构文档、需求文档和当前代码逐渐失真；
+- 文档清理缺少代码锚点，容易误删有效知识。
 
-CodeStable 是面向 Codex / Claude Code 的工程化开发任务管理 Skill 包。当前设计口径是：**人与 AI 共同协作；项目知识进仓库；任务可恢复；实现保持最小；真实代码证据优先；验证后再沉淀。**
+## 核心设计
 
-## 可发现 Skill
+CodeStable 只暴露三个生命周期入口：
 
-Runtime 包只包含 5 个可发现 `SKILL.md`：
-
-| Skill | 作用 |
+| 入口 | 用途 |
 |---|---|
-| `cs-plan` | 规划：代码实况初始化、项目知识刷新、任务路由、上下文包、最小实现计划、只读探索 |
-| `cs-do` | 执行：读取任务上下文和 scoped specs，只实现 ready 工作，记录证据 |
-| `cs-review` | 验收与同步：验证结果、overbuild 检查、任务收口、Project Sync、文档熵减、长期知识沉淀 |
-| `git-commit` | 独立 utility：基于 staged diff 生成提交 |
-| `business-flow-mapper` | 独立 utility：梳理业务流程 |
+| `cs-plan` | 初始化 / 刷新项目知识、探索代码、规划 feature / issue / refactor / roadmap，并生成必要的上下文包 |
+| `cs-do` | 执行已经 ready 的工作，复用现有实现，应用最小实现规则，记录验证证据 |
+| `cs-review` | 验收改动、检查过度设计、收口任务记忆、同步长期文档、执行代码证据优先的 doc-sweep |
 
-`git-commit` 与 `business-flow-mapper` 不是 CodeStable 生命周期的一部分。
+另有两个独立工具 Skill：
 
-## 面向真实仓库的四条工程纪律
+| Skill | 用途 |
+|---|---|
+| `git-commit` | 基于 staged diff 生成规范提交 |
+| `business-flow-mapper` | 从代码、文档或测试梳理业务流程图 |
 
-1. **CodeStable 原始思想**：编排软件生命周期，而不是编排 Agent。需求、架构、feature、issue、refactor、roadmap、decision、learning 都是人和 AI 共同维护的项目资产。
-2. **Trellis 式项目记忆**：`.codestable/specs/` 保存 scoped engineering standards；`.codestable/tasks/` 保存可恢复 task capsule、context pack、journal 和 proof trace。
-3. **Ponytail 式最小实现**：每次计划/执行/评审都使用 minimality ladder：先判断是否要做、先复用、先平台/标准库、先已有依赖，最后才写最小新代码；但不牺牲验证、安全、可访问性和数据安全。
-4. **真实仓库可靠性**：bug fix 必须有复现/根因/回归证据；refactor 必须有等价证据；review/doc-sweep 必须有 claim map；onboard 必须生成代码实况而不是空模板。
+## 工作方式
 
-## 背后是可审计 playbook
+CodeStable 的项目知识默认进入目标仓库的 `.codestable/`：
 
-三入口共享的工程纪律位于：
+- `requirements/`：用户可见能力、业务规则和成功标准；
+- `architecture/`：当前架构事实、模块边界和代码锚点；
+- `specs/`：测试命令、工程规范、API/UI/data/security 约定；
+- `tasks/`：跨会话 task capsule、context pack、journal 和 proof trace；
+- `features/`、`issues/`、`refactors/`、`roadmap/`：生命周期产物；
+- `compound/`：decision、learning、trick、explore 等可复用知识；
+- `reference/code-inventory.*`：当前代码实况库存；
+- `doc-sweeps/`：文档熵减报告，默认不删除文件。
+
+共享工程纪律放在本仓库的 `codestable-core/playbooks/`。这些文件不是可发现 Skill，而是三入口共同引用的可审计规则：
 
 ```text
 codestable-core/playbooks/
-├── collaboration.md     # 人机协作与 human gate
+├── collaboration.md     # human gate 和 owner 决策边界
 ├── task-memory.md       # task capsule / context pack / journal / proof trace
 ├── minimality.md        # 最小实现 ladder / overbuild review
-├── reliability.md       # 真实仓库 evidence level / proof trace / claim map
+├── reliability.md       # evidence level / bug-refactor-review 可靠性门槛
 ├── onboard.md
 ├── explore.md
 ├── feature.md
@@ -56,99 +58,68 @@ codestable-core/playbooks/
 └── knowledge-sync.md
 ```
 
-这些文件不是 `SKILL.md`，不会被宿主发现为技能。三入口输出带：
-
-```text
-Route: ...
-Playbook: codestable-core/playbooks/<name>.md#<section>
-Human Gate: ...
-Evidence: ...
-Evidence Level / Reliability Gate / Proof Trace: ...
-Minimality Plan / Minimality / Overbuild Check: ...
-Task Memory: ...
-```
-
-效果不满意时，优先看 route 是否正确、context pack 是否足够、minimality rung 是否选错、human gate 是否缺失，再修改对应 playbook 小节。
-
 ## 常用调用
 
 | 你想做的事 | 调用方式 |
 |---|---|
-| 初始化新项目 `.codestable/` | `cs-plan：初始化 CodeStable，给这个仓库建立 .codestable 骨架` |
-| 根据当前实现重新整理项目知识 | `cs-plan：根据当前实现重新整理 .codestable` |
-| 只摸代码、解释流程、不改代码 | `cs-plan：探索 auth 登录流程，不改代码` |
-| 规划新功能 / bug / 重构 / roadmap | `cs-plan：<你的需求>` |
-| 执行已经 ready 的任务 | `cs-do：继续执行当前 feature / issue / refactor` |
-| 验收本次改动并同步文档 | `cs-review：验收并做 Project Sync` |
-| 文档熵减 / 清理过时文档 | `cs-review：做文档熵减，范围是 auth 模块` |
-| 显式记录架构事实 | `cs-review：记录 architecture：<事实、边界、证据或代码锚点>` |
-| 显式记录需求/业务规则 | `cs-review：记录 requirements：<能力、成功标准、边界>` |
-| 显式记录技术决策 | `cs-review：记录 decision：<决定、背景、取舍、后果>` |
-| 显式记录踩坑/技巧/探索结论/注意事项 | `cs-review：记录 learning/trick/explore/attention：<内容和证据>` |
+| 初始化项目知识库 | `cs-plan：初始化 CodeStable，给这个仓库建立 .codestable 骨架` |
+| 根据当前实现刷新知识 | `cs-plan：根据当前实现重新整理 .codestable` |
+| 只读探索代码流程 | `cs-plan：探索 auth 登录流程，不改代码` |
+| 规划新功能 / bug / 重构 | `cs-plan：<你的需求>` |
+| 执行 ready 工作 | `cs-do：继续执行当前 feature / issue / refactor` |
+| 验收改动并同步文档 | `cs-review：验收并做 Project Sync` |
+| 清理过时文档 | `cs-review：做文档熵减，范围是 auth 模块` |
+| 记录架构事实 | `cs-review：记录 architecture：<事实、边界、证据或代码锚点>` |
+| 记录需求或业务规则 | `cs-review：记录 requirements：<能力、成功标准、边界>` |
+| 记录技术决策 | `cs-review：记录 decision：<决定、背景、取舍、后果>` |
+| 提交 staged 改动 | `git-commit` |
 
-详细语法见 `docs/manual-operations.md`。
+## 可靠性约束
 
-## 代码实况初始化
-
-`cs-plan：初始化 CodeStable` 不只是创建空目录。它应该：
-
-1. 复制 `.codestable/reference/` 和 `.codestable/tools/`；
-2. 运行或等价执行 `scan-project.py` 生成 `reference/code-inventory.json` 和 `reference/code-inventory.md`；
-3. 根据 README、manifests、entrypoints、routes、schemas、tests、config 生成代码实况版 `INDEX.md`、`architecture/ARCHITECTURE.md`、`requirements/VISION.md`、`specs/INDEX.md`、`tasks/INDEX.md`、`compound/INDEX.md` 和 `attention.md`；
-4. 对无法确认的产品意图标记 `inferred` / `unknown`，不编造事实。
-
-已有项目可以用：
+每个入口都会输出可调试字段，例如：
 
 ```text
-cs-plan：根据当前实现重新整理 .codestable
+Route: ...
+Playbook: ...
+Human Gate: ...
+Evidence Level: ...
+Reliability Gate: ...
+Minimality Plan / Minimality / Overbuild Check: ...
+Task Memory: ...
+Next: ...
 ```
 
-这会刷新代码库存和索引，但不会删除用户维护的文档。
+这些字段用于判断：路由是否正确、证据是否足够、是否需要用户拍板、实现是否过度、任务是否可以继续或收口。
 
-## 文档熵减安全边界
+几个硬规则：
 
-文档熵减使用：
+- bug fix 要从失败信号、复现路径或 no-repro 理由开始；
+- refactor 要先说明行为边界和等价验证方式；
+- 非平凡任务要留下 proof trace；
+- doc-sweep 先做 claim matrix，删除 / 归档必须逐文件确认；
+- minimality 不允许裁掉验证、安全、权限、数据安全或可访问性。
+
+## 仓库结构
 
 ```text
-cs-review：做文档熵减，范围是 <模块/目录/全项目>
+.
+├── cs-plan/                 # 规划入口 Skill
+├── cs-do/                   # 执行入口 Skill
+├── cs-review/               # 验收与同步入口 Skill
+├── git-commit/              # 独立提交工具 Skill
+├── business-flow-mapper/    # 独立业务流程梳理 Skill
+├── codestable-core/
+│   ├── playbooks/           # 三入口共享规则
+│   └── onboard/             # 初始化模板和工具
+└── docs/                    # 使用说明和设计说明
 ```
-
-它会进入 `project-sync.doc-sweep`，要求先用当前代码和索引核验旧文档。默认只写 sweep report 和 lifecycle 标记，不删除文件。删除需要用户明确确认、逐文件列出和充分 evidence。
-
-## 运行时目录
-
-```text
-.codestable/
-├── INDEX.md
-├── attention.md
-├── requirements/VISION.md
-├── architecture/ARCHITECTURE.md
-├── specs/INDEX.md
-├── tasks/INDEX.md
-├── roadmap/
-├── features/
-├── issues/
-├── refactors/
-├── doc-sweeps/
-├── compound/INDEX.md
-├── tools/
-└── reference/
-    ├── project-knowledge-contract.md
-    ├── human-ai-collaboration.md
-    ├── task-memory-contract.md
-    ├── minimality-ladder.md
-    ├── specs-contract.md
-    ├── code-inventory.json
-    └── code-inventory.md
-```
-
-`.codestable/INDEX.md` 是每次 plan/do/review 的项目知识入口；review 写回长期事实时同时维护 scoped index 和 root index。
 
 ## 参考文档
 
-- `docs/manual-operations.md` — 三入口下的初始化、刷新、探索、手动记录、doc-sweep 语法。
-- `docs/three-command-mode.md` — 三命令模式与 playbook 拓扑。
-- `docs/runtime-structure.md` — `.codestable/` 运行时结构。
-- `docs/debugging.md` — 如何根据 `Route / Playbook / Evidence / Task Memory / Minimality` 调试行为。
-- `docs/design-synthesis.md` — CodeStable / Trellis / Ponytail 的设计融合说明。
-- `docs/doc-sweep-safety.md` — 文档熵减的代码证据优先规则。
+- `docs/manual-operations.md`：三入口常用操作。
+- `docs/three-command-mode.md`：三命令模式和职责边界。
+- `docs/runtime-structure.md`：`.codestable/` 运行时结构。
+- `docs/real-repo-reliability.md`：真实仓库证据等级和可靠性门槛。
+- `docs/doc-sweep-safety.md`：文档熵减安全规则。
+- `docs/debugging.md`：如何根据输出字段调试 CodeStable 行为。
+- `docs/design-synthesis.md`：CodeStable / Trellis / Ponytail 的设计融合说明。
