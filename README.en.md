@@ -10,6 +10,14 @@ It is meant to prevent common real-repo failures:
 - stale requirements, architecture, and README docs;
 - unsafe document cleanup without current code anchors.
 
+## Installation
+
+```bash
+npx skills add https://github.com/AdolphKevin/CodeStable
+```
+
+When the interactive selector opens, press `a` to select all skills in the repository, then follow the prompt to confirm installation.
+
 ## Public Entries
 
 | Entry | Purpose |

@@ -10,6 +10,14 @@ CodeStable 是面向 Codex / Claude Code 的工程化开发任务管理 Skill �
 - README、架构文档、需求文档和当前代码逐渐失真；
 - 文档清理缺少代码锚点，容易误删有效知识。
 
+## 安装
+
+```bash
+npx skills add https://github.com/AdolphKevin/CodeStable
+```
+
+命令进入交互选择界面后，按 `a` 全选仓库内所有 skills，再按提示确认安装。
+
 ## 核心设计
 
 CodeStable 只暴露三个生命周期入口：
