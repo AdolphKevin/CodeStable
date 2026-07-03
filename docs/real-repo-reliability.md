@@ -5,17 +5,18 @@
 - Why this reliability layer exists
 - What counts as evidence
 - How to debug poor outcomes
-- Bug fix / refactor / review gates
+- Bug fix / refactor / audit-only / review gates
 
 ## Why this reliability layer exists
 
-A correct Skill package is not enough. CodeStable should improve real work in real repositories: bug fixes should start from the failure, refactors should prove behavior equivalence, and reviews/doc-sweeps should prefer current code over old documents.
+A correct Skill package is not enough. CodeStable should improve real work in real repositories: bug fixes should start from the failure, refactors should prove behavior equivalence, audit-only backend chains should produce a complete file-level ledger before fixes, and reviews/doc-sweeps should prefer current code over old documents.
 
 CodeStable therefore uses three hard ideas:
 
 1. **Evidence levels**: each route states whether it has user intent, docs, code anchors, executable checks, or before/after proof.
 2. **Proof trace**: non-trivial work records a compact audit trail in task memory.
-3. **Fail closed**: when evidence is too weak, the entry returns `blocked:*` instead of guessing.
+3. **Audit ledger**: high-risk backend prompt/schema/status/event chains enumerate modules, callers, consumers, risks, and exact `已审完/未审完` status before code.
+4. **Fail closed**: when evidence is too weak, the entry returns `blocked:*` instead of guessing.
 
 ## What counts as evidence
 
@@ -25,7 +26,7 @@ CodeStable therefore uses three hard ideas:
 - L3: executable command output or reproduction path.
 - L4: before/after proof.
 
-Bug fix and refactor closure should aim for L4. Doc-sweep mutation requires claim mapping to current anchors plus user approval.
+Bug fix and refactor closure should aim for L4. Audit-only completion requires L2 anchors for every relevant module and prompt/schema path-field-caller-consumer mapping. Doc-sweep mutation requires claim mapping to current anchors plus user approval.
 
 ## How to debug poor outcomes
 
@@ -37,6 +38,7 @@ Playbook:
 Evidence Level:
 Reliability Gate:
 Proof Trace:
+Audit Ledger / Audit Status:
 Minimality / Overbuild:
 Next:
 ```
@@ -47,5 +49,6 @@ If the result is bad, fix the first broken layer: route, evidence threshold, hum
 
 - Bug fix: reproduction or no-repro rationale before code.
 - Refactor: equivalence proof path before code.
+- Audit-only: file-level ledger and `Audit Status: 已审完` before `cs-do`; partial ledgers block execution.
 - Review: checks/proof trace/writeback matrix before closure.
 - Doc-sweep: claim matrix before mutation; delete/archive only after explicit path-by-path approval.

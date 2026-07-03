@@ -77,7 +77,7 @@ Fastforward final output must include goal, non-goals, changed scope, verificati
 
 ## Standard design discipline
 
-Use standard design when the feature changes durable project facts or has meaningful uncertainty.
+Use standard design when the feature changes durable project facts or has meaningful uncertainty. If the uncertainty is a high-risk backend chain involving prompt/schema/status/event flow, route to `audit-only.backend-ledger` before drafting the design.
 
 Design minimum sections:
 
@@ -178,5 +178,6 @@ Most fastforward work is `no-sync`. Standard features often update requirements 
 - Starting feature work without reading `.codestable/attention.md` when it exists.
 - Upgrading a small task into roadmap/design just to create records.
 - Implementing before design approval when standard design is required.
+- Designing or implementing a high-risk backend prompt/schema/status/event chain before a required audit-only ledger exists.
 - Quietly changing API, data, permissions, security, or migration scope during implementation.
 - Rewriting historical design/checklist/acceptance to hide actual sequence.

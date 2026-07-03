@@ -9,6 +9,7 @@
 - Plan contract
 - Do contract
 - Review/writeback contract
+- Audit-only contract
 - Doc-sweep contract
 - Freshness rules
 
@@ -39,12 +40,12 @@ Every CodeStable entry starts with:
 2. `.codestable/attention.md`
 3. `.codestable/reference/project-knowledge-contract.md`
 4. `.codestable/reference/real-repo-reliability.md`
-5. relevant `.codestable/tasks/*/context-pack.md` and `proof.md` when resuming work
+5. relevant `.codestable/tasks/*/context-pack.md`, `audit-ledger.md`, and `proof.md` when resuming work
 6. `.codestable/specs/INDEX.md` when implementing/reviewing code style, commands, API, UI, data, or security conventions
 7. `.codestable/reference/code-inventory.md` when implementation map, onboard, refresh, or doc-sweep matters
 8. specific architecture / requirements / compound / roadmap docs only after an index says they are relevant
 
-Do not full-scan all knowledge folders unless the user asks for audit, doc-sweep, or refresh.
+Do not full-scan all knowledge folders unless the user asks for audit, doc-sweep, or refresh. Audit-only backend chain reviews are explicit exceptions and must still be topology-scoped to the relevant chain.
 
 ## Scoped specs
 
@@ -57,7 +58,9 @@ Task capsules make non-trivial work resumable:
 ```text
 .codestable/tasks/YYYY-MM-DD-{slug}/task.md
 .codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md
+.codestable/tasks/YYYY-MM-DD-{slug}/audit-ledger.md   # optional audit-only output
 .codestable/tasks/YYYY-MM-DD-{slug}/journal.md
+.codestable/tasks/YYYY-MM-DD-{slug}/proof.md
 .codestable/tasks/YYYY-MM-DD-{slug}/status.yaml
 ```
 
@@ -76,7 +79,8 @@ Refresh inventory when onboarding, refreshing knowledge, doing doc-sweep, seeing
 - read root index + attention;
 - use code inventory or targeted code reads when facts are missing or suspect;
 - route to `onboard.refresh-knowledge` when `.codestable` is placeholder-heavy or stale;
-- create/update task context packs and proof traces for non-trivial work;
+- route to `audit-only.backend-ledger` before design or implementation when a backend chain is high-risk across prompt/schema/status/event boundaries;
+- create/update task context packs, audit ledgers, and proof traces for non-trivial work;
 - identify human gates and minimality plan;
 - avoid durable fact writes except onboard/refresh artifacts.
 
@@ -85,7 +89,8 @@ Refresh inventory when onboarding, refreshing knowledge, doing doc-sweep, seeing
 `cs-do` must:
 
 - read current plan/artifact plus root index + attention;
-- read task context pack and proof trace when present;
+- read task context pack, completed audit ledger, and proof trace when present;
+- block audit-required work when the ledger is missing, partial, or lacks `Audit Status: 已审完`;
 - read scoped specs and project facts that constrain the implementation;
 - apply the minimality ladder before new code;
 - prefer current code over stale docs while reporting conflicts;
@@ -102,6 +107,14 @@ Refresh inventory when onboarding, refreshing knowledge, doing doc-sweep, seeing
 5. Update scoped index.
 6. Update `.codestable/INDEX.md` only when top-level summary/link/status changed.
 7. Output `Writeback Matrix` and `Index Sync`.
+
+## Audit-only contract
+
+Audit-only is a `cs-plan` reliability escalation, not a default scan. Use it when the user explicitly says `audit-only`, or when a backend chain crosses modules and involves prompt/schema/status/event flow or weak evidence before a fix.
+
+It must output a file-level ledger with: file, responsibility, entry, exit, events, prompts, schemas, state fields, callers, downstream consumers, risks, and `审计状态: done | partial`.
+
+Every prompt and schema must include path, fields, caller, and downstream consumer. The final status is exactly `Audit Status: 已审完` or `Audit Status: 未审完`; a partial ledger cannot authorize `cs-do`.
 
 ## Doc-sweep contract
 

@@ -13,6 +13,7 @@ After `cs-plan` onboarding, the project contains `.codestable/`, a human/AI shar
 ├── tasks/YYYY-MM-DD-{slug}/
 │   ├── task.md
 │   ├── context-pack.md
+│   ├── audit-ledger.md   # optional audit-only file-level ledger
 │   ├── journal.md
 │   ├── proof.md
 │   └── status.yaml
@@ -33,4 +34,4 @@ After `cs-plan` onboarding, the project contains `.codestable/`, a human/AI shar
     └── code-inventory.md
 ```
 
-`specs/` stores scoped engineering standards. `tasks/` stores resumable task capsules, journals, and proof traces. `cs-review` owns durable writeback and index freshness.
+`specs/` stores scoped engineering standards. `tasks/` stores resumable task capsules, optional audit ledgers, journals, and proof traces. `cs-review` owns durable writeback and index freshness.

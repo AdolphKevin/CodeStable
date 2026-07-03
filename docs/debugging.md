@@ -2,7 +2,7 @@
 
 调试入口是输出协议，而不是隐藏 Skill 名称。
 
-## 先看六个字段
+## 先看关键字段
 
 | 字段 | 判断什么 | 常见修复 |
 |---|---|---|
@@ -12,6 +12,7 @@
 | `Evidence` | 是否有代码/文档/命令锚点 | 加强 startup scan 或 context pack |
 | `Task Memory` | 是否创建/读取/更新了 context pack、journal 和 proof trace | 改 `task-memory.md` 或入口扫描规则 |
 | `Minimality` / `Overbuild Check` | 是否过度实现或漏安全检查 | 改 `minimality.md` 或 do/review 输出要求 |
+| `Audit Ledger` / `Audit Status` | 高风险后端链路是否先产出文件级 ledger，且是否明确已审完 | 改 `cs-plan` audit-only gate 或 `audit-only.md` |
 
 ## 常见问题
 
@@ -27,6 +28,10 @@
 
 检查 `onboard.required` 是否生成了 `code-inventory.*`、`specs/INDEX.md`、`tasks/INDEX.md`、`ARCHITECTURE.md`、`VISION.md`，并且是否使用 `observed/documented/inferred/unknown` 标注置信度。修 `onboard.md` 和 `onboard/reference.md`。
 
+### audit-only 没有挡住危险实现
+
+高风险后端链路涉及 prompt、schema、状态字段或事件流时，应先走 `Route: audit-only.backend-ledger`。如果没有文件级 ledger、没有 `Audit Status: 已审完/未审完`，或 partial ledger 仍然进入 `cs-do`，修 `cs-plan` 的 audit-only gate、`cs-do` 的 `blocked.missing-audit-ledger`，以及 `codestable-core/playbooks/audit-only.md`。
+
 ### 跨会话丢上下文
 
-非平凡任务应有 `.codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md`、`journal.md` 和 `proof.md`。没有就修 `task-memory.md` 或 `cs-plan` 的 task memory 规则。
+非平凡任务应有 `.codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md`、`journal.md` 和 `proof.md`。audit-only 任务还应有 `audit-ledger.md` 或等价 inline ledger 证据。没有就修 `task-memory.md` 或 `cs-plan` 的 task memory 规则。

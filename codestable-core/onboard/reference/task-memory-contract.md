@@ -4,6 +4,8 @@
 - Purpose
 - Task capsule layout
 - Context pack
+- Proof trace
+- Audit ledger
 - Journal
 - Finish
 
@@ -17,6 +19,7 @@ Task memory keeps non-trivial work resumable across AI sessions. It is a curated
 .codestable/tasks/YYYY-MM-DD-{slug}/
 ├── task.md
 ├── context-pack.md
+├── audit-ledger.md  # optional, audit-only route
 ├── journal.md
 ├── proof.md
 └── status.yaml
@@ -24,11 +27,15 @@ Task memory keeps non-trivial work resumable across AI sessions. It is a curated
 
 ## Context pack
 
-Include only high-signal links and short summaries: user goal, non-goals, owner decisions, related project facts, code anchors, tests, reuse targets, and forbidden changes.
+Include only high-signal links and short summaries: user goal, non-goals, owner decisions, related project facts, code anchors, tests, reuse targets, completed audit ledger status when required, and forbidden changes.
 
 ## Proof trace
 
 `proof.md` stores the real-repo evidence needed to trust the work: contract, before-change evidence, change evidence, validation evidence, writeback matrix, and uncovered risk. It is required for non-trivial bug fixes, refactors, feature work, and doc-sweeps.
+
+## Audit ledger
+
+`audit-ledger.md` records audit-only file-level findings. It must state `Audit Status: 已审完` or `Audit Status: 未审完`. A partial ledger blocks `cs-do`.
 
 ## Journal
 

@@ -6,6 +6,7 @@ It is meant to prevent common real-repo failures:
 
 - lost context across sessions;
 - fixes without reproduction or verification evidence;
+- backend prompt/schema/status/event chains being fixed before a complete audit;
 - small requests turning into unnecessary frameworks;
 - stale requirements, architecture, and README docs;
 - unsafe document cleanup without current code anchors.
@@ -22,7 +23,7 @@ When the interactive selector opens, press `a` to select all skills in the repos
 
 | Entry | Purpose |
 |---|---|
-| `cs-plan` | Initialize or refresh project knowledge, explore code, route work, and create compact context packs |
+| `cs-plan` | Initialize or refresh project knowledge, explore code, run audit-only ledgers, route work, and create compact context packs |
 | `cs-do` | Execute ready work, reuse existing code, apply the minimality ladder, and record evidence |
 | `cs-review` | Verify changes, check overbuild, finish task memory, sync durable docs, and run code-grounded doc-sweeps |
 
@@ -40,7 +41,7 @@ CodeStable stores project memory in the target repository under `.codestable/`:
 - `requirements/`: capabilities, business rules, and success criteria;
 - `architecture/`: current structure, boundaries, and code anchors;
 - `specs/`: scoped engineering standards;
-- `tasks/`: resumable context packs, journals, and proof traces;
+- `tasks/`: resumable context packs, optional audit ledgers, journals, and proof traces;
 - `features/`, `issues/`, `refactors/`, `roadmap/`: lifecycle artifacts;
 - `compound/`: decisions, learnings, tricks, and explorations;
 - `reference/code-inventory.*`: current implementation inventory;
@@ -55,6 +56,7 @@ Shared rules live in `codestable-core/playbooks/`. They are auditable references
 | Initialize CodeStable for a repo | `cs-plan: initialize CodeStable for this repo` |
 | Refresh knowledge from current code | `cs-plan: refresh .codestable from current implementation` |
 | Explore code without editing | `cs-plan: explore the auth login flow without changing code` |
+| Audit a high-risk backend chain | `cs-plan: audit-only, audit the backend prompt/schema/status/event chain before changing source` |
 | Plan feature / bug / refactor work | `cs-plan: <your request>` |
 | Execute ready work | `cs-do: continue the current feature / issue / refactor` |
 | Review and sync docs | `cs-review: review and run Project Sync` |
@@ -63,12 +65,13 @@ Shared rules live in `codestable-core/playbooks/`. They are auditable references
 
 ## Reliability Rules
 
-Public entries expose route, playbook, human gate, evidence level, reliability gate, minimality, task memory, and next step fields. Those fields make behavior debuggable.
+Public entries expose route, playbook, human gate, evidence level, reliability gate, audit ledger/status, minimality, task memory, and next step fields. Those fields make behavior debuggable.
 
 Hard rules:
 
 - bug fixes start from a failure signal, reproduction path, or no-repro rationale;
 - refactors need a behavior boundary and equivalence proof path;
+- high-risk backend prompt/schema/status/event chains produce an audit-only file-level ledger and explicit `Audit Status: 已审完/未审完` before fixes;
 - non-trivial work leaves a proof trace;
 - doc-sweep audits before mutation and never deletes without explicit path-by-path approval;
 - minimality must not remove validation, permissions, security, data safety, or accessibility.
@@ -77,7 +80,7 @@ Hard rules:
 
 ```text
 .
-├── cs-plan/
+├── cs-plan/        # includes audit-only read-only ledger route
 ├── cs-do/
 ├── cs-review/
 ├── git-commit/

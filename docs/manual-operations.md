@@ -5,6 +5,7 @@
 - 入口选择
 - Onboard / 初始化与刷新
 - Explore / 代码探索
+- Audit-only / 后端链路审计
 - 手动记录 architecture / requirements / roadmap
 - 手动记录 decision / learning / trick / explore / attention
 - Doc-sweep / 文档熵减
@@ -18,6 +19,7 @@
 |---|---|---|
 | 初始化、修复、刷新 `.codestable/` | `cs-plan` | 进入生命周期前先建立代码实况索引 |
 | 代码探索、理解流程、不改代码 | `cs-plan` | explore 是只读探索，不是知识沉淀本身 |
+| audit-only 后端链路审计 | `cs-plan` | 在设计/修复前只读扫描，输出文件级 audit ledger 和 `已审完/未审完` |
 | 新功能 / bug / 重构 / roadmap 规划 | `cs-plan` | 需要路由和边界判断 |
 | 执行已 ready 的实现任务 | `cs-do` | 只做明确边界内的工作 |
 | 验收、状态收口、文档回写 | `cs-review` | review 拥有长期知识写回权 |
@@ -92,6 +94,44 @@ explore 默认只读、不落盘。探索结论未来会复用时，再用：
 cs-review：记录 explore：billing webhook 幂等逻辑的结论是 ...，证据见 ...
 ```
 
+## Audit-only / 后端链路审计
+
+```text
+cs-plan：audit-only，审计后端从用户输入到 LLM prompt、schema 校验、状态字段和事件消费的全链路。先不要改源码。
+```
+
+触发条件：用户明确说 `audit-only`，或后端链路跨模块且涉及 prompt / schema / 状态字段 / 事件流，或修复前证据不足、普通 scoped planning 无法安全给方案。
+
+结果：
+
+```text
+Route: audit-only.backend-ledger
+Audit Ledger: not-applicable | missing | inline | create:<path> | update:<path> | read:<path> | complete:<path> | partial:<path>
+Audit Status: 已审完 | 未审完
+Fix Plan: prioritized | provisional
+Write-intent: none 或仅 audit ledger/task memory
+Next: do 仅允许在 Audit Status: 已审完 且修复项有明确边界时出现
+```
+
+ledger 每个相关文件/模块至少包含：
+
+```text
+文件:
+职责:
+入口:
+出口:
+事件:
+Prompt:
+Schema:
+状态字段:
+调用方:
+下游消费方:
+风险:
+审计状态: done | partial
+```
+
+硬规则：不改源码；不只查关键词；每个 prompt 和 schema 都要列路径、字段、调用方、下游消费方；发现问题只记录；如果任何相关模块没审完，必须写 `Audit Status: 未审完`，修复计划只能是 provisional，不能进入 `cs-do`。
+
 ## 手动记录架构事实
 
 ```text
@@ -145,6 +185,7 @@ Route: project-sync.doc-sweep
 
 ```text
 .codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md
+.codestable/tasks/YYYY-MM-DD-{slug}/audit-ledger.md  # audit-only 时可选/需要
 .codestable/tasks/YYYY-MM-DD-{slug}/journal.md
 .codestable/tasks/YYYY-MM-DD-{slug}/proof.md
 .codestable/tasks/YYYY-MM-DD-{slug}/status.yaml
@@ -165,7 +206,7 @@ cs-review：记录 specs：本项目 API handler 必须返回统一 ResultEnvelo
 ## 项目知识索引维护
 
 - `cs-plan`：先读索引和 attention，再按需打开具体文档；初始化/刷新时按当前代码整理索引。
-- `cs-do`：按 ready artifact 和索引读取实现约束，不顺手改长期事实。
+- `cs-do`：按 ready artifact、索引和必要的 completed audit ledger 读取实现约束，不顺手改长期事实。
 - `cs-review`：拥有长期知识新鲜度责任；写具体文档后，同步对应索引，并输出 `Index Sync`。
 
 显式记录架构、需求、决策、探索结论时，请给出事实来源或代码锚点。证据不足时 `cs-review` 会询问，而不是编造项目知识。

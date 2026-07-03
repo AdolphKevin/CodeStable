@@ -35,12 +35,12 @@
 - Requirements: `requirements/{slug}.md`; index is `requirements/VISION.md`.
 - Architecture: `architecture/{type}-{slug}.md`; index is `architecture/ARCHITECTURE.md`.
 - Compound: `compound/YYYY-MM-DD-{doc_type}-{slug}.md` where `doc_type` is `learning`, `trick`, `decision`, or `explore`.
-- Tasks: `tasks/YYYY-MM-DD-{slug}/` with `task.md`, `context-pack.md`, `proof.md`, `journal.md`, and `status.yaml`.
+- Tasks: `tasks/YYYY-MM-DD-{slug}/` with `task.md`, `context-pack.md`, optional `audit-ledger.md`, `proof.md`, `journal.md`, and `status.yaml`.
 - Scoped specs: `specs/{scope}.md`; index is `specs/INDEX.md`.
 
 ## Metadata rules
 
-Use frontmatter only when it helps search or lifecycle state. Prefer stable fields: `doc_type`, `status`, `summary`, `tags`, `source`, `updated`, `roadmap`, `roadmap_item`, `lifecycle`, `supersedes`, `superseded_by`.
+Use frontmatter only when it helps search or lifecycle state. Prefer stable fields: `doc_type`, `status`, `summary`, `tags`, `source`, `updated`, `roadmap`, `roadmap_item`, `lifecycle`, `audit_status`, `supersedes`, `superseded_by`.
 
 Do not invent a generic `note` type. Classify durable knowledge as attention, decision, learning, trick, explore, guide, libdoc, requirement, architecture, or spec.
 

@@ -60,6 +60,8 @@ Analysis is for finding the root cause and fix options, not for changing code.
 
 Five steps:
 
+If the failing path is a cross-module backend chain involving prompts, schemas, status fields, events, queues, workers, or LLM orchestration and local evidence is insufficient, reroute to `audit-only.backend-ledger` before selecting a fix.
+
 1. Locate the failing path and relevant code owners.
 2. Reconstruct the failure path from input to observed symptom.
 3. Confirm root cause with evidence, or state remaining uncertainty.
@@ -149,6 +151,7 @@ Most bug fixes do not update architecture or requirements. Sync only when the fi
 ## Hard stops
 
 - Coding before root cause is known on a non-trivial issue.
+- Coding a high-risk backend prompt/schema/status/event fix before a required completed audit ledger exists.
 - Coding a bug fix without reproduction evidence or a no-repro rationale.
 - Continuing after the root-cause hypothesis fails.
 - Expanding bug fix into refactor or feature work.

@@ -44,13 +44,14 @@ Fastforward refactor normally creates no directory. Standard refactor creates ar
 
 Before scan or implementation, run these checks in order:
 
-1. Does the request include behavior change? If yes, reroute to feature or issue.
-2. Is there enough test or manual evidence to prove equivalence? If no, plan safety net first.
-3. Is the scope cross-module or owner-spanning? If yes, use standard scan/design.
-4. Are all candidates style preferences only? If yes, refuse or ask for a concrete maintainability goal.
-5. Is the target generated, vendored, third-party, or intentionally frozen code? If yes, refuse or ask for scope change.
-6. Is the scan scope too broad for one reviewable change? If yes, narrow it.
-7. After scan, is there a real improvement with evidence? If no, stop with no-op result.
+1. Does the request require a high-risk backend prompt/schema/status/event chain audit before safe design? If yes, route to `audit-only.backend-ledger` first.
+2. Does the request include behavior change? If yes, reroute to feature or issue.
+3. Is there enough test or manual evidence to prove equivalence? If no, plan safety net first.
+4. Is the scope cross-module or owner-spanning? If yes, use standard scan/design.
+5. Are all candidates style preferences only? If yes, refuse or ask for a concrete maintainability goal.
+6. Is the target generated, vendored, third-party, or intentionally frozen code? If yes, refuse or ask for scope change.
+7. Is the scan scope too broad for one reviewable change? If yes, narrow it.
+8. After scan, is there a real improvement with evidence? If no, stop with no-op result.
 
 A refusal is a valid refactor outcome when it prevents unsafe churn.
 
@@ -160,3 +161,4 @@ Pure internal cleanup is usually `no-sync`. Update architecture only when accept
 - Adding compatibility shims without removal plan.
 - Introducing a new abstraction that does not remove real duplication or isolate a real boundary.
 - Claiming equivalence without evidence.
+- Refactoring a high-risk backend prompt/schema/status/event chain before a required completed audit ledger exists.

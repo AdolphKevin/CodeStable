@@ -12,6 +12,7 @@ playbooks/task-memory.md     # task capsule, context pack, journal, proof trace
 playbooks/minimality.md      # minimal implementation ladder and overbuild checks
 playbooks/onboard.md         # code-aware initialization and refresh
 playbooks/explore.md         # read-only exploration
+playbooks/audit-only.md      # high-risk backend audit ledger before fixes
 playbooks/feature.md
 playbooks/issue.md
 playbooks/refactor.md
@@ -31,11 +32,12 @@ Human Gate: ...
 Evidence: ...
 Task Memory: ...
 Proof Trace: ...
+Audit Ledger / Audit Status: ...
 Minimality Plan / Minimality / Overbuild Check: ...
 Next: ...
 ```
 
-When behavior is bad, debug in this order: route, human gate, evidence, context pack, minimality rung, review/writeback.
+When behavior is bad, debug in this order: route, human gate, evidence, audit ledger status, context pack, minimality rung, review/writeback.
 
 ## Maintenance rules
 
@@ -47,4 +49,4 @@ When behavior is bad, debug in this order: route, human gate, evidence, context 
 
 ## Real-repo reliability
 
-`playbooks/reliability.md` defines evidence levels, proof traces, bug/refactor gates, and doc-sweep claim mapping. Public entries surface those fields in their final protocol so route quality can be debugged.
+`playbooks/reliability.md` defines evidence levels, proof traces, bug/refactor gates, audit-only completion rules, and doc-sweep claim mapping. Public entries surface those fields in their final protocol so route quality can be debugged.

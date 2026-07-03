@@ -6,6 +6,7 @@ CodeStable 是面向 Codex / Claude Code 的工程化开发任务管理 Skill �
 
 - 任务跨会话后上下文丢失；
 - AI 直接实现但没有复现、验证或等价证据；
+- 后端 prompt / schema / 状态字段 / 事件流跨模块时，修复前缺少完整链路审计；
 - 小需求被做成大框架；
 - README、架构文档、需求文档和当前代码逐渐失真；
 - 文档清理缺少代码锚点，容易误删有效知识。
@@ -24,7 +25,7 @@ CodeStable 只暴露三个生命周期入口：
 
 | 入口 | 用途 |
 |---|---|
-| `cs-plan` | 初始化 / 刷新项目知识、探索代码、规划 feature / issue / refactor / roadmap，并生成必要的上下文包 |
+| `cs-plan` | 初始化 / 刷新项目知识、探索代码、audit-only 链路审计、规划 feature / issue / refactor / roadmap，并生成必要的上下文包 |
 | `cs-do` | 执行已经 ready 的工作，复用现有实现，应用最小实现规则，记录验证证据 |
 | `cs-review` | 验收改动、检查过度设计、收口任务记忆、同步长期文档、执行代码证据优先的 doc-sweep |
 
@@ -42,7 +43,7 @@ CodeStable 的项目知识默认进入目标仓库的 `.codestable/`：
 - `requirements/`：用户可见能力、业务规则和成功标准；
 - `architecture/`：当前架构事实、模块边界和代码锚点；
 - `specs/`：测试命令、工程规范、API/UI/data/security 约定；
-- `tasks/`：跨会话 task capsule、context pack、journal 和 proof trace；
+- `tasks/`：跨会话 task capsule、context pack、audit ledger、journal 和 proof trace；
 - `features/`、`issues/`、`refactors/`、`roadmap/`：生命周期产物；
 - `compound/`：decision、learning、trick、explore 等可复用知识；
 - `reference/code-inventory.*`：当前代码实况库存；
@@ -52,6 +53,7 @@ CodeStable 的项目知识默认进入目标仓库的 `.codestable/`：
 
 ```text
 codestable-core/playbooks/
+├── audit-only.md         # 高风险后端链路只读审计和文件级 ledger
 ├── collaboration.md     # human gate 和 owner 决策边界
 ├── task-memory.md       # task capsule / context pack / journal / proof trace
 ├── minimality.md        # 最小实现 ladder / overbuild review
@@ -73,6 +75,7 @@ codestable-core/playbooks/
 | 初始化项目知识库 | `cs-plan：初始化 CodeStable，给这个仓库建立 .codestable 骨架` |
 | 根据当前实现刷新知识 | `cs-plan：根据当前实现重新整理 .codestable` |
 | 只读探索代码流程 | `cs-plan：探索 auth 登录流程，不改代码` |
+| 审计后端高风险链路 | `cs-plan：audit-only，审计后端 prompt/schema/状态/事件链路，先不要改源码` |
 | 规划新功能 / bug / 重构 | `cs-plan：<你的需求>` |
 | 执行 ready 工作 | `cs-do：继续执行当前 feature / issue / refactor` |
 | 验收改动并同步文档 | `cs-review：验收并做 Project Sync` |
@@ -92,6 +95,7 @@ Playbook: ...
 Human Gate: ...
 Evidence Level: ...
 Reliability Gate: ...
+Audit Ledger / Audit Status: ...
 Minimality Plan / Minimality / Overbuild Check: ...
 Task Memory: ...
 Next: ...
@@ -103,6 +107,7 @@ Next: ...
 
 - bug fix 要从失败信号、复现路径或 no-repro 理由开始；
 - refactor 要先说明行为边界和等价验证方式；
+- 高风险后端 prompt/schema/状态/事件链路在修复前要先产出 audit-only 文件级 ledger，并明确 `已审完/未审完`；
 - 非平凡任务要留下 proof trace；
 - doc-sweep 先做 claim matrix，删除 / 归档必须逐文件确认；
 - minimality 不允许裁掉验证、安全、权限、数据安全或可访问性。
@@ -111,7 +116,7 @@ Next: ...
 
 ```text
 .
-├── cs-plan/                 # 规划入口 Skill
+├── cs-plan/                 # 规划入口 Skill（含 audit-only 只读审计路由）
 ├── cs-do/                   # 执行入口 Skill
 ├── cs-review/               # 验收与同步入口 Skill
 ├── git-commit/              # 独立提交工具 Skill

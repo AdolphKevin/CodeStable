@@ -1,6 +1,6 @@
 ---
 name: cs-do
-description: "CodeStable public entry for execution: read task context, implement only ready work, apply the minimality ladder, reuse existing code, record evidence, and stop on missing approval."
+description: "CodeStable public entry for execution: read task context and completed audit ledgers when required, implement only ready work, apply the minimality ladder, reuse existing code, record evidence, and stop on missing approval."
 ---
 
 # cs-do
@@ -29,6 +29,7 @@ The shared rules live in `../codestable-core/playbooks/`; they are auditable ref
 | Minimality ladder | `../codestable-core/playbooks/minimality.md` |
 | Real-repo reliability gates | `../codestable-core/playbooks/reliability.md` |
 | Feature / issue / refactor execution | `../codestable-core/playbooks/{feature,issue,refactor}.md` |
+| Audit-only execution block / handoff | `../codestable-core/playbooks/audit-only.md` |
 
 `cs-do` does not onboard, create roadmap strategy, or write durable project knowledge. Missing skeleton or missing ready plan returns to `cs-plan`.
 
@@ -37,10 +38,11 @@ The shared rules live in `../codestable-core/playbooks/`; they are auditable ref
 1. Ensure `.codestable/INDEX.md` exists. If not, `Route: onboard.required`, `Next: plan`.
 2. Read `.codestable/INDEX.md`, `.codestable/attention.md`, and `.codestable/reference/project-knowledge-contract.md`.
 3. If a `.codestable/tasks/*/context-pack.md` exists for this work, read it before code.
-4. Read the current lifecycle artifact: feature design/checklist, issue report/analysis, refactor design/checklist, or fastforward plan.
-5. Check `git status --short`; exclude unrelated dirty files.
-6. Read touched code, tests, existing helpers/types/components/services, relevant scoped specs, and the task proof trace if present before editing.
-7. Apply the minimality ladder; stop at the first rung that works without cutting safety.
+4. Read the current lifecycle artifact: feature design/checklist, issue report/analysis, refactor design/checklist, audit ledger, or fastforward plan.
+5. If the plan/context says audit-only is required, or the requested execution scope is a cross-module backend prompt/schema/status/event chain, read the completed audit ledger before touching code; if it is missing, partial, or lacks `Audit Status: 已审完`, stop with `blocked.missing-audit-ledger`.
+6. Check `git status --short`; exclude unrelated dirty files.
+7. Read touched code, tests, existing helpers/types/components/services, relevant scoped specs, and the task proof trace if present before editing.
+8. Apply the minimality ladder; stop at the first rung that works without cutting safety.
 
 ## Fixed output protocol
 
@@ -59,6 +61,8 @@ Reliability Gate: pass | blocked:<reason> | not-applicable
 Minimality: rung=<rung>; reuse=<paths or none>; added-abstraction=<none/path+reason>
 Task Memory: none | update:<path>
 Proof Trace: none | update:<path>
+Audit Ledger: not-applicable | missing | inline | create:<path> | update:<path> | read:<path> | complete:<path> | partial:<path>
+Audit Status: not-applicable | 已审完 | 未审完
 Journal: <path or none>
 Write-intent: <actual changed scope or planned scope>
 Checks: <commands/manual paths; if not run, why>
@@ -79,6 +83,7 @@ blocked.need-plan
 blocked.need-user-decision
 blocked.dirty-worktree
 blocked.missing-context-pack
+blocked.missing-audit-ledger
 blocked.missing-reproduction
 blocked.missing-equivalence-proof
 ```
@@ -98,6 +103,7 @@ blocked.missing-equivalence-proof
 | New product/architecture/risk choice appears | `blocked.need-user-decision` | Stop and ask; do not guess |
 | Unrelated dirty files obscure scope | `blocked.dirty-worktree` | Report and ask for scoping |
 | Standard task has no context pack where one is expected | `blocked.missing-context-pack` | Return to `cs-plan` to create/update task memory |
+| Audit-only was required but no completed file-level ledger is present | `blocked.missing-audit-ledger` | Return to `cs-plan` with `audit-only.backend-ledger`; do not edit source |
 | Bug fix lacks reproduction, failing signal, or no-repro rationale | `blocked.missing-reproduction` | Return to `cs-plan` / issue analysis for failure evidence |
 | Refactor lacks an equivalence proof path | `blocked.missing-equivalence-proof` | Return to `cs-plan` for characterization or verification plan |
 
@@ -108,9 +114,10 @@ Before editing, confirm the task is executable in the current repository:
 - Bug fix: reproduction path, failing test/log/user evidence, or explicit no-repro rationale exists.
 - Refactor: equivalence proof path exists and behavior boundaries are named.
 - Feature: success criteria, non-goals, code anchors, and validation path are known.
+- Audit-required backend chain: a file-level audit ledger exists, all relevant rows are `done`, `Audit Status: 已审完` is present, prompt/schema path-field-caller-consumer mappings are complete, and the first fix is bounded.
 - Any task: unrelated dirty files are excluded; task context/proof trace is read when present.
 
-If the gate fails, return `blocked.*` and do not patch code.
+If the gate fails, return `blocked.*` and do not patch code. In particular, never patch audit-required work from a provisional or partial ledger.
 
 ## Minimality execution rules
 
@@ -141,6 +148,7 @@ Implementation does not rewrite architecture, requirements, compound knowledge, 
 ## Completion standard
 
 - Diff scope matches route and plan.
+- Audit-required work references a completed audit ledger and implements only a bounded fix item from it.
 - Checks or manual verification cover the changed behavior.
 - Proof trace records before/after evidence for non-trivial tasks.
 - Task journal/checklist/fix evidence is updated when relevant.

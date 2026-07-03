@@ -29,6 +29,7 @@ Shared rules live in `../codestable-core/playbooks/`; they are auditable referen
 | Minimality / overbuild review | `../codestable-core/playbooks/minimality.md` |
 | Real-repo reliability gates | `../codestable-core/playbooks/reliability.md` |
 | Feature / issue / refactor verification | `../codestable-core/playbooks/{feature,issue,refactor}.md` |
+| Audit ledger evidence when reviewing audit-required work | `../codestable-core/playbooks/audit-only.md` |
 | Roadmap closure and status | `../codestable-core/playbooks/roadmap.md` + `../codestable-core/playbooks/project-sync.md` |
 | Architecture / requirements / roadmap / doc-sweep | `../codestable-core/playbooks/project-sync.md` |
 | Decisions / learnings / tricks / explore / attention / guide / libdoc | `../codestable-core/playbooks/knowledge-sync.md` |
@@ -36,7 +37,7 @@ Shared rules live in `../codestable-core/playbooks/`; they are auditable referen
 ## Startup scan
 
 1. Ensure `.codestable/INDEX.md` exists. If missing, stop with `Next: plan`.
-2. Read `.codestable/INDEX.md`, `.codestable/attention.md`, `.codestable/reference/project-knowledge-contract.md`, and any relevant `.codestable/tasks/*/context-pack.md`.
+2. Read `.codestable/INDEX.md`, `.codestable/attention.md`, `.codestable/reference/project-knowledge-contract.md`, and any relevant `.codestable/tasks/*/context-pack.md` or `audit-ledger.md`.
 3. If the user asks to record architecture, requirements, roadmap, decision, learning, trick, explore, attention, guide, or libdoc, use manual sync with a traceable source.
 4. If the user asks for 文档熵减 / doc-sweep / 清理过时文档, use `project-sync.doc-sweep` and refresh/read code inventory first.
 5. Otherwise review current diff, lifecycle artifacts, task journal, checks, and related code.
@@ -57,6 +58,8 @@ Evidence: <tests, diff, code anchors, user source, inventory, doc claim mapping>
 Evidence Level: L0 | L1 | L2 | L3 | L4
 Reliability Gate: pass | blocked:<reason> | not-applicable
 Proof Trace: none | update:<path> | finish:<path>
+Audit Ledger: not-applicable | missing | inline | create:<path> | update:<path> | read:<path> | complete:<path> | partial:<path>
+Audit Status: not-applicable | 已审完 | 未审完
 Overbuild Check: pass | blocked | not-applicable
 Task Memory: none | update:<path> | finish:<path>
 Write-intent: <actual or proposed doc updates>
@@ -103,6 +106,7 @@ Generic `note` is not a durable type. Classify it or ask.
 - Detail doc first, scoped index second, root index last.
 - Finish task memory by updating task status/journal/proof trace before promoting durable facts.
 - Run the overbuild check: dependencies, abstractions, broad churn, custom platform replacements, missing safety checks.
+- If the diff implements audit-required backend work, verify it references a completed audit ledger and a bounded fix item from that ledger.
 - Use `no-sync` when no durable fact changed.
 
 ## Doc-sweep rules
@@ -121,6 +125,7 @@ Use `risk-approval` before destructive doc changes, migrations, broad rewrites, 
 ## Hard stops
 
 - Review without verification evidence.
+- Reviewing audit-required backend work without a completed audit ledger.
 - Closing tasks without finishing the proof trace when one exists.
 - Manual sync without traceable source.
 - Doc-sweep based only on old docs.

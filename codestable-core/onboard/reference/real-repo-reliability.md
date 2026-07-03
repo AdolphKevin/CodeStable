@@ -5,6 +5,7 @@
 - Proof trace
 - Bug fix contract
 - Refactor contract
+- Audit-only contract
 - Review/doc-sweep contract
 
 ## Evidence levels
@@ -15,7 +16,7 @@
 - L3: executable command output or reproduction path.
 - L4: before/after proof.
 
-Use the highest level available. Do not close non-trivial code work below L3 unless the missing evidence is explicitly documented.
+Use the highest level available. Do not close non-trivial code work below L3 unless the missing evidence is explicitly documented. Do not mark audit-only `已审完` unless every relevant module has L2 current code/config/test anchors.
 
 ## Proof trace
 
@@ -28,6 +29,10 @@ Start from symptom and reproduction. If reproduction is unavailable, record the 
 ## Refactor contract
 
 Refactor requires a behavior contract and equivalence proof path before editing. Behavior change routes to feature or issue.
+
+## Audit-only contract
+
+Audit-only backend reviews require a file-level ledger before fixes when the chain is cross-module and involves prompt, schema, status fields, or events. Every prompt/schema needs path, fields, caller, and downstream consumer. If any row is partial, final status is `Audit Status: 未审完`, and `cs-do` stays blocked.
 
 ## Review/doc-sweep contract
 

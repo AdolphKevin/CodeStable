@@ -15,7 +15,7 @@ The human remains the owner of product intent, architecture tradeoffs, risk tole
 ## Trellis-inspired parts
 
 - Repo-persisted standards: `.codestable/specs/INDEX.md` and scoped spec docs.
-- Task-centered context: `.codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md`, `journal.md`, and `proof.md`.
+- Task-centered context: `.codestable/tasks/YYYY-MM-DD-{slug}/context-pack.md`, optional `audit-ledger.md`, `journal.md`, and `proof.md`.
 - Finish loop: `cs-review` verifies work, closes task memory, and promotes durable learnings into project knowledge.
 - Platform portability: public entries are regular Skills; project memory lives in the repo.
 
@@ -31,5 +31,6 @@ The human remains the owner of product intent, architecture tradeoffs, risk tole
 
 - It keeps only three lifecycle entry points, instead of many workflow commands.
 - It separates read-only exploration from durable knowledge recording.
+- It adds audit-only as a `cs-plan` route for high-risk backend prompt/schema/status/event chains without turning it into a fourth public entry.
 - It makes doc-sweep audit-first and code-grounded; destructive cleanup requires explicit human approval.
 - It treats generated code inventory as evidence map, not product truth.

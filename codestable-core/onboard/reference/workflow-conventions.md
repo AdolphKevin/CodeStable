@@ -11,7 +11,7 @@
 
 ## Entry model
 
-Use `cs-plan` for planning/onboard/explore, `cs-do` for scoped execution, and `cs-review` for verification/sync/closure. Do not call internal historical Skill names.
+Use `cs-plan` for planning/onboard/explore/audit-only ledgers, `cs-do` for scoped execution, and `cs-review` for verification/sync/closure. Do not call internal historical Skill names.
 
 ## Before code
 
@@ -22,7 +22,8 @@ Before implementation, read:
 3. `.codestable/attention.md`;
 4. task context pack when present;
 5. scoped specs relevant to the touched area;
-6. specific architecture/requirements/compound docs only when the indexes point to them.
+6. completed audit ledger when audit-only was required;
+7. specific architecture/requirements/compound docs only when the indexes point to them.
 
 ## Minimality
 
@@ -32,7 +33,7 @@ Apply the ladder from `reference/minimality-ladder.md`: no-op, reuse existing co
 
 Use project-native commands from README, package scripts, Makefile, CI, or existing tests. If full checks are too expensive or unavailable, run the smallest meaningful check and state what was not covered.
 
-Separate dirty files into current scope, CodeStable artifacts, and unrelated work. Do not include unrelated dirty files in conclusions.
+Separate dirty files into current scope, CodeStable artifacts, and unrelated work. Do not include unrelated dirty files in conclusions. If audit-only was required, do not implement from a missing or partial ledger.
 
 ## Project Sync
 

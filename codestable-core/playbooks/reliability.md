@@ -8,6 +8,7 @@ Use this map first, then open only the section needed:
 - Proof trace
 - Bug-fix reliability
 - Refactor reliability
+- Audit-only reliability
 - Review and doc freshness reliability
 - Debuggability
 - Output fields
@@ -36,6 +37,7 @@ Rules:
 - For `cs-do` bug fixes, require L2 plus either L3 reproduction or an explicit explanation why reproduction is unavailable.
 - For refactors, require an equivalence proof path before editing.
 - For doc-sweep mutation, require L2 claim mapping plus user approval for archive/delete/rewrite.
+- For audit-only backend chains, require L2 current code/config/test anchors for every relevant module before marking `Audit Status: 已审完`.
 - For review closure, prefer L4; if unavailable, state the highest level achieved and what remains unproven.
 
 ## Proof trace
@@ -108,6 +110,20 @@ Refactor means behavior preservation. Required before editing:
 
 If the task includes behavior change, reroute to feature or issue.
 
+## Audit-only reliability
+
+Audit-only is a reliability escalation before implementation. It is required when a backend fix or design would otherwise depend on weak evidence across prompt/schema/status/event boundaries.
+
+A completed audit requires:
+
+1. Topology-based module enumeration, not keyword hits alone.
+2. File-level ledger entries for every relevant route, handler, service, worker/consumer, event registration, prompt definition/caller, schema/model/validator, state machine, and downstream consumer in the chain.
+3. For every prompt and schema: file path, fields, caller, and downstream consumer.
+4. `审计状态: done` for every ledger row.
+5. Final `Audit Status: 已审完` plus a prioritized fix plan with verification criteria.
+
+If any module is inferred but unopened, any dynamic dispatch remains unresolved, or any prompt/schema consumer is unknown, the audit status is `未审完`. A partial audit can produce a provisional fix plan, but it cannot authorize `cs-do`.
+
 ## Review and doc freshness reliability
 
 Review is not complete until code, docs, and task memory agree at the right level.
@@ -138,6 +154,7 @@ Playbook:
 Reliability Gate:
 Evidence Level:
 Proof Trace:
+Audit Ledger / Audit Status:
 Minimality / Overbuild:
 Next:
 ```
@@ -158,6 +175,8 @@ Use these fields in addition to each public entry's normal protocol:
 Reliability Gate: pass | blocked:<reason> | not-applicable
 Evidence Level: L0 | L1 | L2 | L3 | L4
 Proof Trace: none | create:<path> | update:<path> | finish:<path>
+Audit Ledger: not-applicable | missing | inline | create:<path> | update:<path> | read:<path> | complete:<path> | partial:<path>
+Audit Status: not-applicable | 已审完 | 未审完
 ```
 
 ## Hard stops
@@ -165,5 +184,6 @@ Proof Trace: none | create:<path> | update:<path> | finish:<path>
 - Implementing a non-trivial bug fix without reproduction evidence or an explicit no-repro rationale.
 - Refactoring without an equivalence proof path.
 - Treating stale docs as proof against current code.
-- Marking review complete when checks, proof trace, or owner gate are missing.
+- Treating a partial audit ledger as execution-ready.
+- Marking review complete when checks, proof trace, audit ledger, or owner gate are missing.
 - Hiding weak evidence behind confident wording.
