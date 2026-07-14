@@ -1,4 +1,0 @@
-interface:
-  display_name: "CodeStable Plan"
-  short_description: "初始化、规划、路由、audit-only 链路审计、上下文包、最小实现计划和只读代码探索"
-  default_prompt: "Use $cs-plan to initialize or refresh CodeStable, run audit-only backend ledgers when required, plan work, build a context pack, choose a minimality path, or explore code without changing it."

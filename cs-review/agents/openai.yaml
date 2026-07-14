@@ -1,4 +1,0 @@
-interface:
-  display_name: "CodeStable Review"
-  short_description: "验收、overbuild 检查、任务收口、Project Sync 和长期知识记录"
-  default_prompt: "Use $cs-review to verify changes, check overbuild, finish task memory, sync project docs, run doc-sweep, or record durable knowledge."

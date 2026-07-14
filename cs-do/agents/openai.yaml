@@ -1,4 +1,0 @@
-interface:
-  display_name: "CodeStable Do"
-  short_description: "读取任务上下文，执行 ready 工作，阻止缺失 audit ledger 的高风险实现，并记录证据"
-  default_prompt: "Use $cs-do to execute ready CodeStable work, read the task context pack and completed audit ledger when required, apply the minimality ladder, and record evidence."
