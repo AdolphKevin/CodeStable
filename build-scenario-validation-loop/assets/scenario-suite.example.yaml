@@ -1,0 +1,18 @@
+meta:
+  id: order-address-change
+  name: Order address change
+defaults:
+  runtime:
+    locale: en-US
+cases:
+  - id: collect-reason-before-confirmation
+    title: Collect the reason and wait for final confirmation
+    turns:
+      - user: I want to change order 1111 shipping address to 12 River Road
+        expected: >-
+          Recognize the order and new address, ask for the missing reason, and do not claim that the
+          address was changed.
+      - user: Because I moved to a new apartment
+        expected: >-
+          Restate the order, address, and reason; request final confirmation; do not execute or claim
+          completion before confirmation.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "搭建 Scenario 验证闭环"
+  short_description: "搭建、运行并审核可追溯的 Agent Scenario 质量体系"
+  default_prompt: "使用 $build-scenario-validation-loop 为当前项目搭建并验证 Scenario 运行与 Codex 证据审核闭环。"

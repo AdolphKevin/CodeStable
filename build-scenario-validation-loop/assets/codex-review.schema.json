@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scenario-validation/codex-review.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "reviewer",
+    "status",
+    "scenario_run_status",
+    "reviewed_artifacts",
+    "summary",
+    "findings",
+    "observations"
+  ],
+  "properties": {
+    "schema_version": {"const": "scenario-codex-review.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "reviewer": {"const": "codex"},
+    "status": {"enum": ["PASS", "FAIL", "BLOCKED"]},
+    "scenario_run_status": {"type": "string", "minLength": 1},
+    "reviewed_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evidence_ref"}
+    },
+    "summary": {"type": "string", "minLength": 1},
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "observations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/observation"}
+    }
+  },
+  "$defs": {
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^(sha256:)?[0-9a-f]{64}$"}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "case_id",
+        "turn_index",
+        "category",
+        "root_cause",
+        "evidence_refs",
+        "recommended_fix_boundary"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "case_id": {"type": ["string", "null"]},
+        "turn_index": {"type": ["integer", "null"], "minimum": 1},
+        "category": {"type": "string", "minLength": 1},
+        "root_cause": {"type": "string", "minLength": 1},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence_ref"}
+        },
+        "recommended_fix_boundary": {"type": "string", "minLength": 1}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "turn_index", "summary", "why_non_blocking", "evidence_refs"],
+      "properties": {
+        "case_id": {"type": ["string", "null"]},
+        "turn_index": {"type": ["integer", "null"], "minimum": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "why_non_blocking": {"type": "string", "minLength": 1},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence_ref"}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"status": {"const": "PASS"}},
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {"findings": {"maxItems": 0}}
+      }
+    },
+    {
+      "if": {
+        "properties": {"status": {"const": "FAIL"}},
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {"findings": {"minItems": 1}}
+      }
+    }
+  ]
+}
